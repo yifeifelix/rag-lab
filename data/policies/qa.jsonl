@@ -1,0 +1,10 @@
+{"question": "What is the current restore recovery target for Cedar EU?", "answer": "17 minutes", "relevant_doc_ids": ["cedar.eu.restore.v2"], "category": "version_trap", "qid": "POL-01"}
+{"question": "How long is exported Cedar EU data kept?", "answer": "30 days", "relevant_doc_ids": ["cedar.eu.export.v2"], "category": "region_trap", "qid": "POL-02"}
+{"question": "What is the current restore recovery target for Cedar US?", "answer": "25 minutes", "relevant_doc_ids": ["cedar.us.restore.v2"], "category": "version_trap", "qid": "POL-03"}
+{"question": "How long is exported Cedar US data kept?", "answer": "90 days", "relevant_doc_ids": ["cedar.us.export.v2"], "category": "region_trap", "qid": "POL-04"}
+{"question": "What is the current restore recovery target for Cedar APAC?", "answer": "40 minutes", "relevant_doc_ids": ["cedar.apac.restore.v2"], "category": "version_trap", "qid": "POL-05"}
+{"question": "How long is exported Cedar APAC data kept?", "answer": "60 days", "relevant_doc_ids": ["cedar.apac.export.v2"], "category": "region_trap", "qid": "POL-06"}
+{"question": "Under the 2026 Cedar EU policies, what are the restore target and the export retention period?", "answer": "17 minutes and 30 days", "relevant_doc_ids": ["cedar.eu.restore.v2", "cedar.eu.export.v2"], "category": "multi_hop", "qid": "POL-07"}
+{"question": "What is the Cedar contract renewal fee?", "answer": null, "relevant_doc_ids": [], "category": "unanswerable", "qid": "POL-08"}
+{"question": "Does Cedar offer a refund guarantee?", "answer": null, "relevant_doc_ids": [], "category": "unanswerable", "qid": "POL-09"}
+{"question": "How many on-call engineers does Cedar EU require?", "answer": null, "relevant_doc_ids": [], "category": "unanswerable", "qid": "POL-10"}

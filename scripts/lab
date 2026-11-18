@@ -1,0 +1,48 @@
+#!/bin/sh
+# RAG Lab control script (OrbStack / Docker).
+set -eu
+cd "$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+
+LOCAL_UID=$(id -u); LOCAL_GID=$(id -g); export LOCAL_UID LOCAL_GID
+CTX="--context ${DOCKER_CONTEXT_NAME:-orbstack}"
+mkdir -p workspace references site .cache/raglab .cache/home
+[ -f .env ] || cp .env.example .env
+if ! grep -q '^JUPYTER_TOKEN=' .lab.env 2>/dev/null; then
+  (umask 077; printf 'JUPYTER_TOKEN=%s\n' "$(od -An -tx1 -N24 /dev/urandom | tr -d ' \n')" >> .lab.env)
+fi
+compose() { docker $CTX compose --env-file .lab.env --env-file .env "$@"; }
+
+sync_workspace() {
+  # Copy lessons you have not started yet; never overwrite your own work.
+  for f in course/[0-9]*.md; do
+    [ -e "workspace/$(basename "$f")" ] || cp "$f" workspace/
+  done
+  [ -e workspace/images ] || cp -R course/images workspace/images 2>/dev/null || true
+}
+
+host_ip() { ipconfig getifaddr en0 2>/dev/null || ipconfig getifaddr en1 2>/dev/null || echo localhost; }
+
+case "${1:-help}" in
+  up)
+    sync_workspace
+    [ -f site/index.html ] || printf '<p>Course website not built yet. Run <code>scripts/lab book</code>.</p>' > site/index.html
+    compose up -d --build
+    ip=$(host_ip)
+    echo "JupyterLab : http://$ip:${LAB_PORT:-8888}/lab?token=$(sed -n 's/^JUPYTER_TOKEN=//p' .lab.env)"
+    echo "Course site: http://$ip:${BOOK_PORT:-8000}" ;;
+  down)    compose down ;;
+  status)  compose ps ;;
+  logs)    compose logs --tail=100 -f ;;
+  token)   sed -n 's/^JUPYTER_TOKEN=//p' .lab.env ;;
+  book)
+    # Executes every lesson (cached) and renders the read-only website.
+    compose exec -T lab sh -c 'jupyter-book build course --path-output .cache/book && rm -rf site/* && cp -R .cache/book/_build/html/. site/'
+    echo "Course site rebuilt: http://$(host_ip):${BOOK_PORT:-8000}" ;;
+  test)    compose exec -T lab python -m pytest -q tests ;;
+  reset)
+    # scripts/lab reset 03  -> fresh copy of lesson 03 (your old file is kept as .bak)
+    f=$(ls course/"${2:?lesson number}"_*.md); b=workspace/$(basename "$f")
+    [ -e "$b" ] && mv "$b" "$b.bak"; cp "$f" "$b"; echo "Reset $b" ;;
+  refs)    sh scripts/clone_references.sh ;;
+  *) echo "Usage: scripts/lab {up|down|status|logs|token|book|test|reset NN|refs}"; exit 2 ;;
+esac

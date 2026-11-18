@@ -1,25 +1,27 @@
-name: rag-workbench
+name: raglab
 services:
-  app:
-    image: rag-learning-workbench:local
+  lab:
+    image: raglab:local
     build:
-      context: .
-      target: runtime
-    init: true
+      context: docker
+    init: false
     user: "${LOCAL_UID:-1000}:${LOCAL_GID:-1000}"
     restart: unless-stopped
     ports:
-      - "${RAG_BIND_HOST:-127.0.0.1}:${RAG_PORT:-8000}:8000"
+      - "${LAB_BIND_HOST:-0.0.0.0}:${LAB_PORT:-8888}:8888"
     environment:
-      RAG_DATA_ROOT: /app
-      RAG_PROJECT_ROOT: /app
-      RAG_ADMIN_TOKEN: "${RAG_ADMIN_TOKEN:?Use scripts/orbstack to create a local owner token}"
-      RAG_TESTER_TOKEN: "${RAG_TESTER_TOKEN:-}"
-      RAG_LLM_MODE: local
-      RAG_EMBEDDING_BACKEND: local_svd
-      RAG_REPORTS_DIR: /app/reports/private
-      RAG_CALIBRATION_PATH: ""
+      JUPYTER_TOKEN: "${JUPYTER_TOKEN:?run scripts/lab to create a token}"
+      LLM_BASE_URL: "${LLM_BASE_URL:-http://host.docker.internal:8317/v1}"
+      LLM_API_KEY: "${LLM_API_KEY:-}"
+      LLM_MODEL: "${LLM_MODEL:-}"
     volumes:
-      - ./data/workspaces:/app/data/workspaces
-      - ./reports/private:/app/reports/private
-      - ./.cache/orbstack:/app/.cache
+      - .:/home/lab/project
+      - ./references:/home/lab/project/references:ro
+
+  book:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    ports:
+      - "${LAB_BIND_HOST:-0.0.0.0}:${BOOK_PORT:-8000}:80"
+    volumes:
+      - ./site:/usr/share/nginx/html:ro
