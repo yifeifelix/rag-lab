@@ -64,6 +64,11 @@ if llm.llm_available():
         display(rag.ask(q))
 ```
 
+Look closely at the second answer. If the model says *"I don't know"*, check its sources: the
+answer lives in `py.asyncio.locks` (`Semaphore`), but retrieval may have returned only
+`py.asyncio.tasks` chunks. The model behaved correctly - **retrieval failed**. When an answer is
+wrong, always ask first: *was the evidence even in the prompt?*
+
 ## Trap 1 · Outdated and look-alike documents
 
 Real knowledge bases contain old versions and near-duplicates. Our tiny `policies` corpus is

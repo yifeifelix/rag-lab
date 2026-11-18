@@ -48,7 +48,7 @@ Passage:
 {passage}"""
 
 def is_relevant(question: str, hit) -> bool:
-    reply = llm.chat(GRADE_PROMPT.format(question=question, passage=hit.chunk.text), max_tokens=3)
+    reply = llm.chat(GRADE_PROMPT.format(question=question, passage=hit.chunk.text))
     return reply.strip().lower().startswith("yes")
 
 if llm.llm_available():
