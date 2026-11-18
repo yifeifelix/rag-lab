@@ -1,0 +1,5 @@
+BM25 Recall@5 1.0 KW coverage 0.2222 P95 ms 0.858
+Dense Recall@5 1.0 KW coverage 0.2222 P95 ms 0.605
+Hybrid RRF Recall@5 1.0 KW coverage 0.2222 P95 ms 0.688
+Hybrid RRF + feature reranker Recall@5 1.0 KW coverage 0.2222 P95 ms 1.841
+Pending human review: /Volumes/Data/Projects/Rag/reports/python_support/local_svd/local/dev/pending_human_review.jsonl

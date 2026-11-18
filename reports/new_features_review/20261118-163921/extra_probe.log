@@ -1,0 +1,27 @@
+{
+  "natural_compression": {
+    "answers_identical": true,
+    "baseline_proxy": 1.0,
+    "compressed_proxy": 0.747,
+    "compression_ratio": 0.4582
+  },
+  "crag_correct_path": {
+    "initial_assessment": "AMBIGUOUS",
+    "initial_confidence": 0.4641,
+    "reported_final_status": "AMBIGUOUS_CORRECTED",
+    "expanded_terms": [
+      "int8",
+      "scalar",
+      "quantization",
+      "ram",
+      "recall",
+      "rescoring",
+      "reduction",
+      "footprint",
+      "hbm",
+      "ndcg",
+      "accuracy",
+      "precision"
+    ]
+  }
+}

@@ -1,0 +1,1111 @@
+--- before/README.md
++++ after/README.md
+@@ -1,158 +1,88 @@
+-# RAG Learning & Evaluation Workbench
++# RAG Learning Workbench & Lab
+ 
+-面向 RAG 学习、Applied Data Scientist 求职作品集和小型 Freelance PoC 的本地实验项目。
++以学习路径为主的本地 RAG 实验台：**看懂链路 → 一次改变一个变量 → 核查证据 → 分析失败。** 求职作品集和 Freelance 演示是学习成果的用途。
+ 
+-当前定位：**可运行的单用户 RAG 工作台，有文档生命周期、可复现实验和审计记录**。不是经过生产验收的企业级万并发服务。
++打开应用先进入“学习路径”，每课都有概念、动手任务、完成标准和代码阅读入口。“链路观察”用于提问和查引用，“单变量 Lab”用于左右对照，“文档工作区”用于导入、修改和删除资料。
+ 
+-本地部署使用 OrbStack，GitHub 用于代码备份、开源分享和 CI。部署与发布步骤、实际验证状态见 [GitHub / OrbStack 实施审计](docs/09_GITHUB_ORBSTACK_CICD.md)。原创代码采用 [MIT License](LICENSE)，第三方材料见 [许可证说明](THIRD_PARTY_NOTICES.md)。
++## 开始
+ 
+-```bash
+-scripts/orbstack up        # 本机构建、启动并检查 HTTP；需要 OrbStack 已运行
+-scripts/orbstack token     # 查看本地 owner token，输入网页顶部
+-scripts/publish-github     # 登录 GitHub，创建公开仓库并推送；默认 rag-learning-workbench
++已有 `.venv` 时：
++
++```sh
++cd /Volumes/Data/Projects/Rag
++scripts/workbench start
++# 打开 http://127.0.0.1:8000
+ ```
+ 
+-更新本地代码后再次运行 `scripts/orbstack up`。GitHub Actions 每次 push / PR 自动检查、测试、构建 Python 包和容器，不连接本机 Docker，不保存工作区、密钥或模型缓存。工作区数据需要自行备份；GitHub 的代码备份不包含它们。
++也可以使用 OrbStack：
+ 
+-1.2 修复状态见 [最新实施审计](docs/10_REMEDIATION_AND_USER_TESTING.md)，邀请用户前阅读 [测试手册](docs/11_USER_TEST_GUIDE.md)。历史审计保留原始证据，以新报告为准。
+-
+-默认资料包含明确标注的虚构政策和 CPython 文档摘录，不能当作真实企业制度。
+-
+-```bash
+-scripts/orbstack tester-token # 分享给测试者，提供查询、阅读与反馈权限
+-scripts/orbstack up-models    # 可选：联网锁定依赖、下载 MiniLM/BGE，启用真实模型和 Qdrant
++```sh
++scripts/orbstack up
++scripts/orbstack token
+ ```
+ 
+-## 已实现
++把 owner token 填入页面后连接。OrbStack 是运行方式，无须先学习容器、Qdrant 或 CI/CD。当前代理环境仍不能访问 Docker socket，容器运行状态需要在正常本机终端确认。
+ 
+-- 四类分块、TF-IDF + SVD 离线 embedding、BM25、RRF、人工特征重排。
+-- 教学策略：技术标识符共现图、启发式检索路由、显式领域词典扩展、保留限制条件的抽取压缩，以及开发集 RRF 网格搜索（`POST /api/v1/rrf/tune`）。它们是简化实现，没有生成 HyDE 假设文档，也没有集成官方 LightRAG / AutoRAG 框架。默认扩展词典为空。
+-- 可选 Sentence Transformers 预训练 embedding，默认只读本地模型缓存；显式命令才允许下载。
+-- 本地抽取式回答，及可选 OpenAI/Gemini 生成适配器。响应明确标识模型、降级、token 用量和可选成本估算。
+-- L1/L2 缓存、singleflight、限流、并发门控、熔断。缓存属于单个 Python 进程。
+-- 文档导入、查询、更新、删除；原文保真、原子 JSONL、版本事件。SVD 基线重新拟合；固定 encoder 路径复用未改文档的分块、向量和 BM25 postings，可增量 upsert/delete Qdrant。
+-- 文档来源、版本、证据展示；Markdown/TXT 文件编辑器；单用户 owner token。
+-- 历史合成集七组诊断对照；新版挑战集 81 篇资料、82 道开发题、83 道测试题，按问题组隔离，包含证据片段标签、难负例、多跳、短查询和无答案题。题目仍由代理编写，独立用户审核尚未完成。
+-- 可选真实 cross-encoder。开发集按组交叉拟合置信度、按错误作答/误拒答代价选择阈值；目标是必要检索证据是否齐全，不是答案事实正确率。代码、语料或配置改变后校准失效。
++默认教学组件为 **BM25 / TF-IDF + SVD、特征重排和本地抽取回答**。学习页初始关闭重排与答案缓存；容器不自动校准，不下载模型，不调用云端 API。基础拒答和原文/引用正确性修复继续保留。
+ 
+-## 启动
++新建 Python 环境需要 Python 3.12 和 uv：
+ 
+-```bash
+-cd /Volumes/Data/Projects/Rag
+-scripts/workbench start
+-# http://127.0.0.1:8000
++```sh
++mkdir -p .cache/tmp
++UV_CACHE_DIR="$PWD/.cache/uv" UV_PYTHON_INSTALL_DIR="$PWD/.cache/uv-python" TMPDIR="$PWD/.cache/tmp" uv venv --python 3.12 .venv
++UV_CACHE_DIR="$PWD/.cache/uv" TMPDIR="$PWD/.cache/tmp" uv pip sync --require-hashes requirements/ci.lock
++UV_CACHE_DIR="$PWD/.cache/uv" TMPDIR="$PWD/.cache/tmp" uv pip install --no-deps --no-build-isolation -e .
+ ```
+ 
+-已有 `.venv` 可直接使用。新环境需要 Python 3.12+ 和 uv：
++默认使用 `/Volumes/Data`，源码外的可写数据和缓存也需位于配置的数据根；其他机器显式设置 `RAG_DATA_ROOT` 和 `RAG_PROJECT_ROOT`。启动时可读取 `.env`，示例为 `.env.example`，已导出的变量优先。学习主线不需要 API key。
+ 
+-```bash
+-mkdir -p .cache/tmp
+-UV_CACHE_DIR="$PWD/.cache/uv" TMPDIR="$PWD/.cache/tmp" uv venv .venv
+-scripts/workbench install dev
++## 七步学习主线
++
++| 课 | 动手任务 | 能解释什么 |
++| --- | --- | --- |
++| 1. 最小链路 | 提问，打开完整证据，找到支持答案的原句 | 原文、检索块、回答和引用的关系 |
++| 2. 分块 | 预览同一文档，再比较 fixed / parent-child | 匹配粒度、边界、限制条件和字符预算 |
++| 3. 检索 | 固定分块，对照 BM25 / SVD 向量检索 | 精确术语与改述为何可能有不同结果 |
++| 4. 融合 | 只切换 BM25 / RRF | 为何融合名次，不能直接相加不同算法分数 |
++| 5. 重排 | 在相同检索方案上开关特征重排 | 召回候选与最终排序的区别 |
++| 6. 拒答 | 对已知、未知、短问题比较两个阈值 | 错误作答和误拒答的取舍，分数不等于正确概率 |
++| 7. 评估 | 改 top-k，核对多跳证据，人工标注自己写的问题 | Recall 的边界、测试集隔离和失败分析 |
++
++详细任务见 [学习路线](docs/01_DS_RAG_LEARNING_ROADMAP.md)。每课的“完成”勾选是自评，只在浏览器保存课号，不代表自动验收，也不保存 token。
++
++## Lab 如何工作
++
++选择一个问题、一个变量、A/B 两个值；先写假设，再运行并检查两边的证据、回答与拒答。Lab 固定为本地 SVD / 抽取回答，关闭缓存、校准和其他高级开关，不改变服务配置、工作区文档或原有索引。
++
++分块变化会引起局部 SVD 表示重新拟合，这是该实验选择的后果。一次查询的耗时受初始化与运行环境影响，不是速度基准；单条问题也不能证明某方案普遍更好。
++
++owner 可以勾选保存运行，记录写入 `reports/private/learning_lab/`，包含假设、配置、语料版本和两边结果。观察笔记仅留在当前页面，需要时另行记录。tester 可以运行不写入文件的基础 Lab，不能编辑文档或保存运行。
++
++默认资料包含虚构政策和 CPython 文档摘录。不要把虚构内容当作企业事实。可编辑文档在 `data/workspaces/user_testing_v2/`；它与冻结评测资料分离。
++
++## 主线完成后再选专题
++
++- **真实模型**：比较一个英文预训练 encoder，再比较特征重排与真正的 cross-encoder；模型与运行成本另行记录。
++- **检索策略**：上下文压缩、显式词典扩展、技术词项共现图，逐项开关，不默认组合成“最佳方案”。
++- **评估方法**：开发集调参、置信度校准、冻结配置与最终测试。历史题目已被实现者看过，不能当独立盲测。
++- **运行机制**：缓存、singleflight、限流、合成并发实验。
++- **交付展示**：Qdrant 增量更新、OrbStack、GitHub。Kubernetes、Redis 等参考拓扑不作为学习前置条件。
++
++这些模块保留在代码中；默认页面收起进阶入口，初始化不自动跑评估。真实模型和真实 Qdrant 尚未在本次代理环境验证。学习主线只依赖基础 Python 环境。
++
++```sh
++scripts/workbench study compare       # 可选：开发集上的批量对照
++scripts/workbench study calibrate     # 可选：观察校准取舍，不会自动应用
++scripts/orbstack up-models            # 可选：需要联网的模型 + Qdrant 模式
+ ```
+ 
+-先创建 `.cache/tmp` 再创建新环境。可复制 `.env.example` 为 `.env`；Python 配置会自动读取，已导出的环境变量优先。不要提交真实密钥。
++## 记录与分享
+ 
+-启动器在 Python 启动前设置 Data 盘上的临时目录、依赖和模型缓存。项目 `.venv`、数据、索引与报告位于 Data 盘；Docker 镜像/虚拟磁盘、浏览器缓存和操作系统本身的空间使用不在这项保证内。
++完成一个实验后，保留问题、假设、唯一变量、支持原句、观察、失败例子与局限，再用于面试或 PoC 演示。项目仍是共享工作区的学习原型，不承诺生产容量或答案正确率。SSE 是完整答案生成后的回放，词项覆盖代理不是事实验证。
+ 
+-## 文档演示
++GitHub 用于源码备份和开源分享，保留简单自动检查；不会自动部署到本机。`.venv`、密钥、工作区、缓存和私有报告不提交。Docker 镜像/VM 磁盘与浏览器本身的空间位置由相应软件控制。
+ 
+-在第 5 个 Documents 页签导入 `.md` / `.txt`，填写文档 ID、标题、来源、版本和正文。保存后提问，再修改文档并复问，最后删除并复问，可观察答案与证据变化。
+-
+-API：
+-
+-- `GET /api/v1/documents`：列表和语料版本。
+-- `GET /api/v1/documents/{id}`：正文与来源。
+-- `POST /api/v1/documents`、`PUT /api/v1/documents/{id}`：导入/更新。
+-- `DELETE /api/v1/documents/{id}`：删除。
+-- 写入可携带 `If-Match: <corpus_revision>`；版本冲突返回 409。
+-
+-更新先完成索引构建，再原子替换语料。新请求使用新版本；已在途的请求可以完成其旧版本快照。其他本地 worker 在下次请求时发现语料变化并刷新。此机制不等于跨机器分布式一致性。
+-
+-默认可编辑语料位于 `data/workspaces/user_testing_v2/`；工作区和 `reports/private/` 已加入 `.gitignore`。客户资料的评估输出应显式指定到私有报告目录，分享前检查是否含正文和证据。
+-
+-默认仅允许 loopback 访问 API。配置 `RAG_ADMIN_TOKEN` 后，浏览器顶部输入 owner token；`RAG_TESTER_TOKEN` 只允许查询、读取共享工作区资料和提交反馈，不能编辑文档或启动实验。不建议把这个单用户工作台当作多租户产品公开部署；尚无用户级/文档级 ACL。
+-
+-## 真实文档学习案例
+-
+-```bash
+-scripts/workbench prepare-domain
+-scripts/workbench evaluate-domain --split dev
+-scripts/workbench evaluate-domain --split test
+-```
+-
+-从本机 CPython 官方 asyncio docstrings 提取 9 篇真实资料，保留本机源码位置、Python 版本和 SHA-256。9 道开发题和 13 道固定测试题分别保存；**题目由代理编写，尚未经过独立人工审核**，不能作为已验证的泛化成绩。
+-
+-固定评估资料放在 `data/python_support/`，可编辑演示副本放在 `data/workspaces/python_support/`，二者分离。使用演示副本启动：
+-
+-```bash
+-RAG_CORPUS_PATH="$PWD/data/workspaces/python_support/documents.jsonl" \
+-RAG_QA_PATH="$PWD/data/workspaces/python_support/qa_dev.jsonl" \
+-scripts/workbench start
+-```
+-
+-每次实验输出到 `reports/python_support/<embedding>/<llm>/<split>/`，包含配置/源码/数据哈希、逐题回答、证据、P50/P95/P99，以及 `pending_human_review.jsonl`。**优先阅读失败例子，不只看 Recall。**
+-
+-## 可选真实模型
+-
+-预训练 embedding 需要额外依赖、网络和模型下载：
+-
+-```bash
+-scripts/workbench install dev,pretrained
+-scripts/workbench download-model
+-RAG_EMBEDDING_BACKEND=sentence_transformers scripts/workbench start
+-scripts/workbench evaluate-domain --embedding sentence_transformers --split dev
+-```
+-
+-默认示例模型为英文 `sentence-transformers/all-MiniLM-L6-v2`。多语言能力取决于所选模型和独立评估，不能由接口支持推断。
+-
+-远程生成在 `.env` 设置 `RAG_LLM_MODE=openai` 或 `gemini`，配置对应 API key 和账号可用的模型名称。首次验证应只跑少量问题；云端费用由所用服务产生。
+-
+-`RAG_INPUT_USD_PER_MILLION` / `RAG_OUTPUT_USD_PER_MILLION` 可填运营者核实后的生成 token 单价；未配置时云端费用为 `null`，不会猜测价格。这个估算不含 embedding、托管或网络费用。缓存命中不重复计生成 token。
+-
+-本次修改期间没有可用密钥，也无法在沙箱下载模型：**真实模型尚未实测**。接口契约使用 MockTransport 验证；云端失败会显示 `extractive_fallback`，不计作真实模型验证成功。
+-
+-## 开发、校准与冻结测试
+-
+-```bash
+-scripts/workbench study tune
+-scripts/workbench study calibrate --output reports/private/calibration.json
+-scripts/workbench study compare
+-# 可选依赖与模型已下载后，保持同一候选集，对照真正的 cross-encoder：
+-scripts/workbench study compare --embedding sentence_transformers --include-neural
+-# 选定配置、重新校准后冻结；不根据最终测试结果反复改参数：
+-scripts/workbench study freeze --output reports/private/freeze.json
+-scripts/workbench study final-test --freeze reports/private/freeze.json
+-```
+-
+-调参只读取显式 dev 文件，不访问测试题。校准和最终报告需使用相同的环境配置；若设置 `RAG_CALIBRATION_PATH`，冻结记录还会绑定该校准文件。配置变化后重新校准。
+-
+-可以通过 `RAG_ENABLE_GRAPH=true` / `RAG_ENABLE_ROUTER=true` / `RAG_ENABLE_COMPRESSION=true` / `RAG_ENABLE_HEADERS=true` 分项开启教学模块。不要把它们默认组合成一个优胜方案。规则扩展需要带来源记录的显式词典，不能根据测试题编写默认规则。
+-
+-## 实验与验证
+-
+-```bash
+-scripts/workbench test -q
+-scripts/workbench ablation
+-scripts/workbench synthetic --requests 10000
+-# 服务在独立终端启动后再运行真正的 HTTP 客户端：
+-scripts/workbench http-benchmark --requests 200 --concurrency 10
+-```
+-
+-`synthetic` 是单进程 `asyncio.gather` 实验：固定流量比例、预热缓存、本地抽取回答和模拟等待；不是 HTTP、真实 LLM 或生产容量证明。吞吐、平均在途请求、用户数分别报告，不能互换。
+-
+-`lexical_grounding_proxy` 只计算回答词项在证据中的覆盖率，不判断事实是否正确；拒答时为 `null`。它不是 RAGAS Faithfulness。bootstrap nonpositive fraction 是描述性重采样结果，不称作校准后的显著性 p 值。
+-
+-SSE 当前是**完整回答生成后的分段回放**，响应头标注 `X-Streaming-Mode: buffered-response-replay`；没有声称模型首 token 流式延迟。
+-
+-## 审计与边界
+-
+-- [首次审查](docs/04_PROJECT_REVIEW.md)：修复前发现与原始依据。
+-- [实施审计报告](docs/05_IMPLEMENTATION_AUDIT.md)：修复矩阵、测试结果、未验证事项和后续步骤。
+-- `reports/audit/2026-11-18/before/`：原始源码、文档、配置、数据及报告快照，不含 `.env` 和凭据。
+-- `reports/audit/2026-11-18/`：基线哈希、最终哈希、测试 XML 和修改证据。
+-- `data/.../document_events.jsonl`：创建/更新/删除事件，含版本与内容摘要，不记录正文或用户查询。它是普通本地文件，不是不可篡改合规审计存储。
+-
+-`deploy/` 中 Redis/Prometheus/Kubernetes 仍是参考拓扑。Qdrant 已通过 REST 接入固定 encoder 路径，配置见根目录 `compose.models.yaml`；本轮真实容器与模型运行受执行环境限制，尚未验证。合成语料中的企业制度、错误码、客户案例和合规叙述是测试素材，不是本项目部署事实。
+-
+-API 1.1 变更：原 `faithfulness` 字段改为 `lexical_grounding_proxy`，拒答返回 `null`；实验统计字段改为 `bootstrap_nonpositive_fraction`；查询回显已脱敏。
++- [学习主线调整审计](docs/12_LEARNING_FIRST_SCOPE.md)：当前产品范围与默认行为。
++- [此前修复审计](docs/10_REMEDIATION_AND_USER_TESTING.md)：保留历史结果；其中自动校准启动说明以 12 号报告为准。
++- [用户测试手册](docs/11_USER_TEST_GUIDE.md)、[GitHub / OrbStack](docs/09_GITHUB_ORBSTACK_CICD.md)：可选运行与分享。
++- [MIT License](LICENSE)、[第三方材料说明](THIRD_PARTY_NOTICES.md)。
+--- before/docs/01_DS_RAG_LEARNING_ROADMAP.md
++++ after/docs/01_DS_RAG_LEARNING_ROADMAP.md
+@@ -1,53 +1,63 @@
+-# DS RAG 学习路线：从可解释基线到真实文档实验
++# 学习路线：看懂链路，做实验，解释失败
+ 
+-本项目是学习实验室。先理解实现的简化，再引入真实模型和交付功能。
++以应用首页七课为主线。每课执行“先猜 → 运行 → 找原句 → 写观察 → 解释局限”，能解释后再勾选自评完成。不要用“接入了几个框架”衡量进度。
+ 
+ ## 1. 跑通最小链路
+ 
+-执行 `scripts/workbench start`。关闭缓存，问一个有答案和一个无答案的问题。记录问题、召回证据、回答和拒答理由。
++打开“链路观察”，保持 BM25、关闭重排与缓存，问当前 Cedar EU 恢复目标。打开完整证据，找到对应原句，再问一个资料没有提供的问题。
+ 
+-阅读 `data_gen.py → chunking.py → embeddings.py → retrieval.py → pipeline.py`。默认回答是抽取式，embedding 是 TF-IDF + SVD，不是预训练大模型。
++画出“原文 → 分块 → 检索 → 回答 → 引用”。阅读 `pipeline.py` 与 `security.py`。默认答案是抽取式，向量基线是 TF-IDF + SVD。
+ 
+-练习：手动计算一条查询的 BM25、余弦相似度和 RRF 排名；说明它们的分数为什么不能直接比较。
++产出：一条有答案、一条无答案的查询记录，以及你对每一步输入和输出的说明。
+ 
+-## 2. 分块与证据
++## 2. 分块与上下文
+ 
+-比较 fixed、recursive、semantic、parent_child。当前主要按字符切分，不能把字符数当 token 数。
++在 Lab 底部选择同一篇文档，预览 fixed、recursive、parent_child；再用单变量对照比较 fixed / parent_child。长度以字符计，不是 token。
+ 
+-查询页不支持动态切换分块。修改 `RAGConfig` 并重建 pipeline，或运行架构对照脚本。
++阅读 `chunking.py`。比较原文、child、parent，检查否定条件、表格与关键数值是否被切开。改变分块也会改变本地 SVD 的拟合输入，不应把观察解释成孤立的预训练 encoder 效果。
+ 
+-练习：保持语料、embedding 和检索方式不变，只改变分块；检查证据是否保留回答所需的限制条件和表格信息。
++产出：一个边界问题和一个更完整的上下文例子。
+ 
+-## 3. 检索与重排
++## 3. BM25 与向量检索
+ 
+-阅读 `retrieval.py`、`reranker.py`。区分 BM25、局部语料 SVD 向量、预训练 bi-encoder，以及人工特征重排和神经 cross-encoder。
++固定其他配置，只比较 bm25 / dense。分别用精确术语、自己的改述、短查询和无关问题。
+ 
+-执行 `scripts/workbench prepare-domain` 和 `scripts/workbench evaluate-domain --split dev`。这里四组受控比较保持分块和 embedding 一致。
++阅读 `embeddings.py`、`retrieval.py`。手算一小段 BM25 和余弦相似度，说明局部 SVD 与预训练 bi-encoder 的区别。
+ 
+-练习：给出 BM25 比复杂管线更好的问题，分析复杂度是否值得。固定测试集只用于最终记录；当前标签仍需独立人工审核。
++产出：两种检索各一个失败例子；允许简单方法在你选的问题上更好。
+ 
+-## 4. 回答质量和实验设计
++## 4. RRF 排名融合
+ 
+-阅读 `evaluation.py` 和逐题 `pending_human_review.jsonl`。检索命中文档不等于找到了正确证据，更不等于回答正确。
++在同一问题上比较 bm25 / hybrid_rrf，观察新增候选与顺序。手算两条排名的加权 RRF。
+ 
+-`lexical_grounding_proxy` 是词项覆盖代理指标，不能识别关系颠倒、数字误用和错误推理。拒答不参与其平均值。
++产出：解释为何不同算法原始分数不能直接相加，并说明这一条问题中融合是否值得。
+ 
+-练习：人工标记正确性、引用支持和应该拒答与否；找出高 Recall、低答案质量的样例。扩展到真实业务问题，并邀请独立评审者核对。
++## 5. 重排
+ 
+-bootstrap CI 表达当前样本下的不确定性，不能解决样本偏差或测试集调参。现有 bootstrap nonpositive fraction 不当作校准后的显著性 p 值。
++Lab 自动固定 hybrid_rrf，再对照特征重排的开关。核查第一条证据、最终引用和回答是否变化。
+ 
+-## 5. 缓存与请求控制
++阅读 `reranker.py`。当前人工特征不是神经 cross-encoder。真实模型对照是主线完成后的独立专题，不需要为了上第一课下载模型。
+ 
+-阅读 `cache.py`、`resilience.py` 和回归测试。观察 L1、L2 和 singleflight 的区别。
++产出：一条排序改善或回归的记录，不只比较总分。
+ 
+-练习：相同问题重复提问，再改变编号或数值；验证不会复用不匹配的语义缓存。修改/删除文档，验证旧答案不再命中。
++## 6. 拒答与置信度
+ 
+-执行 `scripts/workbench synthetic --requests 10000`。明确这是单进程、模拟等待、构造流量实验，记录尾延迟，不把本地缓存中位数写成云端延迟。
++对有答案、无答案、短查询分别比较 0.22 / 0.50。人工判断是否应该回答。
+ 
+-## 6. 完成一个可展示交付闭环
++原始相关性不是正确概率。阈值可能减少错误作答，也可能增加误拒答。主线不自动应用校准；进阶时再学习 `study.py` 的按组交叉拟合和代价曲线。
+ 
+-使用 Documents 页签导入真实且获准使用的 Markdown/TXT，填写来源、版本。演示导入、提问、查来源、更新、删除、重启。
++产出：错误作答/错误拒答的两个例子，说明你愿意接受怎样的取舍。
+ 
+-随后接入可选预训练 embedding 和真实 LLM，记录成本、回答质量、P95 和降级情况。真实模型未跑通时不能把抽取式回退包装为成功。
++## 7. 评估与失败分析
+ 
+-进一步交付私有数据时，再补用户级 ACL、权限范围缓存、数据保留策略、监控、备份恢复和验收。不要为了学习先搭建大规模 Kubernetes 集群。
++对多跳问题比较 top-k 1 / 5，逐个核对必要事实。自己编写至少五道问题并标注支持句、可回答性与预期答案，保留一条失败例子。
++
++阅读 `evaluation.py`。Recall 命中文档不代表回答正确；词项覆盖不能识别关系颠倒。没有标注的指标为 null。一次实验不能得出泛化或速度结论。
++
++需要汇总时运行 `scripts/workbench study compare`。只在 dev 上挑参数；最终测试先冻结配置。当前历史题目由实施代理编写并已见过，需要独立用户题才能形成新的外部效果证据。
++
++产出：一份含假设、唯一变量、证据、观察与局限的实验记录，能够向另一个人解释。
++
++## 自选进阶
++
++预训练 embedding / cross-encoder、压缩 / 扩展 / 共现图、校准、缓存与并发、Qdrant 与交付展示。每次选择一个专题，不为完成学习主线先建设生产平台。万次协程实验是附加机制实验，不是项目的成功标准。
+--- before/docs/11_USER_TEST_GUIDE.md
++++ after/docs/11_USER_TEST_GUIDE.md
+@@ -1,8 +1,10 @@
+ # 用户测试手册
++
++当前默认入口为七步学习路径与单变量 Lab，详见 [学习路线](01_DS_RAG_LEARNING_ROADMAP.md) 和 [范围调整记录](12_LEARNING_FIRST_SCOPE.md)。
+ 
+ 这是一套共享工作区的 RAG 学习原型。邀请少量用户检查答案、引用、拒答与交互；尚未完成独立效果验收，也未验证生产容量。
+ 
+-当前离线基线在已见题集上仍有约 35% 的可回答题被保守门控拒答；测试时请特别记录“应该回答却拒答”的问题。检索满分不代表回答正确。真实模型与 Qdrant 路径尚待实际机器验证。
++此前特定校准配置在已见题集上出现过约 35% 误拒答；当前默认学习模式不自动加载这套校准。它是拒答专题的历史失败案例，不代表新默认模式的成绩。检索满分不代表回答正确。真实模型与 Qdrant 路径仍是选修实验。
+ 
+ ## 运行
+ 
+@@ -59,7 +61,7 @@
+ 
+ 两种模式使用独立的可编辑文档目录：`user_testing_v2` 与 `models_testing_v2`。模型缓存、Qdrant 存储和报告绑定到项目 Data 盘目录。OrbStack 自身的镜像/虚拟磁盘位置仍由 OrbStack 设置决定。
+ 
+-启动时只用开发集校准。默认本地抽取回答，不调用收费 LLM API。若工作区被改为与开发题无关的资料，自动校准可能不可用；应用显示未校准分数，owner 应准备匹配的新开发集后重新校准。
++默认启动不运行校准。需要研究校准时，显式使用开发集运行专题命令，再决定是否应用结果。默认本地抽取回答，不调用收费 LLM API。若工作区被改为与开发题无关的资料，自动校准可能不可用；应用显示未校准分数，owner 应准备匹配的新开发集后重新校准。
+ 
+ ## 复测记录
+ 
+--- before/docs/12_LEARNING_FIRST_SCOPE.md
++++ after/docs/12_LEARNING_FIRST_SCOPE.md
+@@ -0,0 +1,49 @@
++# 学习主线优先：范围调整审计
++
++日期：2026-11-18。用户明确确认：项目以 RAG 学习路径与 Lab 为主。此前把审计修复扩展成工程交付平台，产生了范围偏移。本轮收回默认复杂度，保留已有正确性修复与可选专题。
++
++## 当前目标与成功标准
++
++主线是“理解链路 → 单变量实验 → 原句核查 → 失败分析”。学习者能够解释每一步，完成一份有假设、变量、证据和局限的记录，比集成组件数量或合成并发数字更重要。求职与 Freelance 演示是学习成果的用途。
++
++主线包含七课：最小链路、分块、检索、RRF、重排、拒答、评估。每课提供概念、动手任务、完成标准和源代码入口。完成勾选为浏览器本地自评，仅保存课号，不自动认证知识掌握。
++
++## 实际调整
++
++| 部分 | 当前行为 |
++| --- | --- |
++| 首页 | 默认进入学习路径，按七课开始练习 |
++| 链路观察 | 初始 BM25、关闭特征重排和答案缓存；示例与实际演示语料匹配 |
++| 单变量 Lab | 同一语料快照和问题，选择 A/B；支持分块、检索、重排、top-k、拒答阈值 |
++| 实验约束 | 固定本地 SVD、特征实现和抽取回答；不调用远程模型，不读校准、不写原索引、不改文档；显示其余主要配置 |
++| 分块观察 | 原文、child / 检索文本、parent / 返回上下文并列可查；字符长度明确标注 |
++| 实验记录 | 先写假设，查看证据与回答后记录观察；owner 可显式保存运行到私有目录；页面观察笔记不会自动保存 |
++| 进阶入口 | 批量评测、并发和附加原理默认收起；真实模型、图、压缩、校准、Qdrant 为自选专题 |
++| 默认启动 | OrbStack 基础与模型配置均不自动校准，默认不加载历史校准文件 |
++| GitHub 检查 | push / PR 默认只做源码检查、测试、Python 包构建；Docker / Qdrant 检查需手动触发并启用 integration |
++| 既有修复 | 原文保真、引用/压缩一致性、拒答动作、开发/测试隔离、日志和路径策略保留 |
++
++单变量的含义是只改声明的配置因素；分块改变会自然改变局部 SVD 的拟合输入和块数量，不能宣称所有中间表示固定。重排练习的两个配置都固定为 hybrid_rrf，差别只有开关。单条查询的耗时不是速度基准，证据排名变化也不等于回答正确。
++
++## 新增接口与数据边界
++
++- `GET /api/v1/learning`：七课与进阶专题。
++- `GET /api/v1/learning/chunks?doc_id=...&strategy=...`：只读分块预览。
++- `POST /api/v1/learning/compare`：声明一个变量和两个不同有效值；默认不保存。
++- tester 可学习、预览和运行不保存的 Lab；保存运行需 owner。原有文档写权限不变。
++- 同时只运行一个 Lab 请求，忙时返回 429；计算在有界线程池执行。
++- 可写文件继续位于配置的 Data 根；不增加服务、依赖或默认模型下载。
++
++## 保留内容与暂缓事项
++
++代码和历史证据保留，不做破坏性删除。神经模型、Qdrant、置信度校准、缓存/并发与交付演示仍可作为选修，但不再是完成第一条学习链路的前置条件。
++
++此前约 35% 的误拒答是历史特定校准配置在已见题集上的诊断，不是当前默认学习模式的成绩。本轮不重新包装旧题集、跑满分对照或宣称新质量提升；优先验证学习流程是否能实际使用。已有语料/标签仍需独立人工审核。
++
++历史 09 / 10 号报告记录当时的工程工作；其默认自动校准、入口次序和默认 CI 运行范围以本报告为准。新的源码哈希和检查结果写在 `reports/learning_scope/`，不覆盖旧审计快照。
++
++## 验证与限制
++
++新增测试覆盖课程入口与初始选择、单变量配置约束、无校准/无缓存/无付费模型的实验路径、分块原文一致性、tester 保存拒绝、owner 私有保存与查询脱敏。完整回归 61 项通过，保留已有小样本 SVD 数值 warning。JavaScript 语法、Compose 配置和包内容另行检查并写入本轮验证记录。
++
++本轮没有实际运行浏览器界面或部署容器。此前 Docker socket 权限和网络限制仍存在；不把 ASGI 与静态检查当真实部署验收。
+--- before/src/rag_platform/learning.py
++++ after/src/rag_platform/learning.py
+@@ -0,0 +1,139 @@
++"""A small curriculum and query-level, single-variable experiments."""
++from dataclasses import asdict, replace
++from datetime import datetime, timezone
++import json
++import math
++import uuid
++
++from .bootstrap import atomic_text
++from .compute import run_cpu
++from .pipeline import EnterpriseRAGPipeline
++from .security import redact_pii
++
++QUESTION = 'What is the current EU restore recovery target for Cedar?'
++LESSONS = [
++    dict(id='01', title='跑通一条 RAG 链路', concept='问题先找到资料，再根据证据回答。',
++         task='关闭缓存与重排，运行示例问题，打开完整证据并找到支持答案的原句。',
++         question=QUESTION, variable='retrieval_mode', a='bm25', b='bm25', action='playground',
++         check='能解释原文、检索块、回答与引用分别是什么；指出默认回答是本地抽取式。', source='pipeline.py'),
++    dict(id='02', title='分块：匹配片段与回答上下文', concept='分块影响匹配粒度，也影响限制条件是否完整。这里的长度单位是字符。',
++         task='先预览同一原文的 fixed / parent-child 分块，再用同一问题对照。',
++         question=QUESTION, variable='chunking_strategy', a='fixed', b='parent_child', action='lab',
++         check='指出一个边界变化，并解释 child 与 parent 的用途；不假定某种策略总更好。', source='chunking.py'),
++    dict(id='03', title='BM25 与向量检索', concept='BM25 匹配词项；默认向量来自语料内 TF-IDF + SVD，还不是预训练语义模型。',
++         task='固定分块，比较精确术语和你自己写的改述；观察第一条证据为何变化。',
++         question='When aggregating successful coroutines, are results listed by arrival time or by the original input order?',
++         variable='retrieval_mode', a='bm25', b='dense', action='lab',
++         check='能说出两种检索各自的失败例子，区分算法输出分数和事实正确率。', source='retrieval.py'),
++    dict(id='04', title='RRF：融合排名', concept='RRF 融合名次；BM25 与余弦分数不能直接相加比较。',
++         task='只把 BM25 换成 hybrid_rrf，记录新增或消失的文档及顺序。',
++         question=QUESTION, variable='retrieval_mode', a='bm25', b='hybrid_rrf', action='lab',
++         check='手算两个候选的加权 RRF，说明融合有没有帮助这条问题。', source='retrieval.py'),
++    dict(id='05', title='重排：从候选到最终证据', concept='检索负责找候选，重排负责重新排序。默认是人工特征重排。',
++         task='固定 hybrid_rrf，只切换重排开关；记录排名、引用和回答变化。',
++         question=QUESTION, variable='use_reranker', a=False, b=True, action='lab',
++         check='能区分特征重排与真正的 cross-encoder，不把多一层处理当作效果保证。', source='reranker.py'),
++    dict(id='06', title='拒答：覆盖率与错误的取舍', concept='启发式相关性分数不是正确概率；阈值升高可能增加误拒答。',
++         task='对有答案、无答案和短问题分别比较 0.22 / 0.50 阈值。',
++         question='What is the current Cedar US renewal fee in dollars?',
++         variable='min_confidence_threshold', a=.22, b=.50, action='lab',
++         check='人工判断该不该拒答，记录错误作答和错误拒答；再决定是否学习校准。', source='study.py'),
++    dict(id='07', title='评价：先检查失败，再汇总指标', concept='命中文档不等于回答正确；多跳题需要所有必要证据。',
++         task='只改变 top-k，核对两个必要事实；另写至少五道问题并人工标注支持句。',
++         question='Under the 2026 Cedar EU policies, give both the restore recovery target and export retention period.',
++         variable='top_k', a=1, b=5, action='lab',
++         check='交出一次单变量记录和一个失败案例；能够解释为何不能在测试集上挑参数。', source='evaluation.py'),
++]
++
++
++def curriculum():
++    return {'goal': '理解链路 → 单变量实验 → 证据核查 → 失败分析', 'lessons': LESSONS,
++            'default_profile': 'offline_learning',
++            'advanced': ['预训练 encoder 与 cross-encoder', '压缩、规则扩展与共现图',
++                         '开发集校准', '缓存与并发', 'Qdrant 与交付演示']}
++
++
++def validate_pair(variable, a, b):
++    choices = {'chunking_strategy': {'fixed','recursive','semantic','parent_child'},
++               'retrieval_mode': {'bm25','dense','hybrid_rrf'}}
++    if variable in choices:
++        valid = all(isinstance(value, str) and value in choices[variable] for value in (a,b))
++    elif variable == 'use_reranker':
++        valid = all(type(value) is bool for value in (a,b))
++    elif variable == 'top_k':
++        valid = all(type(value) is int and 1 <= value <= 10 for value in (a,b))
++    elif variable == 'min_confidence_threshold':
++        valid = all(type(value) in (int,float) and math.isfinite(value) and 0 <= value <= 1 for value in (a,b))
++    else:
++        valid = False
++    if not valid or a == b:
++        raise ValueError('Choose two different, valid values for one learning variable')
++
++
++async def compare(snapshot, query, variable, a, b, hypothesis='', save_report=False):
++    validate_pair(variable, a, b)
++    # A lesson is independent of the service's optional deployment/model profile.
++    base = replace(snapshot.config, chunking_strategy='parent_child', retrieval_mode='bm25',
++        use_reranker=False, use_cache=False, enable_singleflight=False, persist_index=False,
++        embedding_backend='local_svd', embedding_revision='', vector_backend='memory',
++        reranker_backend='features', llm_mode='local', use_calibration=False,
++        enable_crag=False, enable_graph_rag=False, enable_query_expansion=False,
++        enable_contextual_compression=False, enable_contextual_headers=False,
++        expansion_rules_path=None, top_k_final=3, min_confidence_threshold=.22)
++    field = 'top_k_final' if variable == 'top_k' else variable
++    results = []
++    for label, value in [('A',a),('B',b)]:
++        changes = {field:value}
++        if variable == 'use_reranker':
++            changes['retrieval_mode'] = 'hybrid_rrf'
++        config = replace(base, **changes)
++        pipeline = await run_cpu(EnterpriseRAGPipeline, config, snapshot.documents, workers=base.cpu_workers)
++        try:
++            response = await pipeline.query(query, use_cache=False)
++            results.append({'label':label, 'value':value, 'chunks':len(pipeline.chunks),
++                            'embedding_dimension_actual':pipeline.retriever.dense_index.embeddings.shape[1],
++                            'response':asdict(response)})
++        finally:
++            await pipeline.aclose()
++    settings = {'chunking_strategy':base.chunking_strategy, 'retrieval_mode':base.retrieval_mode,
++                'use_reranker':base.use_reranker, 'top_k':base.top_k_final,
++                'min_confidence_threshold':base.min_confidence_threshold,
++                'embedding':'TF-IDF + SVD', 'generation':'local extractive',
++                'cache':False, 'calibration':False,
++                'chunk_sizes_characters':{'fixed':base.fixed_chunk_size,'overlap':base.fixed_overlap,
++                                         'parent':base.parent_max_chars,'child':base.child_max_chars},
++                'embedding_dimension_requested':base.embedding_dim,
++                'rrf':{'dense_weight':base.dense_weight,'sparse_weight':base.sparse_weight,'k':base.rrf_k}}
++    settings.pop(variable, None)
++    if variable == 'use_reranker':
++        settings['retrieval_mode'] = 'hybrid_rrf'
++    result = {'experiment_id':uuid.uuid4().hex, 'time':datetime.now(timezone.utc).isoformat(),
++              'variable':variable, 'hypothesis':redact_pii(hypothesis)[0],
++              'corpus_revision':snapshot.corpus_revision, 'controlled_settings':settings, 'results':results,
++              'notes':['Single-query exploration; no general quality or throughput conclusion.',
++                       'Relevance-score scales differ across retrieval methods; inspect the evidence first.',
++                       'Chunking changes the fitted SVD representation as a consequence of that choice.',
++                       'Check the supporting sentences and record your own observation.'], 'saved':False}
++    if save_report:
++        path = base.reports_dir/'learning_lab'/(result['experiment_id']+'.json')
++        result['saved'] = True
++        result['report_path'] = str(path)
++        await run_cpu(atomic_text, path, json.dumps(result,ensure_ascii=False,indent=2)+'\n',workers=base.cpu_workers)
++    return result
++
++
++def chunk_preview(snapshot, doc_id, strategy):
++    from .chunking import build_chunker
++    if strategy not in {'fixed','recursive','parent_child'}:
++        raise ValueError('Preview supports fixed, recursive or parent_child; semantic chunking is available in the comparison lab')
++    document = snapshot.document_by_id.get(doc_id)
++    if document is None:
++        raise KeyError(doc_id)
++    config = snapshot.config
++    chunker = build_chunker(strategy, fixed_chunk_size=config.fixed_chunk_size,
++        fixed_overlap=config.fixed_overlap, recursive_max_chars=config.recursive_max_chars,
++        parent_max_chars=config.parent_max_chars, child_max_chars=config.child_max_chars)
++    chunks = chunker.chunk_documents([document])
++    return {'doc_id':doc_id, 'strategy':strategy, 'unit':'characters',
++            'original_text':document['text'], 'total_chunks':len(chunks),
++            'chunks':[asdict(chunk) for chunk in chunks[:50]], 'truncated':len(chunks)>50}
+--- before/src/rag_platform/server.py
++++ after/src/rag_platform/server.py
+@@ -69,6 +69,15 @@
+     comment: str = Field(default='', max_length=2000)
+ 
+ 
++class LearningComparisonRequest(BaseModel):
++    query: str = Field(min_length=1,max_length=2000)
++    variable: str
++    a: str | int | float | bool
++    b: str | int | float | bool
++    hypothesis: str = Field(default='',max_length=500)
++    save_report: bool = False
++
++
+ def create_app(config: RAGConfig | None = None) -> FastAPI:
+     configure_runtime(config.project_root if config else None)
+     configure_logging()
+@@ -81,6 +90,7 @@
+     app = FastAPI(title='RAG Learning & Evaluation Workbench', version='1.2.0', lifespan=lifespan)
+     issued = OrderedDict()
+     feedback_lock = threading.Lock()
++    learning_gate = asyncio.Semaphore(1)
+ 
+     def record_response(request_id, response):
+         issued[request_id] = {'request_id': request_id, 'corpus_revision': response.corpus_revision,
+@@ -122,9 +132,9 @@
+         else:
+             raise HTTPException(403, 'Configure access tokens before remote access')
+         if request.state.role == 'tester':
+-            allowed = (request.method == 'GET' and (request.url.path in ('/api/v1/stats', '/api/v1/capabilities')
++            allowed = (request.method == 'GET' and (request.url.path in ('/api/v1/stats', '/api/v1/capabilities', '/api/v1/learning', '/api/v1/learning/chunks')
+                         or request.url.path.startswith('/api/v1/documents')))
+-            allowed |= request.method == 'POST' and request.url.path in ('/api/v1/query', '/api/v1/query/stream', '/api/v1/feedback')
++            allowed |= request.method == 'POST' and request.url.path in ('/api/v1/query', '/api/v1/query/stream', '/api/v1/feedback', '/api/v1/learning/compare')
+             if not allowed:
+                 raise HTTPException(403, 'Owner permission required')
+ 
+@@ -276,6 +286,39 @@
+         return {'role': request.state.role, 'can_edit_documents': request.state.role == 'owner',
+                 'can_run_experiments': request.state.role == 'owner', 'workspace_scope': 'shared_single_workspace'}
+ 
++    @api.get('/learning')
++    async def learning_path():
++        from .learning import curriculum
++        return curriculum()
++
++    @api.get('/learning/chunks')
++    async def learning_chunks(doc_id: str, strategy: str = 'fixed'):
++        from .learning import chunk_preview
++        try:
++            return await run_cpu(chunk_preview, await current(), doc_id, strategy, workers=cfg.cpu_workers)
++        except KeyError as exc:
++            raise HTTPException(404, 'Document not found') from exc
++        except ValueError as exc:
++            raise HTTPException(422, str(exc)) from exc
++
++    @api.post('/learning/compare')
++    async def learning_compare(req: LearningComparisonRequest, request: Request):
++        from .learning import compare, validate_pair
++        if req.save_report and request.state.role != 'owner':
++            raise HTTPException(403, 'Only the owner may save a report')
++        try:
++            validate_pair(req.variable,req.a,req.b)
++        except ValueError as exc:
++            raise HTTPException(422,str(exc)) from exc
++        try:
++            await asyncio.wait_for(learning_gate.acquire(), timeout=.05)
++        except TimeoutError as exc:
++            raise HTTPException(429,'A learning experiment is running; retry shortly') from exc
++        try:
++            return await compare(await current(),**req.model_dump())
++        finally:
++            learning_gate.release()
++
+     @api.post('/feedback')
+     async def feedback(req: FeedbackRequest):
+         record = issued.get(req.request_id)
+--- before/src/rag_platform/config.py
++++ after/src/rag_platform/config.py
+@@ -23,6 +23,7 @@
+     dev_qa_path: Path | None = None
+     test_qa_path: Path | None = None
+     calibration_path: Path | None = None
++    use_calibration: bool = True
+     reports_dir: Path | None = None
+     index_dir: Path | None = None
+     persist_index: bool = True
+--- before/src/rag_platform/pipeline.py
++++ after/src/rag_platform/pipeline.py
+@@ -358,7 +358,7 @@
+                                   ambiguous_upper_threshold=self.config.crag_ambiguous_threshold,
+                                   vocab_threshold=self.config.crag_vocab_threshold)
+         self.compressor = ContextualCompressor()
+-        if self.config.calibration_path:
++        if self.config.use_calibration and self.config.calibration_path:
+             from .study import CalibrationMismatch, ConfidenceCalibration
+             try:
+                 self.calibrator = ConfidenceCalibration.load(self.config.calibration_path, self.config,
+--- before/src/rag_platform/study.py
++++ after/src/rag_platform/study.py
+@@ -31,6 +31,7 @@
+     body = {key: getattr(config, key) for key in fields}
+     body['min_confidence_threshold'] = config.min_confidence_threshold
+     body['llm_mode'] = config.llm_mode
++    body['use_calibration'] = config.use_calibration
+     import os
+     body['generation_model'] = (os.getenv('OPENAI_MODEL', 'gpt-4o-mini') if config.llm_mode == 'openai'
+                                 else os.getenv('GEMINI_MODEL', '') if config.llm_mode == 'gemini' else None)
+--- before/src/rag_platform/static/index.html
++++ after/src/rag_platform/static/index.html
+@@ -5,6 +5,8 @@
+   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+   <title>RAG Learning &amp; Evaluation Workbench</title>
+   <style>
++    [hidden] { display: none !important; }
++    input[type="checkbox"] { width: auto; margin-right: 6px; }
+     :root {
+       --bg: #0b1020;
+       --surface: #121931;
+@@ -114,13 +116,13 @@
+   <header>
+     <div class="brand">
+       <h1>RAG Learning &amp; Evaluation Workbench</h1>
+-      <p>Hybrid RRF (Dense + Okapi BM25) · Parent-Child Chunking · Cross-Feature Reranker · L1/L2 Semantic Cache · Singleflight</p>
++      <p>以学习为主：看懂每一步 → 一次改变一个变量 → 核查证据 → 解释失败</p>
+     </div>
+     <div class="status-pills" id="header-pills">
+       <div class="pill">Docs: <strong id="pill-docs">--</strong></div>
+       <div class="pill">Chunks: <strong id="pill-chunks">--</strong></div>
+-      <div class="pill">Cache Hit: <strong id="pill-hit">--</strong></div>
+-      <div class="pill">Breaker: <strong id="pill-breaker">CLOSED</strong></div>
++      <div class="pill" hidden>Cache Hit: <strong id="pill-hit">--</strong></div>
++      <div class="pill" hidden>Breaker: <strong id="pill-breaker">CLOSED</strong></div>
+     </div>
+   </header>
+ 
+@@ -131,41 +133,79 @@
+     <div id="app-status" role="status">Enter your token, connect, then ask a question. Quality metrics require human review.</div>
+   </div>
+   <nav class="tabs">
+-    <button class="tab-btn active" onclick="switchTab('playground', this)">1. RAG Playground &amp; Inspector</button>
+-    <button class="tab-btn" onclick="switchTab('ablation', this)">2. DS Ablation &amp; Eval Lab</button>
+-    <button class="tab-btn" onclick="switchTab('benchmark', this)">3. Synthetic Load Lab</button>
+-    <button class="tab-btn" onclick="switchTab('roadmap', this)">4. DS Learning &amp; Interview Guide</button>
+-    <button class="tab-btn" onclick="switchTab('documents', this); refreshDocuments()">5. Documents</button>
++    <button class="tab-btn active" data-tab="learning" onclick="openPanel('learning')">1. 学习路径</button>
++    <button class="tab-btn" data-tab="playground" onclick="openPanel('playground')">2. 链路观察</button>
++    <button class="tab-btn" data-tab="lab" onclick="openPanel('lab')">3. 单变量 Lab</button>
++    <button class="tab-btn" data-tab="documents" onclick="openPanel('documents'); refreshDocuments()">4. 文档工作区</button>
++    <button class="btn-secondary" id="advanced-toggle" hidden onclick="toggleAdvanced()">展开进阶实验</button>
++    <button class="tab-btn" data-tab="ablation" data-advanced="true" hidden onclick="openPanel('ablation'); loadAblation(false).catch(() => {})">批量评测（进阶）</button>
++    <button class="tab-btn" data-tab="benchmark" data-advanced="true" hidden onclick="openPanel('benchmark')">缓存与并发（进阶）</button>
++    <button class="tab-btn" data-tab="roadmap" data-advanced="true" hidden onclick="openPanel('roadmap')">附加原理（进阶）</button>
+   </nav>
++  <section id="tab-learning" class="panel active">
++    <div class="card">
++      <h2>从一个问题，看懂 RAG</h2>
++      <p>先跑通本地基线，再比较方案。默认不下载模型、不调用云端 API、不自动调参或校准。</p>
++      <p><strong>原文 → 分块 → 检索 → 重排（可选）→ 回答 → 引用核查</strong></p>
++      <p>先猜会发生什么，运行后找原句，再写出为什么。做完一个练习再进入下一课。</p>
++      <p>默认向量是 TF-IDF + SVD；默认回答是抽取式。示例基于开发练习资料，换工作区后请据自己的文档改题。演示政策是虚构资料。</p>
++      <div id="lesson-progress" role="status"></div>
++    </div>
++    <div id="lesson-list" class="grid-2"><p>连接工作区后加载七个练习。</p></div>
++    <div class="card"><h3>完成主线后再选专题</h3><p>预训练模型与神经重排、压缩/扩展/共现图、拒答校准、缓存与并发、Qdrant。它们都可以单独学习，无须先搭齐基础设施。</p></div>
++  </section>
++  <section id="tab-lab" class="panel">
++    <div class="card">
++      <h2>一次只改一个变量</h2>
++      <p>同一份工作区语料与问题；本地 SVD、抽取回答、关闭答案缓存和校准。比较一条问题只能帮助理解，不能证明方案普遍更好。</p>
++      <label for="lab-query">问题</label><textarea id="lab-query" rows="2">What is the current EU restore recovery target for Cedar?</textarea>
++      <div class="controls">
++        <div><label for="lab-variable">本次改变</label><select id="lab-variable" onchange="labValues()"><option value="retrieval_mode">检索方式</option><option value="chunking_strategy">分块策略</option><option value="use_reranker">特征重排</option><option value="top_k">证据数量 top-k</option><option value="min_confidence_threshold">拒答阈值</option></select></div>
++        <div><label for="lab-a">A</label><select id="lab-a"></select></div>
++        <div><label for="lab-b">B</label><select id="lab-b"></select></div>
++      </div>
++      <label for="lab-hypothesis">运行前：你的假设</label><input id="lab-hypothesis" maxlength="500" placeholder="我预计……因为……" />
++      <label><input id="lab-save" type="checkbox" /> 保存本次运行到私有实验目录（owner）</label>
++      <button class="btn" id="lab-run" onclick="runLearningComparison()">运行 A / B</button>
++      <p id="lab-status" role="status"></p>
++      <pre id="lab-controls" style="white-space:pre-wrap"></pre>
++    </div>
++    <div class="grid-2" id="lab-results"></div>
++    <div class="card"><h3>运行后：解释观察</h3><p>哪条证据变化了？条件和数字是否完整？有没有无依据的回答或错误拒答？用一个失败例子解释取舍。</p><textarea rows="3" placeholder="观察笔记仅留在当前页面；需要保留时请另行记录。"></textarea></div>
++    <div class="card">
++      <h3>先看分块，再讨论分数</h3><div class="controls"><select id="preview-doc"></select><select id="preview-strategy"><option value="fixed">fixed</option><option value="recursive">recursive</option><option value="parent_child">parent_child</option></select><button class="btn-secondary" onclick="previewChunks()">查看原文与块</button></div>
++      <div id="chunk-preview"></div>
++    </div>
++  </section>
+ 
+   <!-- TAB 1: PLAYGROUND -->
+-  <section id="tab-playground" class="panel active">
++  <section id="tab-playground" class="panel">
+     <div class="grid-2">
+       <div>
+         <div class="card">
+           <h2>Query Console</h2>
+-          <textarea id="q-input" rows="3" placeholder="Ask an enterprise architecture, security, ML Ops, FinRisk, or SLA question...">What does error code ERR_QDRANT_5032 indicate and how is it recovered?</textarea>
++          <textarea id="q-input" rows="3" placeholder="先选一条资料，写一个能由原句回答的问题……">What is the current EU restore recovery target for Cedar?</textarea>
+           <div class="controls">
+             <div>
+               <label class="small">Retrieval Mode</label>
+               <select id="q-mode">
+-                <option value="hybrid_rrf" selected>Hybrid RRF (Dense + BM25)</option>
++                <option value="hybrid_rrf">Hybrid RRF (Dense + BM25)</option>
+                 <option value="dense">Dense Vector Only</option>
+-                <option value="bm25">Okapi BM25 Only</option>
++                <option value="bm25" selected>Okapi BM25 Only</option>
+               </select>
+             </div>
+             <div>
+               <label class="small">Reranker</label>
+               <select id="q-rerank">
+-                <option value="true" selected>Cross-Feature Reranker ON</option>
+-                <option value="false">Reranker OFF</option>
++                <option value="true">Cross-Feature Reranker ON</option>
++                <option value="false" selected>Reranker OFF</option>
+               </select>
+             </div>
+             <div>
+               <label class="small">L1/L2 Cache</label>
+               <select id="q-cache">
+-                <option value="true" selected>L1 + L2 Semantic ON</option>
+-                <option value="false">Bypass Cache (Cold)</option>
++                <option value="true">L1 + L2 Semantic ON</option>
++                <option value="false" selected>Bypass Cache (Cold)</option>
+               </select>
+             </div>
+             <div>
+@@ -176,7 +216,7 @@
+             </div>
+           </div>
+           <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+-            <button class="btn" id="btn-run-query" onclick="runQuery()">Run Enterprise RAG</button>
++            <button class="btn" id="btn-run-query" onclick="runQuery()">运行并检查证据</button>
+             <button class="btn-secondary" onclick="runQueryStream()">Stream SSE Response</button>
+           </div>
+           <div class="sample-chips" id="sample-chips"></div>
+@@ -314,7 +354,7 @@
+       <div class="card">
+         <h2>Little's Law Capacity Calculator (Interactive)</h2>
+         <p style="font-size:0.86rem; color:var(--muted);">
+-          Formula: <code>L = λ × W</code> (Mean in-flight requests = Throughput RPS × Mean Latency). Tune cache hit rate below to see why multi-tier caching is essential for 10,000 concurrent traffic.
++          Formula: <code>L = λ × W</code> (Mean in-flight requests = Throughput RPS × Mean Latency). Tune cache hit rate below 观察固定假设下缓存如何改变平均在途请求；这是附加练习，不是主线验收目标。
+         </p>
+         <div class="controls">
+           <div>
+@@ -336,7 +376,7 @@
+       <div class="card">
+         <h2>Data Scientist Portfolio &amp; Interview Highlights</h2>
+         <ul style="font-size:0.88rem; color:var(--muted); padding-left:18px; margin:0;">
+-          <li><strong>Ablation Rigor</strong>: Never report single point metrics—this platform evaluates 6 architectures across 40 stratified queries with <code>500x Bootstrap 95% CIs</code> and descriptive paired bootstrap differences; independent human review remains pending.</li>
++          <li><strong>Ablation Rigor</strong>: 先完成单变量练习，再在明确的数据划分上做批量对照；可查看 <code>500x Bootstrap 95% CIs</code> and descriptive paired bootstrap differences; independent human review remains pending.</li>
+           <li><strong>OOV Failure Mode</strong>: Demonstrated why pure Dense vectors fail on exact codes (<code>ERR_QDRANT_5032</code>, <code>SOC2-CC6.7</code>) and why single-word OOV collisions require vocabulary coverage gating.</li>
+           <li><strong>Concurrency Mechanisms</strong>: Eliminates duplicate cold LLM calls via <code>Singleflight</code>, serves paraphrases via <code>L2 cosine &gt;= 0.90</code>, and prevents overload via bounded semaphores + circuit breakers.</li>
+           <li><strong>Docs Included</strong>: Read <code>docs/01_DS_RAG_LEARNING_ROADMAP.md</code>, <code>docs/02_ARCHITECTURE_10K_CONCURRENCY.md</code>, and <code>docs/03_INTERVIEW_AND_FREELANCE_PLAYBOOK.md</code>.</li>
+@@ -350,16 +390,118 @@
+ let documentRevision = null;
+ let accessRole = 'tester';
+ let lastRequestId = null;
++let learningLessons = [];
++let advancedExpanded = false;
++function openPanel(id) {
++  const button = document.querySelector('[data-tab="' + id + '"]');
++  if (button) switchTab(id, button);
++}
++function updateAdvancedVisibility() {
++  document.querySelectorAll('[data-advanced]').forEach(button => { button.hidden = !(advancedExpanded && accessRole === 'owner'); });
++}
++function toggleAdvanced() {
++  advancedExpanded = !advancedExpanded;
++  updateAdvancedVisibility();
++  if (!advancedExpanded) openPanel('learning');
++  document.getElementById('advanced-toggle').textContent = advancedExpanded ? '收起进阶实验' : '展开进阶实验';
++}
++function lessonCompletion() {
++  try { const ids = JSON.parse(localStorage.getItem('rag-lesson-completion-v1') || '[]'); return Array.isArray(ids) ? ids : []; } catch { return []; }
++}
++function markLesson(id, checked) {
++  const ids = new Set(lessonCompletion()); checked ? ids.add(id) : ids.delete(id);
++  try { localStorage.setItem('rag-lesson-completion-v1', JSON.stringify([...ids])); } catch { /* Progress is optional. */ }
++  updateLessonProgress();
++}
++function updateLessonProgress() {
++  const done = new Set(lessonCompletion());
++  document.getElementById('lesson-progress').textContent = '自评完成：' + learningLessons.filter(lesson => done.has(lesson.id)).length + ' / ' + learningLessons.length + '。仅在本浏览器保存课号，不保存 token 或问题。';
++}
++async function loadLessons() {
++  const data = await (await apiFetch('/api/v1/learning')).json();
++  learningLessons = data.lessons;
++  const done = new Set(lessonCompletion());
++  document.getElementById('lesson-list').innerHTML = learningLessons.map(lesson => `<article class="card">
++    <h3>${escapeHTML(lesson.id)} · ${escapeHTML(lesson.title)}</h3><p>${escapeHTML(lesson.concept)}</p>
++    <p><strong>动手：</strong>${escapeHTML(lesson.task)}</p><p><strong>完成标准：</strong>${escapeHTML(lesson.check)}</p>
++    <p>代码阅读：<code>${escapeHTML(lesson.source)}</code></p>
++    <button class="btn-secondary" onclick="startLesson('${lesson.id}')">开始这个练习</button>
++    <label><input type="checkbox" ${done.has(lesson.id) ? 'checked' : ''} onchange="markLesson('${lesson.id}', this.checked)" /> 我能解释这一步了</label>
++  </article>`).join('');
++  updateLessonProgress();
++}
++function startLesson(id) {
++  const lesson = learningLessons.find(value => value.id === id); if (!lesson) return;
++  if (lesson.action === 'playground') {
++    document.getElementById('q-input').value = lesson.question;
++    document.getElementById('q-mode').value = 'bm25';
++    document.getElementById('q-rerank').value = 'false';
++    document.getElementById('q-cache').value = 'false';
++    openPanel('playground');
++  } else {
++    document.getElementById('lab-query').value = lesson.question;
++    document.getElementById('lab-variable').value = lesson.variable;
++    labValues();
++    document.getElementById('lab-a').value = String(lesson.a);
++    document.getElementById('lab-b').value = String(lesson.b);
++    openPanel('lab');
++  }
++}
++function labValues() {
++  const options = {
++    retrieval_mode:['bm25','dense','hybrid_rrf'], chunking_strategy:['fixed','parent_child','recursive','semantic'],
++    use_reranker:['false','true'], top_k:['1','3','5','10'], min_confidence_threshold:['0.22','0.5','0.7']
++  }[document.getElementById('lab-variable').value];
++  for (const id of ['lab-a','lab-b']) {
++    const select = document.getElementById(id); select.replaceChildren();
++    for (const value of options) { const option = document.createElement('option'); option.value=value; option.textContent=value; select.appendChild(option); }
++  }
++  document.getElementById('lab-b').selectedIndex = 1;
++}
++function labValue(id, variable) {
++  const value = document.getElementById(id).value;
++  return variable === 'use_reranker' ? value === 'true' : ['top_k','min_confidence_threshold'].includes(variable) ? Number(value) : value;
++}
++async function runLearningComparison() {
++  const button = document.getElementById('lab-run'); button.disabled=true;
++  const status = document.getElementById('lab-status'); status.textContent='正在运行两个本地配置……';
++  const variable = document.getElementById('lab-variable').value;
++  try {
++    const data = await (await apiFetch('/api/v1/learning/compare', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({
++      query:document.getElementById('lab-query').value, variable, a:labValue('lab-a',variable), b:labValue('lab-b',variable),
++      hypothesis:document.getElementById('lab-hypothesis').value, save_report:document.getElementById('lab-save').checked
++    })})).json();
++    status.textContent='只改变 ' + data.variable + (data.saved ? '；已保存到 ' + data.report_path : '；本次未保存报告。');
++    document.getElementById('lab-controls').textContent='保持固定：' + JSON.stringify(data.controlled_settings, null, 2);
++    document.getElementById('lab-results').innerHTML=data.results.map(result => `<article class="card">
++      <h3>${escapeHTML(result.label)} · ${escapeHTML(String(result.value))}</h3><p>索引块：${result.chunks} · 本次耗时：${result.response.latency_ms} ms（不是速度基准）</p>
++      <p>是否拒答：${result.response.refused} · 相关性分数：${metric(result.response.confidence)}（非正确概率）</p>
++      <div class="answer-box">${escapeHTML(result.response.answer)}</div>
++      <h4>按顺序核查证据</h4>${result.response.evidence.map((e,index) => `<details><summary>${index+1}. [${escapeHTML(e.doc_id)}] ${escapeHTML(e.title)}</summary><pre style="white-space:pre-wrap">${escapeHTML(e.parent_text)}</pre></details>`).join('')}
++    </article>`).join('');
++  } catch(error) { status.textContent=error.message; } finally { button.disabled=false; }
++}
++async function previewChunks() {
++  const target = document.getElementById('chunk-preview'); target.textContent='加载中……';
++  try {
++    const query = new URLSearchParams({doc_id:document.getElementById('preview-doc').value, strategy:document.getElementById('preview-strategy').value});
++    const data = await (await apiFetch('/api/v1/learning/chunks?' + query)).json();
++    target.innerHTML=`<details open><summary>原文</summary><pre style="white-space:pre-wrap">${escapeHTML(data.original_text)}</pre></details><p>${data.total_chunks} 个块，长度单位：字符${data.truncated ? '；仅显示前 50 个' : ''}</p>` + data.chunks.map((chunk,index) => `<details><summary>块 ${index+1} · ${chunk.text.length} 字符</summary><h4>检索文本</h4><pre style="white-space:pre-wrap">${escapeHTML(chunk.text)}</pre><h4>返回上下文</h4><pre style="white-space:pre-wrap">${escapeHTML(chunk.parent_text)}</pre></details>`).join('');
++  } catch(error) { target.textContent=error.message; }
++}
++
+ 
+ async function connectWorkspace() {
+   lastRequestId = null;
+   const capabilities = await (await apiFetch('/api/v1/capabilities')).json();
+   accessRole = capabilities.role;
+-  for (const index of [1, 2]) document.querySelectorAll('.tab-btn')[index].hidden = accessRole !== 'owner';
++  updateAdvancedVisibility();
++  document.getElementById("advanced-toggle").hidden = accessRole !== "owner";
++  document.getElementById("lab-save").disabled = accessRole !== "owner";
++  if (accessRole !== "owner") document.getElementById("lab-save").checked = false;
+   for (const input of document.querySelectorAll('#tab-documents input, #tab-documents textarea')) input.disabled = !capabilities.can_edit_documents;
+   document.getElementById('doc-save').hidden = !capabilities.can_edit_documents;
+-  await Promise.all([refreshStats(), refreshDocuments()]);
+-  if (accessRole === 'owner') await Promise.allSettled([loadAblation(false), loadBenchmark()]);
++  await Promise.all([refreshStats(), refreshDocuments(), loadLessons()]);
+   document.getElementById('app-status').textContent = 'Connected as ' + accessRole + '. Shared workspace; human answer review is required.';
+ }
+ 
+@@ -405,6 +547,8 @@
+   documentRevision = data.corpus_revision;
+   document.getElementById('doc-revision').textContent = 'Corpus revision: ' + documentRevision;
+   const list = document.getElementById('doc-list'); list.replaceChildren();
++  const select = document.getElementById('preview-doc'); select.replaceChildren();
++  for (const doc of data.documents) { const option = document.createElement('option'); option.value=doc.doc_id; option.textContent=doc.title; select.appendChild(option); }
+   for (const doc of data.documents) {
+     const row = document.createElement('div'); row.className = 'chunk-item';
+     const label = document.createElement('span');
+@@ -672,6 +816,7 @@
+ }
+ 
+ calcLittles();
++labValues();
+ if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') connectWorkspace().catch(() => {});
+ </script>
+ </body>
+--- before/tests/test_learning_path.py
++++ after/tests/test_learning_path.py
+@@ -0,0 +1,102 @@
++from dataclasses import asdict
++from html.parser import HTMLParser
++import json
++from pathlib import Path
++
++import httpx
++import pytest
++
++from rag_platform.config import RAGConfig
++from rag_platform.learning import compare, validate_pair
++from rag_platform.pipeline import EnterpriseRAGPipeline
++from rag_platform.server import create_app
++
++
++@pytest.mark.asyncio
++async def test_learning_comparison_changes_only_the_selected_factor(monkeypatch,tmp_path):
++    source = EnterpriseRAGPipeline(RAGConfig())
++    source.config.calibration_path=tmp_path/'not-a-calibration.json'
++    source.config.calibration_path.write_text('{"unrelated":"must not be read"}')
++    source.config.llm_mode='openai'
++    source.config.embedding_backend='sentence_transformers'
++    import rag_platform.learning as learning
++    real = learning.EnterpriseRAGPipeline
++    captured = []
++    def construct(config, documents):
++        captured.append(asdict(config))
++        return real(config, documents)
++    monkeypatch.setattr(learning,'EnterpriseRAGPipeline',construct)
++    def forbidden(*args,**kwargs):
++        raise AssertionError('Learning experiments must not load calibration')
++    monkeypatch.setattr('rag_platform.study.ConfidenceCalibration.load',forbidden)
++    response = await compare(source,'What does ERR_QDRANT_5032 indicate?','use_reranker',False,True)
++    assert {key for key in captured[0] if captured[0][key]!=captured[1][key]} == {'use_reranker'}
++    assert all(config['retrieval_mode']=='hybrid_rrf' for config in captured)
++    assert all(not config['use_cache'] and not config['use_calibration'] and not config['persist_index'] for config in captured)
++    assert all(config['llm_mode']=='local' and config['vector_backend']=='memory' for config in captured)
++    assert response['controlled_settings']['calibration'] is False
++    assert response['saved'] is False
++    assert all(row['response']['cache_tier']=='miss' for row in response['results'])
++    assert source.config.use_cache is True
++    await source.aclose()
++
++
++def test_comparison_rejects_multiple_or_invalid_controls():
++    for args in [('top_k',True,5),('top_k',1,1000),('min_confidence_threshold',.2,float('nan')),
++                 ('llm_mode','local','openai'),('retrieval_mode','bm25','bm25')]:
++        with pytest.raises(ValueError): validate_pair(*args)
++
++
++@pytest.mark.asyncio
++async def test_course_preview_and_readonly_lab_preserve_source():
++    cfg=RAGConfig(admin_token='owner-example',tester_token='learner-example')
++    app=create_app(cfg)
++    kb=app.state.knowledge_base
++    before=cfg.corpus_path.read_bytes()
++    async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app),base_url='http://test') as client:
++        headers={'Authorization':'Bearer learner-example'}
++        course=(await client.get('/api/v1/learning',headers=headers)).json()
++        assert len(course['lessons'])==7 and course['lessons'][0]['action']=='playground'
++        doc_id=kb.current().documents[0]['doc_id']
++        preview=await client.get('/api/v1/learning/chunks',params={'doc_id':doc_id,'strategy':'parent_child'},headers=headers)
++        assert preview.status_code==200
++        assert preview.json()['original_text']==kb.current().document_by_id[doc_id]['text']
++        assert preview.json()['unit']=='characters'
++        payload={'query':'What does ERR_QDRANT_5032 indicate?','variable':'retrieval_mode','a':'bm25','b':'dense'}
++        result=await client.post('/api/v1/learning/compare',headers=headers,json=payload)
++        assert result.status_code==200,result.text
++        assert not result.json()['saved'] and len(result.json()['results'])==2
++        assert cfg.corpus_path.read_bytes()==before
++        assert not (cfg.reports_dir/'learning_lab').exists()
++        assert (await client.post('/api/v1/learning/compare',headers=headers,json={**payload,'save_report':True})).status_code==403
++        saved=await client.post('/api/v1/learning/compare',headers={'Authorization':'Bearer owner-example'},
++             json={**payload,'save_report':True,'hypothesis':'Contact alice@example.com'})
++        assert saved.status_code==200,saved.text
++        path=Path(saved.json()['report_path'])
++        assert path.is_relative_to(cfg.reports_dir/'learning_lab')
++        assert 'alice@example.com' not in path.read_text()
++        assert json.loads(path.read_text())['saved'] is True
++    await kb.aclose()
++
++
++class Page(HTMLParser):
++    def __init__(self):
++        super().__init__();self.attrs=[];self.select=None;self.defaults={}
++    def handle_starttag(self,tag,attrs):
++        value=dict(attrs);self.attrs.append((tag,value))
++        if tag=='select':self.select=value.get('id')
++        if tag=='option' and 'selected' in value:self.defaults[self.select]=value['value']
++    def handle_endtag(self,tag):
++        if tag=='select':self.select=None
++
++
++@pytest.mark.asyncio
++async def test_home_starts_with_learning_and_lightweight_query_defaults():
++    app=create_app()
++    async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app),base_url='http://test') as client:
++        page=Page();page.feed((await client.get('/')).text)
++    active=[value['id'] for tag,value in page.attrs if tag=='section' and value.get('class')=='panel active']
++    assert active==['tab-learning']
++    assert page.defaults['q-mode']=='bm25' and page.defaults['q-cache']=='false' and page.defaults['q-rerank']=='false'
++    assert all('hidden' in value for tag,value in page.attrs if 'data-advanced' in value)
++    await app.state.knowledge_base.aclose()
+--- before/Dockerfile
++++ after/Dockerfile
+@@ -11,7 +11,7 @@
+ ENV RAG_DATA_ROOT=/app RAG_PROJECT_ROOT=/app \
+     RAG_LLM_MODE=local RAG_EMBEDDING_BACKEND=local_svd \
+     RAG_REPORTS_DIR=/app/reports/private \
+-    RAG_CALIBRATION_PATH=/app/reports/private/calibration.json \
++    RAG_CALIBRATION_PATH="" \
+     OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 TOKENIZERS_PARALLELISM=false \
+     PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 HOME=/app
+ COPY requirements/runtime.lock /app/requirements.lock
+--- before/compose.yaml
++++ after/compose.yaml
+@@ -18,7 +18,7 @@
+       RAG_LLM_MODE: local
+       RAG_EMBEDDING_BACKEND: local_svd
+       RAG_REPORTS_DIR: /app/reports/private
+-      RAG_CALIBRATION_PATH: /app/reports/private/calibration.json
++      RAG_CALIBRATION_PATH: ""
+     volumes:
+       - ./data/workspaces:/app/data/workspaces
+       - ./reports/private:/app/reports/private
+--- before/compose.models.yaml
++++ after/compose.models.yaml
+@@ -13,7 +13,7 @@
+       RAG_VECTOR_BACKEND: qdrant
+       RAG_QDRANT_URL: http://qdrant:6333
+       RAG_REPORTS_DIR: /app/reports/private/models
+-      RAG_CALIBRATION_PATH: /app/reports/private/models/calibration.json
++      RAG_CALIBRATION_PATH: ""
+     healthcheck:
+       start_period: 10m
+     depends_on:
+--- before/.github/workflows/ci.yml
++++ after/.github/workflows/ci.yml
+@@ -4,6 +4,11 @@
+   push:
+   pull_request:
+   workflow_dispatch:
++    inputs:
++      integration:
++        description: Run optional Docker and Qdrant integration checks
++        type: boolean
++        default: false
+ 
+ permissions:
+   contents: read
+@@ -58,6 +63,7 @@
+           uv build --no-build-isolation
+           .venv/bin/python scripts/check_wheel.py
+       - name: Real Qdrant REST integration
++        if: github.event_name == 'workflow_dispatch' && inputs.integration
+         run: |
+           docker run -d --name qdrant-ci -p 127.0.0.1:6333:6333 qdrant/qdrant:v1.16.3
+           for attempt in $(seq 1 60); do
+@@ -66,6 +72,7 @@
+           done
+           .venv/bin/python scripts/integration_qdrant.py
+       - name: Build and smoke test container
++        if: github.event_name == 'workflow_dispatch' && inputs.integration
+         env:
+           RAG_ADMIN_TOKEN: ci-smoke-owner-token
+         run: |
+@@ -80,7 +87,7 @@
+           test "$(docker inspect --format '{{.State.Health.Status}}' rag-ci)" = healthy
+           .venv/bin/python scripts/smoke_http.py
+       - name: Container diagnostics
+-        if: failure()
++        if: failure() && github.event_name == 'workflow_dispatch' && inputs.integration
+         run: docker logs rag-ci || true
+       - uses: actions/upload-artifact@v7
+         if: always()

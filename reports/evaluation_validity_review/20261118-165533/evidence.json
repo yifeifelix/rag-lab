@@ -1,0 +1,509 @@
+{
+  "timestamp_utc": "2026-11-18T16:55:33.849133+00:00",
+  "trigger_count": 23,
+  "source_sha256": {
+    "chunking.py": "54df4b092c2e322594324946740fc3ac721c0642af16d3a54010a96a2d262408",
+    "server.py": "0a1f32b41b22f7968cb5dd40f5a1d04cbfcf72878b4acadc097b900cff41a028",
+    "config.py": "15ca2c7d32aa4f9cd9bd7a4ccbd6f23104951d330dd5305fb1e4ca78a0c34c9d",
+    "benchmark.py": "c7f5638e5dd0a75bd77e1e051c0eed2db21afc92928147fc2120cb6858141dc2",
+    "knowledge_base.py": "d9bb0b3b0d7987643afd03422f802226c5a6a30eac4cdd599587ca96aeef7785",
+    "reranker.py": "75db3674cec2d18a1c837d50639c6e483b23c30af40010a1ecccfc975a6a0170",
+    "data_gen.py": "7811893eda2d8b677e5047bdde03278cb0dc3a3a5d7a5649411f666e292e8a96",
+    "awesome_rag.py": "b93cbad758eff0b524ba1de21b843184791fd838575c815d6e080458828ae719",
+    "evaluation.py": "de9d0c56d85d8ab16ea39f27d41ee66a9a44f5cfcc66bd012b297af08a461e00",
+    "cache.py": "70512268bee6bdf3bb0a531c75f61df21db2d3b3756fc6ec6aa2b6346d6ba7eb",
+    "__init__.py": "cd4c6570ec3a3255f4bb469b3ca6f37d15d1a1d261485ac2f771223b36f1a52d",
+    "runtime.py": "cc27f9ff9cd8cbe88be0a28e1fff0f0e57f2b90f9da0dd87b760a108dca17915",
+    "embeddings.py": "55596ff78d7455aa6a7d663d6de2f530edeb27a7e2a0113f9b910c276e9f086f",
+    "pipeline.py": "ef17314ab762fe2768921c51ddd4c37cc72e59e3dc9574837c0b189698442313",
+    "retrieval.py": "0c707e8fbc569872fd7c6cd5abd519b942a8551d93146cf4d3f405cb792c46b0",
+    "provenance.py": "cea144f0f0e462b233bfd699f317ce96e6993243061c811d76312131efb7fcac",
+    "index_store.py": "bbf8bd2a2355ac272f3c73e53d388b32a624e3ab67d3aa87b4c5ec7d76f0bb69",
+    "resilience.py": "9533c8bb31d1d7bc006bc4422e91a43ed33fd66085af18ebd63a34a71d36922a"
+  },
+  "synthetic": {
+    "questions": 40,
+    "raw_substring_distinct_triggers": 20,
+    "actual_match_distinct_triggers": 20,
+    "matched_triggers": [
+      "500",
+      "8-bit",
+      "capacity",
+      "cardholder",
+      "compressing",
+      "decay",
+      "duplicate",
+      "erase",
+      "integers",
+      "memory",
+      "noise",
+      "paraphrased",
+      "quality",
+      "reworded",
+      "shifts",
+      "simultaneous",
+      "statistically",
+      "validate",
+      "viral",
+      "vocabulary"
+    ],
+    "unmatched_triggers": [
+      "delete",
+      "outage",
+      "payment"
+    ],
+    "questions_with_added_terms": 11,
+    "rows": [
+      {
+        "question_id": "QA-EXACT-01",
+        "matched_triggers": [],
+        "added_terms": []
+      },
+      {
+        "question_id": "QA-EXACT-02",
+        "matched_triggers": [],
+        "added_terms": []
+      },
+      {
+        "question_id": "QA-EXACT-03",
+        "matched_triggers": [],
+        "added_terms": []
+      },
+      {
+        "question_id": "QA-EXACT-04",
+        "matched_triggers": [],
+        "added_terms": []
+      },
+      {
+        "question_id": "QA-EXACT-05",
+        "matched_triggers": [],
+        "added_terms": []
+      },
+      {
+        "question_id": "QA-EXACT-06",
+        "matched_triggers": [],
+        "added_terms": []
+      },
+      {
+        "question_id": "QA-EXACT-07",
+        "matched_triggers": [],
+        "added_terms": []
+      },
+      {
+        "question_id": "QA-EXACT-08",
+        "matched_triggers": [],
+        "added_terms": []
+      },
+      {
+        "question_id": "QA-EXACT-09",
+        "matched_triggers": [],
+        "added_terms": []
+      },
+      {
+        "question_id": "QA-EXACT-10",
+        "matched_triggers": [],
+        "added_terms": []
+      },
+      {
+        "question_id": "QA-EXACT-11",
+        "matched_triggers": [],
+        "added_terms": []
+      },
+      {
+        "question_id": "QA-EXACT-12",
+        "matched_triggers": [],
+        "added_terms": []
+      },
+      {
+        "question_id": "QA-SEM-01",
+        "matched_triggers": [
+          "viral",
+          "duplicate"
+        ],
+        "added_terms": [
+          "thundering",
+          "herd",
+          "singleflight",
+          "coalescing",
+          "deduplication",
+          "future"
+        ]
+      },
+      {
+        "question_id": "QA-SEM-02",
+        "matched_triggers": [
+          "8-bit",
+          "integers",
+          "compressing",
+          "memory",
+          "quality"
+        ],
+        "added_terms": [
+          "int8",
+          "scalar",
+          "quantization",
+          "ram",
+          "recall",
+          "rescoring",
+          "reduction",
+          "footprint",
+          "hbm",
+          "ndcg",
+          "accuracy",
+          "precision"
+        ]
+      },
+      {
+        "question_id": "QA-SEM-03",
+        "matched_triggers": [
+          "reworded",
+          "paraphrased"
+        ],
+        "added_terms": [
+          "semantic",
+          "cache",
+          "l2",
+          "cosine",
+          "similarity"
+        ]
+      },
+      {
+        "question_id": "QA-SEM-04",
+        "matched_triggers": [],
+        "added_terms": []
+      },
+      {
+        "question_id": "QA-SEM-05",
+        "matched_triggers": [],
+        "added_terms": []
+      },
+      {
+        "question_id": "QA-SEM-06",
+        "matched_triggers": [
+          "erase"
+        ],
+        "added_terms": [
+          "deletion",
+          "gdpr",
+          "cryptographic",
+          "shredding",
+          "dek"
+        ]
+      },
+      {
+        "question_id": "QA-SEM-07",
+        "matched_triggers": [],
+        "added_terms": []
+      },
+      {
+        "question_id": "QA-SEM-08",
+        "matched_triggers": [
+          "quality",
+          "vocabulary",
+          "shifts",
+          "decay"
+        ],
+        "added_terms": [
+          "recall",
+          "ndcg",
+          "accuracy",
+          "precision",
+          "terminology",
+          "drift",
+          "shift",
+          "embedding",
+          "distribution",
+          "psi",
+          "kl",
+          "degrading",
+          "drop",
+          "mrr"
+        ]
+      },
+      {
+        "question_id": "QA-SEM-09",
+        "matched_triggers": [
+          "memory"
+        ],
+        "added_terms": [
+          "ram",
+          "footprint",
+          "hbm"
+        ]
+      },
+      {
+        "question_id": "QA-SEM-10",
+        "matched_triggers": [
+          "validate",
+          "statistically",
+          "noise"
+        ],
+        "added_terms": [
+          "evaluation",
+          "statistical",
+          "rigor",
+          "bootstrap",
+          "paired",
+          "confidence",
+          "intervals",
+          "hypothesis",
+          "test",
+          "sets"
+        ]
+      },
+      {
+        "question_id": "QA-SEM-11",
+        "matched_triggers": [
+          "500"
+        ],
+        "added_terms": [
+          "circuit",
+          "breaker",
+          "degraded",
+          "extractive"
+        ]
+      },
+      {
+        "question_id": "QA-SEM-12",
+        "matched_triggers": [
+          "simultaneous",
+          "capacity"
+        ],
+        "added_terms": [
+          "concurrent",
+          "concurrency",
+          "gate",
+          "burst",
+          "little",
+          "law",
+          "sizing",
+          "slots",
+          "workers"
+        ]
+      },
+      {
+        "question_id": "QA-MULTI-01",
+        "matched_triggers": [],
+        "added_terms": []
+      },
+      {
+        "question_id": "QA-MULTI-02",
+        "matched_triggers": [],
+        "added_terms": []
+      },
+      {
+        "question_id": "QA-MULTI-03",
+        "matched_triggers": [],
+        "added_terms": []
+      },
+      {
+        "question_id": "QA-MULTI-04",
+        "matched_triggers": [],
+        "added_terms": []
+      },
+      {
+        "question_id": "QA-MULTI-05",
+        "matched_triggers": [],
+        "added_terms": []
+      },
+      {
+        "question_id": "QA-MULTI-06",
+        "matched_triggers": [
+          "cardholder"
+        ],
+        "added_terms": [
+          "pci-dss",
+          "pan",
+          "cvv",
+          "tokenization"
+        ]
+      },
+      {
+        "question_id": "QA-MULTI-07",
+        "matched_triggers": [
+          "validate"
+        ],
+        "added_terms": [
+          "evaluation",
+          "statistical",
+          "rigor",
+          "bootstrap",
+          "paired"
+        ]
+      },
+      {
+        "question_id": "QA-MULTI-08",
+        "matched_triggers": [],
+        "added_terms": []
+      },
+      {
+        "question_id": "QA-MULTI-09",
+        "matched_triggers": [],
+        "added_terms": []
+      },
+      {
+        "question_id": "QA-MULTI-10",
+        "matched_triggers": [],
+        "added_terms": []
+      },
+      {
+        "question_id": "QA-UNANS-01",
+        "matched_triggers": [],
+        "added_terms": []
+      },
+      {
+        "question_id": "QA-UNANS-02",
+        "matched_triggers": [],
+        "added_terms": []
+      },
+      {
+        "question_id": "QA-UNANS-03",
+        "matched_triggers": [],
+        "added_terms": []
+      },
+      {
+        "question_id": "QA-UNANS-04",
+        "matched_triggers": [],
+        "added_terms": []
+      },
+      {
+        "question_id": "QA-UNANS-05",
+        "matched_triggers": [],
+        "added_terms": []
+      },
+      {
+        "question_id": "QA-UNANS-06",
+        "matched_triggers": [],
+        "added_terms": []
+      }
+    ],
+    "qa_sha256": "15faf3a1b86d072099d0f303fc89efbd3ce59103f6f7192a097cd18fd825f120"
+  },
+  "python_test": {
+    "questions": 13,
+    "raw_substring_distinct_triggers": 0,
+    "actual_match_distinct_triggers": 0,
+    "matched_triggers": [],
+    "unmatched_triggers": [
+      "500",
+      "8-bit",
+      "capacity",
+      "cardholder",
+      "compressing",
+      "decay",
+      "delete",
+      "duplicate",
+      "erase",
+      "integers",
+      "memory",
+      "noise",
+      "outage",
+      "paraphrased",
+      "payment",
+      "quality",
+      "reworded",
+      "shifts",
+      "simultaneous",
+      "statistically",
+      "validate",
+      "viral",
+      "vocabulary"
+    ],
+    "questions_with_added_terms": 0,
+    "rows": [
+      {
+        "question_id": "PY-TEST-01",
+        "matched_triggers": [],
+        "added_terms": []
+      },
+      {
+        "question_id": "PY-TEST-02",
+        "matched_triggers": [],
+        "added_terms": []
+      },
+      {
+        "question_id": "PY-TEST-03",
+        "matched_triggers": [],
+        "added_terms": []
+      },
+      {
+        "question_id": "PY-TEST-04",
+        "matched_triggers": [],
+        "added_terms": []
+      },
+      {
+        "question_id": "PY-TEST-05",
+        "matched_triggers": [],
+        "added_terms": []
+      },
+      {
+        "question_id": "PY-TEST-06",
+        "matched_triggers": [],
+        "added_terms": []
+      },
+      {
+        "question_id": "PY-TEST-07",
+        "matched_triggers": [],
+        "added_terms": []
+      },
+      {
+        "question_id": "PY-TEST-08",
+        "matched_triggers": [],
+        "added_terms": []
+      },
+      {
+        "question_id": "PY-TEST-09",
+        "matched_triggers": [],
+        "added_terms": []
+      },
+      {
+        "question_id": "PY-TEST-10",
+        "matched_triggers": [],
+        "added_terms": []
+      },
+      {
+        "question_id": "PY-TEST-11",
+        "matched_triggers": [],
+        "added_terms": []
+      },
+      {
+        "question_id": "PY-TEST-12",
+        "matched_triggers": [],
+        "added_terms": []
+      },
+      {
+        "question_id": "PY-TEST-13",
+        "matched_triggers": [],
+        "added_terms": []
+      }
+    ],
+    "qa_sha256": "39a3ac63ab5470b253100d350d4c7f263950f211a28a7a785132a2dfd2ca1326"
+  },
+  "confidence_path": {
+    "before_rerank_unique_scores": [
+      0.46414
+    ],
+    "normal_response_confidence": 0.4641,
+    "normal_evidence_confidences": [
+      0.4641,
+      0.3182,
+      0.4449,
+      0.2563,
+      0.3523
+    ],
+    "normal_refused": false,
+    "controlled_zero_reranker": {
+      "evidence_scores": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "response_confidence": 0.4641,
+      "refused": false,
+      "note": "Controlled probe of gate dependency, not observed production scores"
+    }
+  },
+  "source_unchanged_during_probe": true
+}

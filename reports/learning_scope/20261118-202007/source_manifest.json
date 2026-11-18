@@ -1,0 +1,62 @@
+{
+  "README.md": {
+    "before_sha256": "b871bcf0b3be86a90e68523c95142202967ba8641762014e23fa5b017653cf96",
+    "after_sha256": "674cd3e18bd304b1ef9356ba6899a57a19e776cfe8627e6c32bd1ed89eaa561d"
+  },
+  "docs/01_DS_RAG_LEARNING_ROADMAP.md": {
+    "before_sha256": "37da28fcc9a8e6172270c94dc8fb0a8c1c124779d4cc8b44ef0d8fecfef8fa4b",
+    "after_sha256": "f1a0bfb8b01d7696e53c3a22c64e50304cb51c6576cbef2db93347f74fa285dd"
+  },
+  "docs/11_USER_TEST_GUIDE.md": {
+    "before_sha256": "08ed11c1c113c9b009e0d20d8a402c90c4b38395bba93e2c5352ca08340cfe47",
+    "after_sha256": "5dc9b7cdc99b9e1359779e099a34d94104f9559c63eee8c70ac9f8903ff867ea"
+  },
+  "docs/12_LEARNING_FIRST_SCOPE.md": {
+    "before_sha256": null,
+    "after_sha256": "1228fdc07dfe0ea8232f3f078382b6e1c5fae846261ce278eb599b9b7d00460b"
+  },
+  "src/rag_platform/learning.py": {
+    "before_sha256": null,
+    "after_sha256": "81bdb2df9a5c14ef0d2e53d689c8ee95e0190400cc01a60c07053d058ee11f39"
+  },
+  "src/rag_platform/server.py": {
+    "before_sha256": "de6082e1432e2b2981b2d790b74a8e1bb7b410f9986c1540c8ee863631a47948",
+    "after_sha256": "5e59a2fc57a8f0c59a97635cba738358bce5c4c562ba5c631039a7aa90486cdf"
+  },
+  "src/rag_platform/config.py": {
+    "before_sha256": "2fc83aa78baed7d64e064827304df5975fb1b7d6a9125434b6b1bf9cf39baef7",
+    "after_sha256": "1b0da6b5312eba1604779a8ce6bf342fb25856929f38ff17ca4d9bdb7f2c5bbb"
+  },
+  "src/rag_platform/pipeline.py": {
+    "before_sha256": "d582a7dfb560a074c6c8db2fb699b9a6526256a6ac5d9a721b53063350bb5963",
+    "after_sha256": "a98d8fb2532c902a7bdcf3cc4c14395288f3cbd10df4a5e2f50e4ae6d64acbc1"
+  },
+  "src/rag_platform/study.py": {
+    "before_sha256": "6ad59f665c318a464539bde7ccb2affacf37a95b725f2fa1a225a69f9201c911",
+    "after_sha256": "92e6db1309b8e4ee7e4db0fe056173c8005c7d930b0bc2ea2f057191b495c5b4"
+  },
+  "src/rag_platform/static/index.html": {
+    "before_sha256": "6553c2743d837b2d47c4c806224628c3a2ae55625b6361b5616e15803ec92e70",
+    "after_sha256": "1d4ab478c9a5124e80deaccdd05c1e3074d17d724d8f9bdd52969d94050e510d"
+  },
+  "tests/test_learning_path.py": {
+    "before_sha256": null,
+    "after_sha256": "e74a5cb476469a123608c780477964df03309753193da9277bc060c278c58ac2"
+  },
+  "Dockerfile": {
+    "before_sha256": "b1e6d9a5200fb4633aa8579e1bf0fada6918ad52b55c1e1e850271754f8f51ac",
+    "after_sha256": "79845bbbbd37b99ef163a63f509f941c8e5fca9c2752626626d3cf4855f1d67e"
+  },
+  "compose.yaml": {
+    "before_sha256": "1dbcd3877f6aded52ecf413d95a9468b361f46435a1822105a9b604b1935d860",
+    "after_sha256": "612d66474c8cad279d5ef266df3de6e658b6512e7d29ddebf1e6e0cf4faf1799"
+  },
+  "compose.models.yaml": {
+    "before_sha256": "da660d7865a4a3a766a4f89a6c63b9ee8e917c993e16855a9cbad4fce3b64a10",
+    "after_sha256": "df0913ad17dcf98e4793634b808cceb1593aac6010cb2aacdf1b73ab78e022c6"
+  },
+  ".github/workflows/ci.yml": {
+    "before_sha256": "5dcd1d33b79e6d36898caaeb86fc134a131a081b9ef36ed00cdb422718c9641c",
+    "after_sha256": "60de93ccfd3b8121c7df85b6b5c06c943b2af2a827aafddb248ce3a089671c8f"
+  }
+}

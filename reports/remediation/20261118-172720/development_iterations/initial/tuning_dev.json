@@ -1,0 +1,67 @@
+{
+  "method": "RRFGridSearch",
+  "best_config": {
+    "dense_weight": 0.55,
+    "sparse_weight": 0.45,
+    "graph_weight": 0.0,
+    "rrf_k": 60,
+    "recall_at_5": 1.0,
+    "mrr": 0.9571428571428572,
+    "ndcg_at_5": 0.9700789368406114
+  },
+  "all_trials": [
+    {
+      "dense_weight": 0.55,
+      "sparse_weight": 0.45,
+      "graph_weight": 0.0,
+      "rrf_k": 60,
+      "recall_at_5": 1.0,
+      "mrr": 0.9571428571428572,
+      "ndcg_at_5": 0.9700789368406114
+    },
+    {
+      "dense_weight": 0.7,
+      "sparse_weight": 0.3,
+      "graph_weight": 0.0,
+      "rrf_k": 60,
+      "recall_at_5": 1.0,
+      "mrr": 0.9571428571428572,
+      "ndcg_at_5": 0.9700789368406114
+    },
+    {
+      "dense_weight": 0.3,
+      "sparse_weight": 0.7,
+      "graph_weight": 0.0,
+      "rrf_k": 60,
+      "recall_at_5": 1.0,
+      "mrr": 0.9571428571428572,
+      "ndcg_at_5": 0.9700789368406114
+    },
+    {
+      "dense_weight": 0.55,
+      "sparse_weight": 0.45,
+      "graph_weight": 0.0,
+      "rrf_k": 40,
+      "recall_at_5": 1.0,
+      "mrr": 0.9571428571428572,
+      "ndcg_at_5": 0.9700789368406114
+    },
+    {
+      "dense_weight": 0.55,
+      "sparse_weight": 0.45,
+      "graph_weight": 0.0,
+      "rrf_k": 80,
+      "recall_at_5": 1.0,
+      "mrr": 0.9571428571428572,
+      "ndcg_at_5": 0.9700789368406114
+    }
+  ],
+  "split": "dev",
+  "num_queries_evaluated": 70,
+  "applied": false,
+  "requires_recalibration": true,
+  "objective": "development retrieval NDCG with the raw relevance gate; not final answer correctness",
+  "dev_sha256": "409daefb94cd49641beb464ec9c1b5758c9ebbb3ee708d1e32db404cff751bfc",
+  "corpus_revision": "1a1cd4cf243084144d991f6c463dc94e967b1d9d750107ac062a519af0933083",
+  "config_signature": "b8e407a9e9f531f5d20a66af3ec01aa68738e22a9c8d2e500f25d870f9ef3c71"
+}

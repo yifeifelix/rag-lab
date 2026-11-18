@@ -1,0 +1,197 @@
+--- previous/pipeline.py
++++ snapshot/pipeline.py
+@@ -12,6 +12,13 @@
+ import httpx
+ import numpy as np
+ 
++from .awesome_rag import (
++    ContextualCompressor,
++    CRAGEvaluator,
++    LightRAGEntityGraph,
++    QueryExpanderHyDE,
++    fuse_trimodal_rrf,
++)
+ from .cache import (
+     L1ExactCache,
+     L2SemanticCache,
+@@ -103,6 +110,8 @@
+     corpus_revision: str = ''
+     token_usage: dict[str, int] = field(default_factory=dict)
+     estimated_cost_usd: float | None = None
++    crag_status: str = 'DISABLED'
++    query_expanded_terms: list[str] = field(default_factory=list)
+ 
+ 
+ def _redact_pii(text: str) -> tuple[str, bool]:
+@@ -283,6 +292,10 @@
+         if self.config.persist_index and not self.index_loaded_from_disk:
+             save_index(index_path, self.chunks, self.embedder, self.retriever.dense_index.embeddings)
+         self.reranker = CrossFeatureReranker()
++        self.graph_index = LightRAGEntityGraph(self.chunks)
++        self.query_expander = QueryExpanderHyDE()
++        self.crag = CRAGEvaluator(min_confidence_threshold=self.config.min_confidence_threshold)
++        self.compressor = ContextualCompressor()
+ 
+         # Multi-tier caching & coalescing
+         self.l1_cache = L1ExactCache(
+@@ -409,22 +422,86 @@
+             async with self.concurrency_gate.acquire() as wait_ms:
+                 stage_timings["queue_wait"] = round(wait_ms, 3)
+ 
+-                # 1. Retrieval
++                # 1. Retrieval (plus optional Awesome-RAG LightRAG Graph + CRAG + Query Expansion)
+                 t_ret0 = time.perf_counter()
++                top_k_cand = max(self.config.top_k_candidates, top_k * 3)
+                 candidates = self.retriever.retrieve(
+                     query=sanitized_query,
+                     mode=retrieval_mode,
+-                    top_k_candidates=max(self.config.top_k_candidates, top_k * 3),
++                    top_k_candidates=top_k_cand,
+                     domain_filter=domain_filter,
+                     query_vec=q_vec,
+                 )
++                orig_max_conf = max((c.confidence_score for c in candidates), default=0.0)
++                orig_q_tokens = set(tokenize_technical(sanitized_query, remove_stopwords=True))
++                orig_in_vocab = (
++                    sum(1 for t in orig_q_tokens if t in self.retriever.bm25_index.vocab)
++                    / len(orig_q_tokens)
++                    if orig_q_tokens
++                    else 0.0
++                )
++
++                rank_query = sanitized_query
++                expanded_terms: list[str] = []
++                crag_status = "DISABLED"
++
++                if self.config.enable_crag:
++                    assessment = self.crag.evaluate(
++                        sanitized_query,
++                        candidates,
++                        self.retriever.bm25_index.vocab,
++                    )
++                    crag_status = assessment.status
++                    if assessment.trigger_correction or (
++                        self.config.enable_query_expansion and assessment.status != "INCORRECT"
++                    ):
++                        rank_query, expanded_terms = self.query_expander.expand(sanitized_query)
++                        if expanded_terms:
++                            crag_status = "AMBIGUOUS_CORRECTED"
++                elif self.config.enable_query_expansion and orig_max_conf >= self.config.min_confidence_threshold and orig_in_vocab >= 0.35:
++                    rank_query, expanded_terms = self.query_expander.expand(sanitized_query)
++
++                should_run_trimodal = (
++                    retrieval_mode == "hybrid_rrf"
++                    and orig_max_conf >= self.config.min_confidence_threshold
++                    and orig_in_vocab >= 0.35
++                    and (self.config.enable_graph_rag or bool(expanded_terms))
++                )
++                if should_run_trimodal:
++                    dense_hits = self.retriever.dense_index.search(
++                        rank_query, top_k=top_k_cand, domain_filter=domain_filter
++                    )
++                    bm25_hits = self.retriever.bm25_index.search(
++                        rank_query, top_k=top_k_cand, domain_filter=domain_filter
++                    )
++                    graph_hits = (
++                        self.graph_index.search(
++                            rank_query, top_k=top_k_cand, domain_filter=domain_filter
++                        )
++                        if (self.config.enable_graph_rag or self.config.enable_crag)
++                        else []
++                    )
++                    candidates = fuse_trimodal_rrf(
++                        dense_hits=dense_hits,
++                        bm25_hits=bm25_hits,
++                        graph_hits=graph_hits,
++                        chunks=self.chunks,
++                        dense_weight=0.45 if graph_hits else self.config.dense_weight,
++                        sparse_weight=0.35 if graph_hits else self.config.sparse_weight,
++                        graph_weight=0.20 if graph_hits else 0.0,
++                        rrf_k=self.config.rrf_k,
++                        top_k_candidates=top_k_cand,
++                    )
++                    for c in candidates:
++                        c.confidence_score = orig_max_conf
++
+                 stage_timings["retrieval"] = round((time.perf_counter() - t_ret0) * 1000.0, 3)
+ 
+                 # 2. Reranking or Diversity-aware selection
+                 t_rr0 = time.perf_counter()
+                 if use_reranker:
+                     selected = self.reranker.rerank(
+-                        query=sanitized_query,
++                        query=rank_query,
+                         candidates=candidates,
+                         top_k=top_k,
+                         max_per_doc=2,
+@@ -435,30 +512,41 @@
+ 
+                 # 3. Confidence Check & Synthesis
+                 t_gen0 = time.perf_counter()
+-                max_conf = max((c.confidence_score for c in selected), default=0.0)
++                if rank_query != sanitized_query or should_run_trimodal:
++                    max_conf = orig_max_conf
++                else:
++                    max_conf = max((c.confidence_score for c in selected), default=0.0)
+                 if self.config.simulated_llm_latency_ms > 0:
+                     await asyncio.sleep(self.config.simulated_llm_latency_ms / 1000.0)
+ 
+-                evidence = [
+-                    ChunkEvidence(
+-                        chunk_id=c.chunk.chunk_id,
+-                        doc_id=c.chunk.doc_id,
+-                        title=c.chunk.title,
+-                        domain=c.chunk.domain,
+-                        excerpt=c.chunk.text[:260],
+-                        parent_text=c.chunk.parent_text,
+-                        dense_score=round(c.dense_score, 4),
+-                        bm25_score=round(c.bm25_score, 4),
+-                        rrf_score=round(c.rrf_score, 4),
+-                        rerank_score=round(c.rerank_score, 4),
+-                        confidence_score=round(c.confidence_score, 4),
+-                        source=next((str(d.get('source', '')) for d in self.documents
+-                                     if d['doc_id'] == c.chunk.doc_id), ''),
+-                        version=next((str(d.get('version', '')) for d in self.documents
+-                                      if d['doc_id'] == c.chunk.doc_id), ''),
++                ratios: list[float] = []
++                evidence = []
++                for c in selected:
++                    p_text = c.chunk.parent_text
++                    if self.config.enable_contextual_compression:
++                        p_text, ratio = self.compressor.compress(sanitized_query, p_text)
++                        ratios.append(ratio)
++                    evidence.append(
++                        ChunkEvidence(
++                            chunk_id=c.chunk.chunk_id,
++                            doc_id=c.chunk.doc_id,
++                            title=c.chunk.title,
++                            domain=c.chunk.domain,
++                            excerpt=c.chunk.text[:260],
++                            parent_text=p_text,
++                            dense_score=round(c.dense_score, 4),
++                            bm25_score=round(c.bm25_score, 4),
++                            rrf_score=round(c.rrf_score, 4),
++                            rerank_score=round(c.rerank_score, 4),
++                            confidence_score=round(c.confidence_score, 4),
++                            source=next((str(d.get('source', '')) for d in self.documents
++                                         if d['doc_id'] == c.chunk.doc_id), ''),
++                            version=next((str(d.get('version', '')) for d in self.documents
++                                          if d['doc_id'] == c.chunk.doc_id), ''),
++                        )
+                     )
+-                    for c in selected
+-                ]
++                if ratios:
++                    stage_timings["compression_ratio"] = round(sum(ratios) / len(ratios), 4)
+ 
+                 refused = False
+                 degraded_mode = False
+@@ -525,6 +613,8 @@
+                     corpus_revision=self.corpus_revision,
+                     token_usage=token_usage,
+                     estimated_cost_usd=estimated_cost,
++                    crag_status=crag_status,
++                    query_expanded_terms=expanded_terms,
+                 )
+ 
+                 if use_cache and not degraded_mode:

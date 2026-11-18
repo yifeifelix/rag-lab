@@ -1,0 +1,51 @@
+{
+  "recorded_at_utc": "2026-11-18T20:25:02.565660+00:00",
+  "goal": "RAG learning path and single-variable lab first",
+  "baseline_snapshot": "reports/remediation/20261118-172720/after_manifest.json",
+  "changes": {
+    "learning_home": true,
+    "lessons": 7,
+    "single_variable_controls": [
+      "chunking_strategy",
+      "retrieval_mode",
+      "use_reranker",
+      "top_k",
+      "min_confidence_threshold"
+    ],
+    "read_only_chunk_preview": true,
+    "optional_private_run_save": true,
+    "default_startup_calibration": false,
+    "default_query_page_cache": false,
+    "default_query_page_reranker": false,
+    "advanced_tabs_collapsed": true,
+    "ci_integration_opt_in": true
+  },
+  "verification": {
+    "pytest_tests": 61,
+    "pytest_failures": 0,
+    "pytest_errors": 0,
+    "runtime_warnings": 1,
+    "pytest_seconds": 11.79,
+    "javascript_syntax": "passed",
+    "lesson_presets_and_boolean_controls": "passed",
+    "compose_config": "passed_without_daemon",
+    "optional_ci_yaml": "parsed_not_executed_remotely",
+    "wheel_source_and_ui": "byte_matched",
+    "example": "single_variable_example.json; public frozen documents, not a quality evaluation"
+  },
+  "not_verified": [
+    "Actual browser rendering",
+    "Actual Docker deployment",
+    "Real optional model and Qdrant execution"
+  ],
+  "audit_sha256": {
+    "source_manifest.json": "6b472dbaa75563a8152f8e38c809423048a1b5bd5916057df550b8a3a73927c4",
+    "changes.patch": "25deb74629664f86a5c089808351c9c5f66927498b0e58e768e48337986bf917",
+    "single_variable_example.json": "ae1965a4b29199700c8f6628b58dc9082ba3b31ea267aa2f951d68d513e9ce84",
+    "pytest.xml": "e8a2848b39ecdbbf838f1d4dd144174ec4fbb4ccb7cd1a20bc17df2b04d597ac"
+  },
+  "distribution_sha256": {
+    "enterprise_rag_platform-1.2.0-py3-none-any.whl": "f8b10c74f2ec2d362faa2ab4130be32ff0851051a4217ad873fda84be52a3109",
+    "enterprise_rag_platform-1.2.0.tar.gz": "49e7d775dd6bf43791ebbcbc7053e5dd034972d91094bc645ac0bdbaa6cd9c79"
+  }
+}

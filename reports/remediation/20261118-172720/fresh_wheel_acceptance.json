@@ -1,0 +1,30 @@
+{
+  "status": "passed",
+  "version": "1.2.0",
+  "transport": "ASGI in memory; no Docker or socket",
+  "isolated_wheel_import": true,
+  "initial_documents": 81,
+  "calibration_loaded": true,
+  "checks": [
+    "fresh workspace bootstrap",
+    "UI",
+    "health",
+    "401 authentication",
+    "tester role",
+    "403 mutation protection",
+    "query response",
+    "buffered SSE evidence",
+    "feedback persistence",
+    "owner source preservation",
+    "owner delete"
+  ],
+  "query_observation": {
+    "answer": "The Cedar EU restore recovery target is 17 minutes. [cedar.eu.restore.v2]",
+    "refused": false,
+    "confidence": 1.0,
+    "citations": [
+      "cedar.eu.restore.v2"
+    ]
+  },
+  "human_quality_review": "pending"
+}

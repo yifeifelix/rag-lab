@@ -1,0 +1,10 @@
+Launching 10,000 synthetic coroutine requests (local model, no HTTP)...
+
+=== Synthetic Coroutine Experiment Results ===
+Completed: 10,000/10,000 (100.00%) in 2.750s -> 3,636.7 RPS
+Latency (ms): P50=311.928 | P95=1960.058 | P99=2328.818 | Max=2380.917
+Cache + Singleflight Offload: 74.86% | Peak Backend Concurrency: 256
+  - l1_exact              : 3,500 (35.00%) | P50=0.011ms P99=0.017ms
+  - l2_semantic           : 1,156 (11.56%) | P50=0.020ms P99=0.029ms
+  - singleflight_coalesced: 2,830 (28.30%) | P50=400.265ms P99=610.530ms
+  - miss                  : 2,514 (25.14%) | P50=1306.859ms P99=2367.871ms

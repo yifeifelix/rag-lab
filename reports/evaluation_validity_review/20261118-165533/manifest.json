@@ -1,0 +1,30 @@
+{
+  "business_code_modified_by_this_review": false,
+  "source_changed_during_review": [],
+  "source_sha256": {
+    "chunking.py": "54df4b092c2e322594324946740fc3ac721c0642af16d3a54010a96a2d262408",
+    "server.py": "0a1f32b41b22f7968cb5dd40f5a1d04cbfcf72878b4acadc097b900cff41a028",
+    "config.py": "15ca2c7d32aa4f9cd9bd7a4ccbd6f23104951d330dd5305fb1e4ca78a0c34c9d",
+    "benchmark.py": "c7f5638e5dd0a75bd77e1e051c0eed2db21afc92928147fc2120cb6858141dc2",
+    "knowledge_base.py": "d9bb0b3b0d7987643afd03422f802226c5a6a30eac4cdd599587ca96aeef7785",
+    "reranker.py": "75db3674cec2d18a1c837d50639c6e483b23c30af40010a1ecccfc975a6a0170",
+    "data_gen.py": "7811893eda2d8b677e5047bdde03278cb0dc3a3a5d7a5649411f666e292e8a96",
+    "awesome_rag.py": "b93cbad758eff0b524ba1de21b843184791fd838575c815d6e080458828ae719",
+    "evaluation.py": "de9d0c56d85d8ab16ea39f27d41ee66a9a44f5cfcc66bd012b297af08a461e00",
+    "cache.py": "70512268bee6bdf3bb0a531c75f61df21db2d3b3756fc6ec6aa2b6346d6ba7eb",
+    "__init__.py": "cd4c6570ec3a3255f4bb469b3ca6f37d15d1a1d261485ac2f771223b36f1a52d",
+    "runtime.py": "cc27f9ff9cd8cbe88be0a28e1fff0f0e57f2b90f9da0dd87b760a108dca17915",
+    "embeddings.py": "55596ff78d7455aa6a7d663d6de2f530edeb27a7e2a0113f9b910c276e9f086f",
+    "pipeline.py": "ef17314ab762fe2768921c51ddd4c37cc72e59e3dc9574837c0b189698442313",
+    "retrieval.py": "0c707e8fbc569872fd7c6cd5abd519b942a8551d93146cf4d3f405cb792c46b0",
+    "provenance.py": "cea144f0f0e462b233bfd699f317ce96e6993243061c811d76312131efb7fcac",
+    "index_store.py": "bbf8bd2a2355ac272f3c73e53d388b32a624e3ab67d3aa87b4c5ec7d76f0bb69",
+    "resilience.py": "9533c8bb31d1d7bc006bc4422e91a43ed33fd66085af18ebd63a34a71d36922a"
+  },
+  "files": {
+    "docs/08_EVALUATION_VALIDITY_RECHECK.md": "c4abda323f1c64f2f0f341e7261a34ab7652c7835a851dedc2c839c3b09438e2",
+    "reports/evaluation_validity_review/20261118-165533/evidence.json": "bb59a1abc09623a1375b05abcabd7fec6f75ae8a63fd1a9ee952f8fa15c5058a",
+    "reports/evaluation_validity_review/20261118-165533/diagnostic_ablation.json": "255855b6e92f929309b2260739805891227479fe176bee52a5b932d4991fdf11",
+    "reports/evaluation_validity_review/20261118-165533/counting_scope.json": "ceab125283cbe55b4d4a925325f0e7eab5db8bf0691d0ea1aaadce6ce176ef3a"
+  }
+}

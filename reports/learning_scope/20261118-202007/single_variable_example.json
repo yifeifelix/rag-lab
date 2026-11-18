@@ -1,0 +1,222 @@
+{
+  "experiment_id": "22b5e37560294c58b4f25c9223d115ea",
+  "time": "2026-11-18T20:23:39.529436+00:00",
+  "variable": "retrieval_mode",
+  "hypothesis": "先观察精确词匹配与局部向量排序的区别。",
+  "corpus_revision": "1a1cd4cf243084144d991f6c463dc94e967b1d9d750107ac062a519af0933083",
+  "controlled_settings": {
+    "chunking_strategy": "parent_child",
+    "use_reranker": false,
+    "top_k": 3,
+    "min_confidence_threshold": 0.22,
+    "embedding": "TF-IDF + SVD",
+    "generation": "local extractive",
+    "cache": false,
+    "calibration": false,
+    "chunk_sizes_characters": {
+      "fixed": 260,
+      "overlap": 40,
+      "parent": 900,
+      "child": 260
+    },
+    "embedding_dimension_requested": 48,
+    "rrf": {
+      "dense_weight": 0.55,
+      "sparse_weight": 0.45,
+      "k": 60
+    }
+  },
+  "results": [
+    {
+      "label": "A",
+      "value": "bm25",
+      "chunks": 149,
+      "embedding_dimension_actual": 48,
+      "response": {
+        "query": "What is the current EU restore recovery target for Cedar?",
+        "sanitized_query": "What is the current EU restore recovery target for Cedar?",
+        "answer": "The Cedar EU restore recovery target is 17 minutes. [cedar.eu.restore.v2]",
+        "citations": [
+          "cedar.eu.restore.v2"
+        ],
+        "evidence": [
+          {
+            "chunk_id": "cedar.eu.restore.v2::p0::c0",
+            "doc_id": "cedar.eu.restore.v2",
+            "title": "Cedar EU restore policy 2026",
+            "domain": "fictional_operations",
+            "excerpt": "[cedar.eu.restore.v2] Cedar EU restore policy 2026 (Domain: fictional_operations)\n# Cedar EU restore policy\nStatus: CURRENT. Effective version: 2026.\nThe Cedar EU restore recovery target is 17 minutes.\nThis policy applies only to the EU region and the restore ",
+            "parent_text": "[cedar.eu.restore.v2] Cedar EU restore policy 2026 (Domain: fictional_operations)\n# Cedar EU restore policy\nStatus: CURRENT. Effective version: 2026.\nThe Cedar EU restore recovery target is 17 minutes.\nThis policy applies only to the EU region and the restore operation. It specifies no contract renewal fee, refund guarantee, or staffing requirement. Policies for other regions or operations do not override this one.",
+            "dense_score": 0.0,
+            "bm25_score": 11.22904109954834,
+            "rrf_score": 11.22904109954834,
+            "rerank_score": 0.0,
+            "confidence_score": 0.7554931508170233,
+            "source": "fixture://learning-v2/cedar.eu.restore.v2",
+            "version": "2"
+          },
+          {
+            "chunk_id": "cedar.us.restore.v2::p0::c0",
+            "doc_id": "cedar.us.restore.v2",
+            "title": "Cedar US restore policy 2026",
+            "domain": "fictional_operations",
+            "excerpt": "[cedar.us.restore.v2] Cedar US restore policy 2026 (Domain: fictional_operations)\n# Cedar US restore policy\nStatus: CURRENT. Effective version: 2026.\nThe Cedar US restore recovery target is 28 minutes.\nThis policy applies only to the US region and the restore ",
+            "parent_text": "[cedar.us.restore.v2] Cedar US restore policy 2026 (Domain: fictional_operations)\n# Cedar US restore policy\nStatus: CURRENT. Effective version: 2026.\nThe Cedar US restore recovery target is 28 minutes.\nThis policy applies only to the US region and the restore operation. It specifies no contract renewal fee, refund guarantee, or staffing requirement. Policies for other regions or operations do not override this one.",
+            "dense_score": 0.0,
+            "bm25_score": 9.5272798538208,
+            "rrf_score": 9.5272798538208,
+            "rerank_score": 0.0,
+            "confidence_score": 0.63570732805464,
+            "source": "fixture://learning-v2/cedar.us.restore.v2",
+            "version": "2"
+          },
+          {
+            "chunk_id": "cedar.eu.export.v2::p0::c0",
+            "doc_id": "cedar.eu.export.v2",
+            "title": "Cedar EU export policy 2026",
+            "domain": "fictional_operations",
+            "excerpt": "[cedar.eu.export.v2] Cedar EU export policy 2026 (Domain: fictional_operations)\n# Cedar EU export policy\nStatus: CURRENT. Effective version: 2026.\nThe Cedar EU export retention period is 37 hours.\nThis policy applies only to the EU region and the export operat",
+            "parent_text": "[cedar.eu.export.v2] Cedar EU export policy 2026 (Domain: fictional_operations)\n# Cedar EU export policy\nStatus: CURRENT. Effective version: 2026.\nThe Cedar EU export retention period is 37 hours.\nThis policy applies only to the EU region and the export operation. It specifies no contract renewal fee, refund guarantee, or staffing requirement. Policies for other regions or operations do not override this one.",
+            "dense_score": 0.0,
+            "bm25_score": 7.449315071105957,
+            "rrf_score": 7.449315071105957,
+            "rerank_score": 0.0,
+            "confidence_score": 0.4440030442343818,
+            "source": "fixture://learning-v2/cedar.eu.export.v2",
+            "version": "2"
+          }
+        ],
+        "retrieval_mode": "bm25",
+        "use_reranker": false,
+        "cache_tier": "miss",
+        "l2_similarity": 0.0,
+        "confidence": 0.7555,
+        "lexical_grounding_proxy": 1.0,
+        "refused": false,
+        "blocked_by_guardrail": false,
+        "pii_redacted": false,
+        "degraded_mode": false,
+        "latency_ms": 1.64,
+        "stage_timings_ms": {
+          "queue_wait": 0.014,
+          "retrieval": 0.702,
+          "rerank": 0.003,
+          "synthesis": 0.39,
+          "embedding": 0.129
+        },
+        "generation_mode": "local_extractive",
+        "embedding_backend": "local_svd",
+        "corpus_revision": "1a1cd4cf243084144d991f6c463dc94e967b1d9d750107ac062a519af0933083",
+        "token_usage": {},
+        "estimated_cost_usd": 0.0,
+        "crag_status": "DISABLED",
+        "query_expanded_terms": [],
+        "compression_stats": {},
+        "retrieval_confidence": 0.7555,
+        "confidence_kind": "uncalibrated_relevance",
+        "refusal_reason": "",
+        "unknown_citations": [],
+        "request_id": ""
+      }
+    },
+    {
+      "label": "B",
+      "value": "dense",
+      "chunks": 149,
+      "embedding_dimension_actual": 48,
+      "response": {
+        "query": "What is the current EU restore recovery target for Cedar?",
+        "sanitized_query": "What is the current EU restore recovery target for Cedar?",
+        "answer": "The Cedar EU restore recovery target is 17 minutes. [cedar.eu.restore.v2]",
+        "citations": [
+          "cedar.eu.restore.v2"
+        ],
+        "evidence": [
+          {
+            "chunk_id": "cedar.eu.restore.v2::p0::c0",
+            "doc_id": "cedar.eu.restore.v2",
+            "title": "Cedar EU restore policy 2026",
+            "domain": "fictional_operations",
+            "excerpt": "[cedar.eu.restore.v2] Cedar EU restore policy 2026 (Domain: fictional_operations)\n# Cedar EU restore policy\nStatus: CURRENT. Effective version: 2026.\nThe Cedar EU restore recovery target is 17 minutes.\nThis policy applies only to the EU region and the restore ",
+            "parent_text": "[cedar.eu.restore.v2] Cedar EU restore policy 2026 (Domain: fictional_operations)\n# Cedar EU restore policy\nStatus: CURRENT. Effective version: 2026.\nThe Cedar EU restore recovery target is 17 minutes.\nThis policy applies only to the EU region and the restore operation. It specifies no contract renewal fee, refund guarantee, or staffing requirement. Policies for other regions or operations do not override this one.",
+            "dense_score": 0.8678221702575684,
+            "bm25_score": 0.0,
+            "rrf_score": 0.8678221702575684,
+            "rerank_score": 0.0,
+            "confidence_score": 0.920693302154541,
+            "source": "fixture://learning-v2/cedar.eu.restore.v2",
+            "version": "2"
+          },
+          {
+            "chunk_id": "cedar.us.restore.v2::p0::c0",
+            "doc_id": "cedar.us.restore.v2",
+            "title": "Cedar US restore policy 2026",
+            "domain": "fictional_operations",
+            "excerpt": "[cedar.us.restore.v2] Cedar US restore policy 2026 (Domain: fictional_operations)\n# Cedar US restore policy\nStatus: CURRENT. Effective version: 2026.\nThe Cedar US restore recovery target is 28 minutes.\nThis policy applies only to the US region and the restore ",
+            "parent_text": "[cedar.us.restore.v2] Cedar US restore policy 2026 (Domain: fictional_operations)\n# Cedar US restore policy\nStatus: CURRENT. Effective version: 2026.\nThe Cedar US restore recovery target is 28 minutes.\nThis policy applies only to the US region and the restore operation. It specifies no contract renewal fee, refund guarantee, or staffing requirement. Policies for other regions or operations do not override this one.",
+            "dense_score": 0.6727461814880371,
+            "bm25_score": 0.0,
+            "rrf_score": 0.6727461814880371,
+            "rerank_score": 0.0,
+            "confidence_score": 0.7369810422261556,
+            "source": "fixture://learning-v2/cedar.us.restore.v2",
+            "version": "2"
+          },
+          {
+            "chunk_id": "oak.eu.restore.v2::p0::c0",
+            "doc_id": "oak.eu.restore.v2",
+            "title": "Oak EU restore policy 2026",
+            "domain": "fictional_operations",
+            "excerpt": "[oak.eu.restore.v2] Oak EU restore policy 2026 (Domain: fictional_operations)\n# Oak EU restore policy\nStatus: CURRENT. Effective version: 2026.\nThe Oak EU restore recovery target is 26 minutes.\nThis policy applies only to the EU region and the restore operatio",
+            "parent_text": "[oak.eu.restore.v2] Oak EU restore policy 2026 (Domain: fictional_operations)\n# Oak EU restore policy\nStatus: CURRENT. Effective version: 2026.\nThe Oak EU restore recovery target is 26 minutes.\nThis policy applies only to the EU region and the restore operation. It specifies no contract renewal fee, refund guarantee, or staffing requirement. Policies for other regions or operations do not override this one.",
+            "dense_score": 0.48909229040145874,
+            "bm25_score": 0.0,
+            "rrf_score": 0.48909229040145874,
+            "rerank_score": 0.0,
+            "confidence_score": 0.6267887075742087,
+            "source": "fixture://learning-v2/oak.eu.restore.v2",
+            "version": "2"
+          }
+        ],
+        "retrieval_mode": "dense",
+        "use_reranker": false,
+        "cache_tier": "miss",
+        "l2_similarity": 0.0,
+        "confidence": 0.9207,
+        "lexical_grounding_proxy": 1.0,
+        "refused": false,
+        "blocked_by_guardrail": false,
+        "pii_redacted": false,
+        "degraded_mode": false,
+        "latency_ms": 1.214,
+        "stage_timings_ms": {
+          "queue_wait": 0.009,
+          "retrieval": 0.559,
+          "rerank": 0.002,
+          "synthesis": 0.245,
+          "embedding": 0.093
+        },
+        "generation_mode": "local_extractive",
+        "embedding_backend": "local_svd",
+        "corpus_revision": "1a1cd4cf243084144d991f6c463dc94e967b1d9d750107ac062a519af0933083",
+        "token_usage": {},
+        "estimated_cost_usd": 0.0,
+        "crag_status": "DISABLED",
+        "query_expanded_terms": [],
+        "compression_stats": {},
+        "retrieval_confidence": 0.9207,
+        "confidence_kind": "uncalibrated_relevance",
+        "refusal_reason": "",
+        "unknown_citations": [],
+        "request_id": ""
+      }
+    }
+  ],
+  "notes": [
+    "Single-query exploration; no general quality or throughput conclusion.",
+    "Relevance-score scales differ across retrieval methods; inspect the evidence first.",
+    "Chunking changes the fitted SVD representation as a consequence of that choice.",
+    "Check the supporting sentences and record your own observation."
+  ],
+  "saved": false
+}

@@ -1,0 +1,17 @@
+Fresh wheel acceptance passed
+/Volumes/Data/Projects/Rag/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+  from starlette.testclient import TestClient as TestClient  # noqa
+{"time": "2026-11-18T18:19:10.535468+00:00", "event": "http_request", "request_id": "26fc6f8c61c44048a4bacf8027c107a8", "method": "GET", "status": 200, "role": "anonymous", "duration_ms": 0.602}
+{"time": "2026-11-18T18:19:10.540353+00:00", "event": "http_request", "request_id": "36f5c2a394654849bc38d7a101c64b2e", "method": "GET", "status": 200, "role": "anonymous", "duration_ms": 4.055}
+{"time": "2026-11-18T18:19:10.543986+00:00", "event": "http_request", "request_id": "947458ac89e54f399955bcd64df69f60", "method": "GET", "status": 401, "role": "anonymous", "duration_ms": 2.587}
+{"time": "2026-11-18T18:19:10.544881+00:00", "event": "http_request", "request_id": "f4ba0ab61c034cce8270a9479828507b", "method": "GET", "status": 200, "role": "tester", "duration_ms": 0.245}
+{"time": "2026-11-18T18:19:10.545814+00:00", "event": "http_request", "request_id": "8cf7234cb2bf45e8bb758fe1b3cf4aff", "method": "POST", "status": 403, "role": "tester", "duration_ms": 0.306}
+{"time": "2026-11-18T18:19:10.550951+00:00", "event": "http_request", "request_id": "f6b8c872b9cf4d93bf9a01a9cf946162", "method": "POST", "status": 200, "role": "tester", "duration_ms": 4.541}
+{"time": "2026-11-18T18:19:10.552703+00:00", "event": "http_request", "request_id": "e6f5eb5a1a764486a44954d0d270ada6", "method": "POST", "status": 200, "role": "tester", "duration_ms": 0.78}
+{"time": "2026-11-18T18:19:10.557221+00:00", "event": "http_request", "request_id": "80cefe4f38ad48498fd3c4f52874903c", "method": "POST", "status": 200, "role": "tester", "duration_ms": 0.995}
+{"time": "2026-11-18T18:19:10.592053+00:00", "event": "calibration_stale", "corpus_revision": "677bf82887fb8caccc3c05f53a966bc05081f4da6e0321a451f3647307158a68"}
+{"time": "2026-11-18T18:19:10.593229+00:00", "event": "document_mutation", "operation": "create", "documents": 82, "corpus_revision": "677bf82887fb8caccc3c05f53a966bc05081f4da6e0321a451f3647307158a68"}
+{"time": "2026-11-18T18:19:10.593371+00:00", "event": "http_request", "request_id": "d77635dddf174eccaea74384e1192b31", "method": "POST", "status": 200, "role": "owner", "duration_ms": 35.496}
+{"time": "2026-11-18T18:19:10.594363+00:00", "event": "http_request", "request_id": "b7434dfabfcf4382ab5cb5bed7c4d786", "method": "GET", "status": 200, "role": "owner", "duration_ms": 0.302}
+{"time": "2026-11-18T18:19:10.627662+00:00", "event": "document_mutation", "operation": "delete", "documents": 81, "corpus_revision": "1a1cd4cf243084144d991f6c463dc94e967b1d9d750107ac062a519af0933083"}
+{"time": "2026-11-18T18:19:10.627810+00:00", "event": "http_request", "request_id": "feb0b93dceb74812b0dafca6d429555c", "method": "DELETE", "status": 200, "role": "owner", "duration_ms": 32.83}

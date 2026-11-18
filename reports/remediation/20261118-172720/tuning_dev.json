@@ -1,0 +1,67 @@
+{
+  "method": "RRFGridSearch",
+  "best_config": {
+    "dense_weight": 0.55,
+    "sparse_weight": 0.45,
+    "graph_weight": 0.0,
+    "rrf_k": 60,
+    "recall_at_5": 1.0,
+    "mrr": 1.0,
+    "ndcg_at_5": 1.0
+  },
+  "all_trials": [
+    {
+      "dense_weight": 0.55,
+      "sparse_weight": 0.45,
+      "graph_weight": 0.0,
+      "rrf_k": 60,
+      "recall_at_5": 1.0,
+      "mrr": 1.0,
+      "ndcg_at_5": 1.0
+    },
+    {
+      "dense_weight": 0.7,
+      "sparse_weight": 0.3,
+      "graph_weight": 0.0,
+      "rrf_k": 60,
+      "recall_at_5": 1.0,
+      "mrr": 1.0,
+      "ndcg_at_5": 1.0
+    },
+    {
+      "dense_weight": 0.3,
+      "sparse_weight": 0.7,
+      "graph_weight": 0.0,
+      "rrf_k": 60,
+      "recall_at_5": 1.0,
+      "mrr": 1.0,
+      "ndcg_at_5": 1.0
+    },
+    {
+      "dense_weight": 0.55,
+      "sparse_weight": 0.45,
+      "graph_weight": 0.0,
+      "rrf_k": 40,
+      "recall_at_5": 1.0,
+      "mrr": 1.0,
+      "ndcg_at_5": 1.0
+    },
+    {
+      "dense_weight": 0.55,
+      "sparse_weight": 0.45,
+      "graph_weight": 0.0,
+      "rrf_k": 80,
+      "recall_at_5": 1.0,
+      "mrr": 1.0,
+      "ndcg_at_5": 1.0
+    }
+  ],
+  "split": "dev",
+  "num_queries_evaluated": 70,
+  "applied": false,
+  "requires_recalibration": true,
+  "objective": "development retrieval NDCG with the raw relevance gate; not final answer correctness",
+  "dev_sha256": "409daefb94cd49641beb464ec9c1b5758c9ebbb3ee708d1e32db404cff751bfc",
+  "corpus_revision": "1a1cd4cf243084144d991f6c463dc94e967b1d9d750107ac062a519af0933083",
+  "config_signature": "4e362d0e63447f6e1c5fa36a468ab0f1476a04c46860c0172f19dfa8e5805d37"
+}

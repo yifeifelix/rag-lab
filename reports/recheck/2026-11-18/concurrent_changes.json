@@ -1,0 +1,47 @@
+{
+  "changed_after_reproduction": {
+    "config.py": {
+      "reproduced_sha256": "a3b1c576c822aad4890894b89f43cdf04fb715a446d0488fb8b155e7f287a5a6",
+      "current_sha256": "15ca2c7d32aa4f9cd9bd7a4ccbd6f23104951d330dd5305fb1e4ca78a0c34c9d",
+      "mtime_ns": 1795013198145261287
+    },
+    "evaluation.py": {
+      "reproduced_sha256": "e9676b4e43c36cb6fd4a7ca8d5258e1323fb6c05d0df9150eaffb308b3796707",
+      "current_sha256": "de9d0c56d85d8ab16ea39f27d41ee66a9a44f5cfcc66bd012b297af08a461e00",
+      "mtime_ns": 1795013246212646504
+    },
+    "pipeline.py": {
+      "reproduced_sha256": "808ac07b966898ac4163b4ad54d410123f51b50081954b0b47524d57c79d335d",
+      "current_sha256": "ef17314ab762fe2768921c51ddd4c37cc72e59e3dc9574837c0b189698442313",
+      "mtime_ns": 1795013232313169248
+    },
+    "server.py": {
+      "reproduced_sha256": "4f42279e068c82929b678ec34fa0d4732178a1ff452b251a5b91c1579d5bfc87",
+      "current_sha256": "0a1f32b41b22f7968cb5dd40f5a1d04cbfcf72878b4acadc097b900cff41a028",
+      "mtime_ns": 1795013247714037143
+    }
+  },
+  "all_reproduced_source_preserved": true,
+  "missing": [],
+  "snapshot_origins": {
+    "__init__.py": "previously built 1.1.0 wheel",
+    "awesome_rag.py": "current file still matching reproduced hash",
+    "benchmark.py": "previously built 1.1.0 wheel",
+    "cache.py": "previously built 1.1.0 wheel",
+    "chunking.py": "previously built 1.1.0 wheel",
+    "config.py": "previously built 1.1.0 wheel",
+    "data_gen.py": "previously built 1.1.0 wheel",
+    "embeddings.py": "previously built 1.1.0 wheel",
+    "evaluation.py": "previously built 1.1.0 wheel",
+    "index_store.py": "previously built 1.1.0 wheel",
+    "knowledge_base.py": "previously built 1.1.0 wheel",
+    "pipeline.py": "previously built 1.1.0 wheel",
+    "provenance.py": "previously built 1.1.0 wheel",
+    "reranker.py": "previously built 1.1.0 wheel",
+    "resilience.py": "previously built 1.1.0 wheel",
+    "retrieval.py": "previously built 1.1.0 wheel",
+    "runtime.py": "previously built 1.1.0 wheel",
+    "server.py": "previously built 1.1.0 wheel"
+  },
+  "policy": "No external edits overwritten; later feature changes not covered by this reproduction"
+}

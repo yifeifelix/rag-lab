@@ -1,0 +1,42 @@
+{
+  "bm25": {
+    "total": 9,
+    "reviewed": 0,
+    "correct": 0,
+    "partial": 0,
+    "incorrect": 0,
+    "citations_supported": 0,
+    "pending": 9,
+    "correct_rate_among_reviewed": null
+  },
+  "dense": {
+    "total": 9,
+    "reviewed": 0,
+    "correct": 0,
+    "partial": 0,
+    "incorrect": 0,
+    "citations_supported": 0,
+    "pending": 9,
+    "correct_rate_among_reviewed": null
+  },
+  "hybrid": {
+    "total": 9,
+    "reviewed": 0,
+    "correct": 0,
+    "partial": 0,
+    "incorrect": 0,
+    "citations_supported": 0,
+    "pending": 9,
+    "correct_rate_among_reviewed": null
+  },
+  "hybrid_rerank": {
+    "total": 9,
+    "reviewed": 0,
+    "correct": 0,
+    "partial": 0,
+    "incorrect": 0,
+    "citations_supported": 0,
+    "pending": 9,
+    "correct_rate_among_reviewed": null
+  }
+}

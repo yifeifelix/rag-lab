@@ -1,0 +1,199 @@
+{
+  "timestamp_utc": "2026-11-18T14:46:22.000882+00:00",
+  "scope": "isolated source audit; no live LLM, no production corpus writes",
+  "source_sha256": {
+    "__init__.py": "cd4c6570ec3a3255f4bb469b3ca6f37d15d1a1d261485ac2f771223b36f1a52d",
+    "awesome_rag.py": "b93cbad758eff0b524ba1de21b843184791fd838575c815d6e080458828ae719",
+    "benchmark.py": "c7f5638e5dd0a75bd77e1e051c0eed2db21afc92928147fc2120cb6858141dc2",
+    "cache.py": "70512268bee6bdf3bb0a531c75f61df21db2d3b3756fc6ec6aa2b6346d6ba7eb",
+    "chunking.py": "54df4b092c2e322594324946740fc3ac721c0642af16d3a54010a96a2d262408",
+    "config.py": "a3b1c576c822aad4890894b89f43cdf04fb715a446d0488fb8b155e7f287a5a6",
+    "data_gen.py": "7811893eda2d8b677e5047bdde03278cb0dc3a3a5d7a5649411f666e292e8a96",
+    "embeddings.py": "55596ff78d7455aa6a7d663d6de2f530edeb27a7e2a0113f9b910c276e9f086f",
+    "evaluation.py": "e9676b4e43c36cb6fd4a7ca8d5258e1323fb6c05d0df9150eaffb308b3796707",
+    "index_store.py": "bbf8bd2a2355ac272f3c73e53d388b32a624e3ab67d3aa87b4c5ec7d76f0bb69",
+    "knowledge_base.py": "d9bb0b3b0d7987643afd03422f802226c5a6a30eac4cdd599587ca96aeef7785",
+    "pipeline.py": "808ac07b966898ac4163b4ad54d410123f51b50081954b0b47524d57c79d335d",
+    "provenance.py": "cea144f0f0e462b233bfd699f317ce96e6993243061c811d76312131efb7fcac",
+    "reranker.py": "75db3674cec2d18a1c837d50639c6e483b23c30af40010a1ecccfc975a6a0170",
+    "resilience.py": "9533c8bb31d1d7bc006bc4422e91a43ed33fd66085af18ebd63a34a71d36922a",
+    "retrieval.py": "0c707e8fbc569872fd7c6cd5abd519b942a8551d93146cf4d3f405cb792c46b0",
+    "runtime.py": "cc27f9ff9cd8cbe88be0a28e1fff0f0e57f2b90f9da0dd87b760a108dca17915",
+    "server.py": "4f42279e068c82929b678ec34fa0d4732178a1ff452b251a5b91c1579d5bfc87"
+  },
+  "pii": [
+    {
+      "input": "Order 1234567890123",
+      "output": "Order [REDACTED_PAN]",
+      "digits_pass_luhn": false
+    },
+    {
+      "input": "+1 415 555 0100 2345",
+      "output": "+[REDACTED_PAN]",
+      "digits_pass_luhn": false
+    },
+    {
+      "input": "Order 1234567890128",
+      "output": "Order [REDACTED_PAN]",
+      "digits_pass_luhn": true
+    }
+  ],
+  "ingestion": {
+    "input": "Order 1234567890123 has a support recovery window of 17 minutes. The support escalation line is +1 415 555 0100 2345.",
+    "persisted_text": "Order [REDACTED_PAN] has a support recovery window of 17 minutes. The support escalation line is +[REDACTED_PAN].",
+    "original_changed": true
+  },
+  "event_loop": {
+    "heartbeat_target_ms": 5,
+    "baseline_max_interval_ms": 5.681,
+    "controlled_cpu_80ms_max_interval_ms": 85.205,
+    "note": "80ms busy loop injected into existing synchronous retrieval dispatch; not a production benchmark"
+  },
+  "rebuild_lock": {
+    "lock_unavailable_during_build": true,
+    "second_reader_blocked": true
+  },
+  "short_queries": [
+    {
+      "query": "Semaphore",
+      "query_tokens": [
+        "semaphore"
+      ],
+      "confidence": 0.2161,
+      "refused": true,
+      "top_doc_id": "PY-SEMAPHORE"
+    },
+    {
+      "query": "Queue",
+      "query_tokens": [
+        "queue"
+      ],
+      "confidence": 0.1874,
+      "refused": true,
+      "top_doc_id": "PY-QUEUE"
+    },
+    {
+      "query": "gather",
+      "query_tokens": [
+        "gather"
+      ],
+      "confidence": 0.157,
+      "refused": true,
+      "top_doc_id": "PY-GATHER"
+    },
+    {
+      "query": "What does Semaphore do?",
+      "query_tokens": [
+        "semaphore"
+      ],
+      "confidence": 0.2068,
+      "refused": true,
+      "top_doc_id": "PY-SEMAPHORE"
+    },
+    {
+      "query": "How does an asyncio Semaphore manage its internal counter?",
+      "query_tokens": [
+        "asyncio",
+        "semaphore",
+        "manage",
+        "its",
+        "internal",
+        "counter"
+      ],
+      "confidence": 0.6176,
+      "refused": false,
+      "top_doc_id": "PY-SEMAPHORE"
+    }
+  ],
+  "citation_proxy": {
+    "alpha beta gamma": 1.0,
+    "alpha beta gamma [DOC-V1-2]": 1.0,
+    "alpha beta gamma [doc.v1.2]": 0.42857142857142855
+  },
+  "remote_builder": {
+    "query_blocked": false,
+    "requests": [
+      {
+        "key_in_query_string": true,
+        "key_header_present": false,
+        "document_instructions_forwarded": true,
+        "document_tag_breakout_forwarded": true
+      },
+      {
+        "key_in_query_string": true,
+        "key_header_present": false,
+        "document_instructions_forwarded": true,
+        "document_tag_breakout_forwarded": true
+      }
+    ],
+    "clients_constructed": 2,
+    "real_model_injection_success_tested": false
+  },
+  "upstream_error": {
+    "degraded_mode": true,
+    "generation_mode": "extractive_fallback",
+    "log_records": 0,
+    "exception_reason_in_response": false
+  },
+  "evaluation": {
+    "test_questions": 13,
+    "architectures": {
+      "bm25": {
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_5": 1.0,
+        "context_precision_at_5": 1.0,
+        "keyword_coverage": 0.3636,
+        "citation_precision": 0.3788,
+        "lexical_grounding_proxy": 1.0,
+        "false_refusal_rate": 0.0,
+        "refusal_accuracy": 1.0,
+        "latency_ms": 0.5494
+      },
+      "dense": {
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 0.9545,
+        "ndcg_at_5": 0.9664,
+        "context_precision_at_5": 0.9545,
+        "keyword_coverage": 0.3636,
+        "citation_precision": 0.3788,
+        "lexical_grounding_proxy": 1.0,
+        "false_refusal_rate": 0.0,
+        "refusal_accuracy": 1.0,
+        "latency_ms": 0.4742
+      },
+      "hybrid": {
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_5": 1.0,
+        "context_precision_at_5": 1.0,
+        "keyword_coverage": 0.3636,
+        "citation_precision": 0.3788,
+        "lexical_grounding_proxy": 1.0,
+        "false_refusal_rate": 0.0,
+        "refusal_accuracy": 1.0,
+        "latency_ms": 0.5246
+      },
+      "hybrid_rerank": {
+        "recall_at_3": 1.0,
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_5": 1.0,
+        "context_precision_at_5": 1.0,
+        "keyword_coverage": 0.3182,
+        "citation_precision": 0.3788,
+        "lexical_grounding_proxy": 1.0,
+        "false_refusal_rate": 0.0,
+        "refusal_accuracy": 1.0,
+        "latency_ms": 0.7365
+      }
+    }
+  },
+  "git": {
+    "is_repository": false
+  },
+  "business_source_unchanged": true
+}

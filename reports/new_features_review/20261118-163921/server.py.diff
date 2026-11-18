@@ -1,0 +1,22 @@
+--- previous/server.py
++++ snapshot/server.py
+@@ -166,6 +166,19 @@
+             total_requests=req.total_requests, simulated_llm_latency_ms=req.simulated_llm_latency_ms,
+             save_reports=req.total_requests == 10000)))
+ 
++    @api.post('/autorag/tune')
++    async def tune_autorag():
++        from .awesome_rag import AutoRAGTuner
++        pipeline = await current()
++        qa = load_golden_qa(cfg.golden_qa_path)
++        return await asyncio.to_thread(
++            AutoRAGTuner.tune_rrf_weights,
++            pipeline.retriever,
++            pipeline.graph_index,
++            pipeline.reranker,
++            qa,
++        )
++
+     @api.get('/stats')
+     async def get_stats():
+         pipeline = await current()

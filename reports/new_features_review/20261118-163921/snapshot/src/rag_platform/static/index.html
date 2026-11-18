@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RAG Learning &amp; Evaluation Workbench</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --surface: #121931;
+      --surface-2: #192241;
+      --border: #27335e;
+      --text: #e6ecff;
+      --muted: #93a3cf;
+      --accent: #6366f1;
+      --accent-2: #22d3ee;
+      --ok: #10b981;
+      --warn: #f59e0b;
+      --bad: #ef4444;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: radial-gradient(circle at top right, #162044, var(--bg) 55%);
+      color: var(--text);
+      line-height: 1.5;
+    }
+    .container { max-width: 1320px; margin: 0 auto; padding: 24px; }
+    header {
+      display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
+      gap: 16px; border-bottom: 1px solid var(--border); padding-bottom: 18px; margin-bottom: 20px;
+    }
+    .brand h1 { margin: 0; font-size: 1.45rem; letter-spacing: -0.02em; }
+    .brand p { margin: 4px 0 0; color: var(--muted); font-size: 0.9rem; }
+    .status-pills { display: flex; gap: 10px; flex-wrap: wrap; }
+    .pill {
+      background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: 999px; padding: 6px 12px; font-size: 0.8rem; color: var(--muted);
+    }
+    .pill strong { color: var(--text); }
+    .tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+    .tab-btn {
+      background: var(--surface); border: 1px solid var(--border); color: var(--muted);
+      padding: 10px 16px; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 0.9rem;
+      transition: all 0.15s ease;
+    }
+    .tab-btn:hover { color: var(--text); border-color: var(--accent); }
+    .tab-btn.active {
+      background: linear-gradient(135deg, var(--accent), #4f46e5);
+      color: #fff; border-color: transparent;
+    }
+    .panel { display: none; }
+    .panel.active { display: block; }
+    .grid-2 { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 18px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; margin-bottom: 18px; }
+    @media (max-width: 960px) { .grid-2 { grid-template-columns: 1fr; } }
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 14px; padding: 18px; margin-bottom: 16px;
+    }
+    .card h2, .card h3 { margin: 0 0 12px; font-size: 1.05rem; }
+    .kpi-label { font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    .kpi-val { font-size: 1.6rem; font-weight: 700; margin-top: 4px; color: var(--accent-2); }
+    .kpi-sub { font-size: 0.8rem; color: var(--muted); margin-top: 2px; }
+    textarea, select, input {
+      width: 100%; background: var(--surface-2); color: var(--text);
+      border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; font-size: 0.92rem;
+    }
+    .controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 12px 0; }
+    label.small { display: block; font-size: 0.78rem; color: var(--muted); margin-bottom: 4px; }
+    .btn {
+      background: linear-gradient(135deg, var(--accent), #4338ca); color: #fff;
+      border: none; border-radius: 8px; padding: 10px 18px; font-weight: 600; cursor: pointer;
+    }
+    .btn:disabled { opacity: 0.55; cursor: not-allowed; }
+    .btn-secondary {
+      background: var(--surface-2); border: 1px solid var(--border); color: var(--text);
+      border-radius: 8px; padding: 8px 12px; font-size: 0.82rem; cursor: pointer;
+    }
+    .btn-secondary:hover { border-color: var(--accent-2); }
+    .sample-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+    .chip {
+      background: var(--surface-2); border: 1px solid var(--border); color: var(--muted);
+      border-radius: 8px; padding: 5px 10px; font-size: 0.78rem; cursor: pointer;
+    }
+    .chip:hover { color: var(--text); border-color: var(--accent); }
+    .answer-box {
+      background: #0e1529; border: 1px solid var(--border); border-radius: 10px;
+      padding: 14px; min-height: 110px; white-space: pre-wrap; font-size: 0.94rem;
+    }
+    .badge {
+      display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 600;
+    }
+    .b-ok { background: rgba(16,185,129,0.18); color: #34d399; }
+    .b-warn { background: rgba(245,158,11,0.18); color: #fbbf24; }
+    .b-bad { background: rgba(239,68,68,0.18); color: #f87171; }
+    .b-info { background: rgba(34,211,238,0.16); color: #67e8f9; }
+    .chunk-item {
+      background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px;
+      padding: 12px; margin-bottom: 10px; font-size: 0.85rem;
+    }
+    .chunk-meta { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 6px; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+    th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--border); }
+    th { color: var(--muted); font-weight: 600; font-size: 0.78rem; text-transform: uppercase; }
+    .bar-track { background: #0d1326; border-radius: 999px; height: 9px; width: 100%; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--accent), var(--accent-2)); }
+    code { background: #0e1529; padding: 2px 5px; border-radius: 4px; color: var(--accent-2); font-size: 0.85em; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="brand">
+      <h1>RAG Learning &amp; Evaluation Workbench</h1>
+      <p>Hybrid RRF (Dense + Okapi BM25) · Parent-Child Chunking · Cross-Feature Reranker · L1/L2 Semantic Cache · Singleflight</p>
+    </div>
+    <div class="status-pills" id="header-pills">
+      <div class="pill">Docs: <strong id="pill-docs">--</strong></div>
+      <div class="pill">Chunks: <strong id="pill-chunks">--</strong></div>
+      <div class="pill">Cache Hit: <strong id="pill-hit">--</strong></div>
+      <div class="pill">Breaker: <strong id="pill-breaker">CLOSED</strong></div>
+    </div>
+  </header>
+
+  <div class="card">
+    <label class="small" for="owner-token">Owner token (only if configured; kept in this page)</label>
+    <div class="controls"><input id="owner-token" type="password" autocomplete="off" placeholder="Optional owner token" />
+    <button class="btn-secondary" onclick="refreshStats(); refreshDocuments(); loadAblation(); loadBenchmark()">Connect / Refresh</button></div>
+    <div id="app-status" role="status">Local RAG workbench. Quality metrics require human review.</div>
+  </div>
+  <nav class="tabs">
+    <button class="tab-btn active" onclick="switchTab('playground', this)">1. RAG Playground &amp; Inspector</button>
+    <button class="tab-btn" onclick="switchTab('ablation', this)">2. DS Ablation &amp; Eval Lab</button>
+    <button class="tab-btn" onclick="switchTab('benchmark', this)">3. Synthetic Load Lab</button>
+    <button class="tab-btn" onclick="switchTab('roadmap', this)">4. DS Learning &amp; Interview Guide</button>
+    <button class="tab-btn" onclick="switchTab('documents', this); refreshDocuments()">5. Documents</button>
+  </nav>
+
+  <!-- TAB 1: PLAYGROUND -->
+  <section id="tab-playground" class="panel active">
+    <div class="grid-2">
+      <div>
+        <div class="card">
+          <h2>Query Console</h2>
+          <textarea id="q-input" rows="3" placeholder="Ask an enterprise architecture, security, ML Ops, FinRisk, or SLA question...">What does error code ERR_QDRANT_5032 indicate and how is it recovered?</textarea>
+          <div class="controls">
+            <div>
+              <label class="small">Retrieval Mode</label>
+              <select id="q-mode">
+                <option value="hybrid_rrf" selected>Hybrid RRF (Dense + BM25)</option>
+                <option value="dense">Dense Vector Only</option>
+                <option value="bm25">Okapi BM25 Only</option>
+              </select>
+            </div>
+            <div>
+              <label class="small">Reranker</label>
+              <select id="q-rerank">
+                <option value="true" selected>Cross-Feature Reranker ON</option>
+                <option value="false">Reranker OFF</option>
+              </select>
+            </div>
+            <div>
+              <label class="small">L1/L2 Cache</label>
+              <select id="q-cache">
+                <option value="true" selected>L1 + L2 Semantic ON</option>
+                <option value="false">Bypass Cache (Cold)</option>
+              </select>
+            </div>
+            <div>
+              <label class="small">Domain Filter</label>
+              <select id="q-domain">
+                <option value="">All Domains</option>
+              </select>
+            </div>
+          </div>
+          <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+            <button class="btn" id="btn-run-query" onclick="runQuery()">Run Enterprise RAG</button>
+            <button class="btn-secondary" onclick="runQueryStream()">Stream SSE Response</button>
+          </div>
+          <div class="sample-chips" id="sample-chips"></div>
+        </div>
+
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <h2 style="margin:0;">Synthesized Grounded Answer</h2>
+            <div id="resp-badges"></div>
+          </div>
+          <div class="answer-box" id="answer-box">Submit a query to inspect grounded citations, lexical overlap, and multi-tier cache routing.</div>
+          <div id="metrics-strip" style="display:flex; gap:16px; flex-wrap:wrap; margin-top:10px; font-size:0.82rem; color:var(--muted);"></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <h2>Retrieved Parent-Child Evidence &amp; Ranking Scores</h2>
+          <div id="evidence-list" style="color:var(--muted); font-size:0.9rem;">
+            Retrieved chunks with Dense cosine, Okapi BM25, RRF fusion, and Reranker scores will appear here.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="tab-documents" class="panel">
+    <div class="card">
+      <h2>Document import, update and deletion</h2>
+      <p>Import UTF-8 Markdown or text. Changes rebuild the index and clear answer caches. This is a single-owner workspace.</p>
+      <label class="small" for="doc-file">Load a .md or .txt file into the editor</label>
+      <input id="doc-file" type="file" accept=".md,.txt,text/plain,text/markdown" onchange="readDocumentFile(this)" />
+      <div class="controls">
+        <div><label class="small" for="doc-id">Document ID</label><input id="doc-id" value="SUPPORT-001" /></div>
+        <div><label class="small" for="doc-title">Title</label><input id="doc-title" placeholder="Support handbook" /></div>
+        <div><label class="small" for="doc-domain">Domain</label><input id="doc-domain" value="support" /></div>
+        <div><label class="small" for="doc-version">Version</label><input id="doc-version" value="1" /></div>
+      </div>
+      <label class="small" for="doc-source">Source URL or reference</label><input id="doc-source" />
+      <label class="small" for="doc-license">License / permission</label><input id="doc-license" />
+      <label class="small" for="doc-text">Document text</label><textarea id="doc-text" rows="10"></textarea>
+      <button class="btn" id="doc-save" onclick="saveDocument()">Import / Save changes</button>
+      <p id="doc-revision" style="overflow-wrap:anywhere"></p>
+      <div id="doc-list"></div>
+    </div>
+  </section>
+
+  <!-- TAB 2: ABLATION LAB -->
+  <section id="tab-ablation" class="panel">
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+        <div>
+          <h2 style="margin:0;">Architecture Comparison (configured corpus and QA)</h2>
+          <span style="color:var(--muted); font-size:0.84rem;" id="ablation-sig">Loading significance metrics...</span>
+        </div>
+        <button class="btn-secondary" onclick="loadAblation(true)">Run Configured-Model Comparison</button>
+      </div>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>Architecture</th>
+              <th>Chunks</th>
+              <th>Recall@3</th>
+              <th>Recall@5 (95% CI)</th>
+              <th>MRR</th>
+              <th>NDCG@5 (95% CI)</th>
+              <th>Lexical Grounding Proxy</th>
+              <th>Refusal Acc</th>
+              <th>Latency</th>
+            </tr>
+          </thead>
+          <tbody id="ablation-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Flagship Category Breakdown (`Parent-Child + Hybrid RRF + Reranker`)</h3>
+      <div class="grid-4" id="category-cards"></div>
+    </div>
+  </section>
+
+  <!-- TAB 3: 10K BENCHMARK -->
+  <section id="tab-benchmark" class="panel">
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+        <div>
+          <h2 style="margin:0;">10,000 Coroutine Experiment &amp; Tail Latency</h2>
+          <span style="color:var(--muted); font-size:0.84rem;">Constructed proportions (single process, no HTTP, simulated LLM): 35% L1 Hot · 10% Singleflight Viral Burst · 30% L2 Semantic Paraphrase · 25% Cold Tail RAG</span>
+        </div>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <select id="bench-size" style="width:auto;">
+            <option value="2000">2,000 Coroutines</option>
+            <option value="5000">5,000 Coroutines</option>
+            <option value="10000" selected>10,000 Coroutines</option>
+          </select>
+          <button class="btn" id="btn-bench" onclick="runLiveBenchmark()">Run Synthetic Experiment</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-4" id="bench-kpis"></div>
+
+    <div class="card">
+      <h3>Execution Tier Breakdown (L1 Exact / L2 Semantic / Singleflight / Cold Miss)</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Cache / Execution Tier</th>
+            <th>Requests</th>
+            <th>Traffic Share</th>
+            <th>P50 (ms)</th>
+            <th>P95 (ms)</th>
+            <th>P99 (ms)</th>
+            <th>Visual Share</th>
+          </tr>
+        </thead>
+        <tbody id="bench-tbody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- TAB 4: LEARNING & INTERVIEW GUIDE -->
+  <section id="tab-roadmap" class="panel">
+    <div class="grid-2">
+      <div class="card">
+        <h2>Little's Law Capacity Calculator (Interactive)</h2>
+        <p style="font-size:0.86rem; color:var(--muted);">
+          Formula: <code>L = λ × W</code> (Mean in-flight requests = Throughput RPS × Mean Latency). Tune cache hit rate below to see why multi-tier caching is essential for 10,000 concurrent traffic.
+        </p>
+        <div class="controls">
+          <div>
+            <label class="small">Uncached in-flight requests at fixed throughput (L)</label>
+            <input type="number" id="ll-users" value="10000" oninput="calcLittles()" />
+          </div>
+          <div>
+            <label class="small">Combined L1+L2+SF Hit Rate (%)</label>
+            <input type="number" id="ll-hit" value="75" min="0" max="99" oninput="calcLittles()" />
+          </div>
+          <div>
+            <label class="small">Cold LLM Latency (ms)</label>
+            <input type="number" id="ll-cold" value="320" oninput="calcLittles()" />
+          </div>
+        </div>
+        <div class="answer-box" id="ll-output" style="min-height:80px;"></div>
+      </div>
+
+      <div class="card">
+        <h2>Data Scientist Portfolio &amp; Interview Highlights</h2>
+        <ul style="font-size:0.88rem; color:var(--muted); padding-left:18px; margin:0;">
+          <li><strong>Ablation Rigor</strong>: Never report single point metrics—this platform evaluates 6 architectures across 40 stratified queries with <code>500x Bootstrap 95% CIs</code> and descriptive paired bootstrap differences; independent human review remains pending.</li>
+          <li><strong>OOV Failure Mode</strong>: Demonstrated why pure Dense vectors fail on exact codes (<code>ERR_QDRANT_5032</code>, <code>SOC2-CC6.7</code>) and why single-word OOV collisions require vocabulary coverage gating.</li>
+          <li><strong>Concurrency Mechanisms</strong>: Eliminates duplicate cold LLM calls via <code>Singleflight</code>, serves paraphrases via <code>L2 cosine &gt;= 0.90</code>, and prevents overload via bounded semaphores + circuit breakers.</li>
+          <li><strong>Docs Included</strong>: Read <code>docs/01_DS_RAG_LEARNING_ROADMAP.md</code>, <code>docs/02_ARCHITECTURE_10K_CONCURRENCY.md</code>, and <code>docs/03_INTERVIEW_AND_FREELANCE_PLAYBOOK.md</code>.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+let documentRevision = null;
+function escapeHTML(value) {
+  return String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function metric(value, digits=3) { return value == null ? 'N/A' : value.toFixed(digits); }
+function proxyPercent(value) { return value == null ? 'N/A' : (value * 100).toFixed(0) + '%'; }
+async function apiFetch(url, options = {}) {
+  const token = document.getElementById('owner-token').value;
+  options.headers = {...options.headers, ...(token ? {'Authorization':'Bearer ' + token} : {})};
+  try {
+    const response = await window.fetch(url, options);
+    if (!response.ok) {
+      const detail = await response.text();
+      throw new Error('HTTP ' + response.status + ': ' + detail);
+    }
+    document.getElementById('app-status').textContent = 'Connected. Lexical overlap does not establish answer correctness.';
+    return response;
+  } catch (error) {
+    document.getElementById('app-status').textContent = error.message;
+    throw error;
+  }
+}
+async function readDocumentFile(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 500000) { document.getElementById('app-status').textContent = 'File exceeds 500 KB'; return; }
+  document.getElementById('doc-text').value = await file.text();
+  if (!document.getElementById('doc-title').value) document.getElementById('doc-title').value = file.name;
+}
+async function refreshDocuments() {
+  const data = await (await apiFetch('/api/v1/documents')).json();
+  documentRevision = data.corpus_revision;
+  document.getElementById('doc-revision').textContent = 'Corpus revision: ' + documentRevision;
+  const list = document.getElementById('doc-list'); list.replaceChildren();
+  for (const doc of data.documents) {
+    const row = document.createElement('div'); row.className = 'chunk-item';
+    const label = document.createElement('span');
+    label.textContent = doc.doc_id + ' · ' + doc.title + ' · v' + (doc.version || '?') + ' · ' + doc.characters + ' chars ';
+    row.appendChild(label);
+    const edit = document.createElement('button'); edit.className = 'btn-secondary'; edit.textContent = 'Edit';
+    edit.onclick = async () => {
+      const result = await (await apiFetch('/api/v1/documents/' + encodeURIComponent(doc.doc_id))).json();
+      documentRevision = result.corpus_revision;
+      for (const [field, key] of Object.entries({'id':'doc_id','title':'title','domain':'domain','version':'version','source':'source','license':'license','text':'text'}))
+        document.getElementById('doc-' + field).value = result.document[key] || '';
+    };
+    const remove = document.createElement('button'); remove.className = 'btn-secondary'; remove.textContent = 'Delete';
+    remove.onclick = async () => {
+      if (!window.confirm('Delete ' + doc.doc_id + ' and rebuild its index?')) return;
+      await apiFetch('/api/v1/documents/' + encodeURIComponent(doc.doc_id), {method:'DELETE',headers:{'If-Match':documentRevision}});
+      await refreshDocuments(); await refreshStats();
+    };
+    row.append(edit, remove); list.appendChild(row);
+  }
+}
+async function saveDocument() {
+  const button = document.getElementById('doc-save'); button.disabled = true;
+  try {
+    const payload = {};
+    for (const [field, key] of Object.entries({'id':'doc_id','title':'title','domain':'domain','version':'version','source':'source','license':'license','text':'text'}))
+      payload[key] = document.getElementById('doc-' + field).value;
+    await apiFetch('/api/v1/documents', {method:'POST',headers:{'Content-Type':'application/json',...(documentRevision ? {'If-Match':documentRevision} : {})},body:JSON.stringify(payload)});
+    await refreshDocuments(); await refreshStats();
+  } finally { button.disabled = false; }
+}
+
+function switchTab(id, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+async function refreshStats() {
+  const res = await apiFetch('/api/v1/stats');
+  const data = await res.json();
+  const t = data.telemetry;
+  document.getElementById('pill-docs').textContent = t.corpus_documents;
+  document.getElementById('pill-chunks').textContent = t.indexed_chunks;
+  document.getElementById('pill-hit').textContent = (t.effective_cache_hit_rate * 100).toFixed(1) + '%';
+  document.getElementById('pill-breaker').textContent = t.circuit_breaker_state;
+
+  const domSel = document.getElementById('q-domain');
+  if (domSel.options.length <= 1) {
+    data.domains.forEach(d => {
+      const opt = document.createElement('option');
+      opt.value = d; opt.textContent = d;
+      domSel.appendChild(opt);
+    });
+  }
+
+  const chips = document.getElementById('sample-chips');
+  if (chips.children.length === 0) {
+    data.sample_queries.slice(0, 10).forEach(s => {
+      const btn = document.createElement('button');
+      btn.className = 'chip';
+      btn.textContent = `[${s.category}] ${s.question.slice(0, 48)}...`;
+      btn.onclick = () => { document.getElementById('q-input').value = s.question; runQuery(); };
+      chips.appendChild(btn);
+    });
+  }
+}
+
+function renderQueryResponse(data) {
+  document.getElementById('answer-box').textContent = data.answer;
+  const tierClass = data.blocked_by_guardrail ? 'b-bad' : (data.cache_tier === 'miss' ? 'b-warn' : 'b-ok');
+  document.getElementById('resp-badges').innerHTML = `
+    <span class="badge ${tierClass}">Tier: ${data.cache_tier}</span>
+    <span class="badge b-info">Lexical Grounding Proxy: ${proxyPercent(data.lexical_grounding_proxy)}</span>
+    <span class="badge b-info">Heuristic score: ${data.confidence.toFixed(3)}</span>
+  `;
+  document.getElementById('metrics-strip').innerHTML = `
+    <span>Generation: <strong>${escapeHTML(data.generation_mode)}</strong></span>
+    <span>Latency: <strong>${data.latency_ms} ms</strong></span>
+    <span>Citations: <strong>${escapeHTML(data.citations.join(', ') || 'None')}</strong></span>
+    <span>PII Redacted: <strong>${data.pii_redacted}</strong></span>
+    <span>L2 Sim: <strong>${data.l2_similarity}</strong></span>
+  `;
+
+  const evDiv = document.getElementById('evidence-list');
+  if (!data.evidence || data.evidence.length === 0) {
+    evDiv.innerHTML = '<div class="chunk-item">No chunks passed security/confidence gates.</div>';
+  } else {
+    evDiv.innerHTML = data.evidence.map((ev, i) => `
+      <div class="chunk-item">
+        <div class="chunk-meta">
+          <strong>#${i + 1} [${escapeHTML(ev.doc_id)}] ${escapeHTML(ev.title)}</strong>
+          <span class="badge b-info">${escapeHTML(ev.domain)}</span>
+        </div>
+        <div style="color:var(--muted); font-size:0.78rem; margin-bottom:6px;">
+          Dense: <code>${ev.dense_score}</code> · BM25: <code>${ev.bm25_score}</code> · RRF: <code>${ev.rrf_score}</code> · Rerank: <code>${ev.rerank_score}</code>
+        </div>
+        <div>${escapeHTML(ev.parent_text.slice(0, 320))}...</div><small>Source: ${escapeHTML(ev.source || "synthetic / unspecified")} · Version: ${escapeHTML(ev.version || "unspecified")}</small>
+      </div>
+    `).join('');
+  }
+  refreshStats();
+}
+
+async function runQuery() {
+  const btn = document.getElementById('btn-run-query');
+  btn.disabled = true;
+  try {
+    const payload = {
+      query: document.getElementById('q-input').value,
+      retrieval_mode: document.getElementById('q-mode').value,
+      use_reranker: document.getElementById('q-rerank').value === 'true',
+      use_cache: document.getElementById('q-cache').value === 'true',
+      domain_filter: document.getElementById('q-domain').value || null,
+    };
+    const res = await apiFetch('/api/v1/query', {
+      method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    renderQueryResponse(data);
+  } finally { btn.disabled = false; }
+}
+
+async function runQueryStream() {
+  const ansBox = document.getElementById('answer-box');
+  ansBox.textContent = '';
+  const payload = {
+    query: document.getElementById('q-input').value,
+    retrieval_mode: document.getElementById('q-mode').value,
+    use_reranker: document.getElementById('q-rerank').value === 'true',
+    use_cache: document.getElementById('q-cache').value === 'true',
+    domain_filter: document.getElementById('q-domain').value || null,
+  };
+  const res = await apiFetch('/api/v1/query/stream', {
+    method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload)
+  });
+  const reader = res.body.getReader();
+  const dec = new TextDecoder();
+  let buf = '';
+  while (true) {
+    const {value, done} = await reader.read();
+    if (done) break;
+    buf += dec.decode(value, {stream: true});
+    const parts = buf.split('\n\n');
+    buf = parts.pop() || '';
+    for (const part of parts) {
+      const lines = part.split('\n');
+      const evLine = lines.find(l => l.startsWith('event: '));
+      const dataLine = lines.find(l => l.startsWith('data: '));
+      if (!evLine || !dataLine) continue;
+      const ev = evLine.slice(7).trim();
+      const obj = JSON.parse(dataLine.slice(6));
+      if (ev === 'delta') ansBox.textContent += obj.token;
+      if (ev === 'done') {
+        document.getElementById('resp-badges').innerHTML = `
+          <span class="badge b-info">Buffered SSE Replay</span>
+          <span class="badge b-info">Lexical Grounding Proxy: ${proxyPercent(obj.lexical_grounding_proxy)}</span>
+          <span class="badge b-info">Latency: ${obj.latency_ms} ms</span>
+        `;
+        refreshStats();
+      }
+    }
+  }
+}
+
+async function loadAblation(refresh = false) {
+  const res = await apiFetch('/api/v1/ablation?refresh=' + refresh);
+  const data = await res.json();
+  const sig = data.significance_flagship_vs_baseline;
+  document.getElementById('ablation-sig').textContent =
+    (data.report_matches_current_data === false ? 'Saved report uses different data. ' : '') + `Full pipeline vs Baseline: Recall@5 +${sig.recall_at_5.delta.toFixed(4)} (bootstrap fraction=${sig.recall_at_5.bootstrap_nonpositive_fraction}) | NDCG@5 +${sig.ndcg_at_5.delta.toFixed(4)} (bootstrap fraction=${sig.ndcg_at_5.bootstrap_nonpositive_fraction})`;
+
+  const tbody = document.getElementById('ablation-tbody');
+  tbody.innerHTML = data.experiments.map((exp, idx) => {
+    const m = exp.metrics;
+    const isBest = idx === data.experiments.length - 1;
+    return `<tr style="${isBest ? 'background:rgba(99,102,241,0.12); font-weight:600;' : ''}">
+      <td>${exp.spec.label}</td>
+      <td>${exp.num_chunks}</td>
+      <td>${metric(m.recall_at_3.mean, 3)}</td>
+      <td>${metric(m.recall_at_5.mean, 3)} <span style="color:var(--muted);font-size:0.78em;">[${metric(m.recall_at_5.ci_low, 2)}, ${metric(m.recall_at_5.ci_high, 2)}]</span></td>
+      <td>${metric(m.mrr.mean, 3)}</td>
+      <td>${metric(m.ndcg_at_5.mean, 3)} <span style="color:var(--muted);font-size:0.78em;">[${metric(m.ndcg_at_5.ci_low, 2)}, ${metric(m.ndcg_at_5.ci_high, 2)}]</span></td>
+      <td>${metric(m.lexical_grounding_proxy.mean, 3)}</td>
+      <td>${metric(m.refusal_accuracy.mean, 3)}</td>
+      <td>${metric(m.latency_ms.mean, 2)} ms</td>
+    </tr>`;
+  }).join('');
+
+  const cats = data.experiments[data.experiments.length - 1].by_category;
+  document.getElementById('category-cards').innerHTML = Object.entries(cats).map(([k, v]) => `
+    <div class="card" style="margin:0;">
+      <div class="kpi-label">${k} (${v.count})</div>
+      <div class="kpi-val">${((v.recall_at_5 ?? v.refusal_accuracy) * 100).toFixed(1)}%</div>
+      <div class="kpi-sub">${v.mrr !== undefined ? `MRR: ${v.mrr.toFixed(3)} · NDCG@5: ${v.ndcg_at_5.toFixed(3)}` : `Lexical Grounding Proxy: ${(v.lexical_grounding_proxy == null ? 'N/A' : v.lexical_grounding_proxy.toFixed(3))}`}</div>
+    </div>
+  `).join('');
+}
+
+function renderBenchmark(rep) {
+  const s = rep.summary;
+  const ol = rep.overall_latency_ms;
+  document.getElementById('bench-kpis').innerHTML = `
+    <div class="card"><div class="kpi-label">Completion Rate</div><div class="kpi-val">${(s.success_rate * 100).toFixed(2)}%</div><div class="kpi-sub">${s.succeeded.toLocaleString()} / ${rep.config.total_requests.toLocaleString()} OK</div></div>
+    <div class="card"><div class="kpi-label">Achieved Throughput</div><div class="kpi-val">${s.achieved_rps.toLocaleString()} RPS</div><div class="kpi-sub">Wall time: ${s.wall_time_seconds} s</div></div>
+    <div class="card"><div class="kpi-label">P50 / P99 Latency</div><div class="kpi-val">${ol.p50} ms</div><div class="kpi-sub">P99: ${ol.p99} ms · Peak Gate: ${s.peak_backend_concurrency}</div></div>
+    <div class="card"><div class="kpi-label">Cache + Singleflight Offload</div><div class="kpi-val">${(s.effective_cache_and_coalesce_rate * 100).toFixed(1)}%</div><div class="kpi-sub">Avoided backend executions in this experiment</div></div>
+  `;
+  document.getElementById('bench-tbody').innerHTML = Object.entries(rep.tier_breakdown).map(([tier, info]) => `
+    <tr>
+      <td><code>${tier}</code></td>
+      <td>${info.count.toLocaleString()}</td>
+      <td>${info.share_pct}%</td>
+      <td>${info.latency_ms.p50}</td>
+      <td>${info.latency_ms.p95}</td>
+      <td>${info.latency_ms.p99}</td>
+      <td style="width:180px;"><div class="bar-track"><div class="bar-fill" style="width:${info.share_pct}%"></div></div></td>
+    </tr>
+  `).join('');
+}
+
+async function loadBenchmark() {
+  const res = await apiFetch('/api/v1/benchmark');
+  renderBenchmark(await res.json());
+}
+
+async function runLiveBenchmark() {
+  const btn = document.getElementById('btn-bench');
+  btn.disabled = true;
+  btn.textContent = 'Running Experiment...';
+  try {
+    const n = parseInt(document.getElementById('bench-size').value, 10);
+    const res = await apiFetch('/api/v1/benchmark/run', {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({total_requests: n, simulated_llm_latency_ms: 2.0})
+    });
+    renderBenchmark(await res.json());
+    refreshStats();
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Run Synthetic Experiment';
+  }
+}
+
+function calcLittles() {
+  const L = parseFloat(document.getElementById('ll-users').value) || 10000;
+  const hit = Math.min(99, Math.max(0, parseFloat(document.getElementById('ll-hit').value) || 75)) / 100;
+  const coldMs = parseFloat(document.getElementById('ll-cold').value) || 320;
+  const cacheMs = 2.0;
+  const blendedW = (hit * cacheMs + (1 - hit) * coldMs) / 1000.0;
+  const coldOnlyW = coldMs / 1000.0;
+  const lambdaBlended = L / coldOnlyW;
+  const coldRequestsPerSec = lambdaBlended * (1 - hit);
+  const coldConcurrentSlots = coldRequestsPerSec * coldOnlyW;
+  document.getElementById('ll-output').textContent =
+    `Blended Latency W = ${(blendedW * 1000).toFixed(1)} ms (vs ${coldMs} ms uncached)\n` +
+    `Fixed offered throughput: ${Math.round(lambdaBlended).toLocaleString()} RPS; mean in-flight after caching: ${Math.round(lambdaBlended * blendedW)}\n` +
+    `Active Cold LLM Slots Needed: ${Math.round(coldConcurrentSlots).toLocaleString()} slots (vs ${L.toLocaleString()} without cache -> ${((1 - coldConcurrentSlots / L) * 100).toFixed(1)}% fewer cold slots; model assumptions apply)`;
+}
+
+refreshStats();
+loadAblation(false);
+loadBenchmark();
+refreshDocuments();
+calcLittles();
+</script>
+</body>
+</html>

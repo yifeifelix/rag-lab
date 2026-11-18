@@ -1,0 +1,1251 @@
+{
+  "method": "isotonic_group_cross_fit",
+  "split": "dev",
+  "model": {
+    "x": [
+      0.5344453499430701,
+      0.6311125168535444,
+      0.6315137094921536,
+      0.6319666335317824,
+      0.6653039587868584,
+      0.8500911129845514
+    ],
+    "y": [
+      0.6333333333333333,
+      0.6333333333333333,
+      0.8571428571428571,
+      0.8571428571428571,
+      1.0,
+      1.0
+    ],
+    "threshold": 1.0,
+    "signature": "9220f91f8e70545a84c15d4bf555e39163efab8280054267aa12d1a13b9340b1",
+    "corpus_revision": "1a1cd4cf243084144d991f6c463dc94e967b1d9d750107ac062a519af0933083"
+  },
+  "target": "all_required_retrieved_evidence_present; not factual answer correctness",
+  "dev_sha256": "409daefb94cd49641beb464ec9c1b5758c9ebbb3ee708d1e32db404cff751bfc",
+  "questions": 82,
+  "groups": 10,
+  "oof_brier_score": 0.1031282525828659,
+  "oof_selected_operating_point": {
+    "threshold": 1.0,
+    "cost": 27,
+    "unsupported_accepts": 1,
+    "false_refusals": 23,
+    "coverage": 0.5853658536585366
+  },
+  "threshold_tradeoffs": [
+    {
+      "threshold": 0.0,
+      "cost": 48,
+      "unsupported_accepts": 12,
+      "false_refusals": 0,
+      "coverage": 1.0
+    },
+    {
+      "threshold": 0.6190476190476191,
+      "cost": 48,
+      "unsupported_accepts": 12,
+      "false_refusals": 0,
+      "coverage": 1.0
+    },
+    {
+      "threshold": 0.625,
+      "cost": 46,
+      "unsupported_accepts": 10,
+      "false_refusals": 6,
+      "coverage": 0.9024390243902439
+    },
+    {
+      "threshold": 0.64,
+      "cost": 42,
+      "unsupported_accepts": 8,
+      "false_refusals": 10,
+      "coverage": 0.8292682926829268
+    },
+    {
+      "threshold": 0.832448788301405,
+      "cost": 27,
+      "unsupported_accepts": 2,
+      "false_refusals": 19,
+      "coverage": 0.6463414634146342
+    },
+    {
+      "threshold": 0.8333333333333334,
+      "cost": 28,
+      "unsupported_accepts": 2,
+      "false_refusals": 20,
+      "coverage": 0.6341463414634146
+    },
+    {
+      "threshold": 0.8603323551414435,
+      "cost": 31,
+      "unsupported_accepts": 2,
+      "false_refusals": 23,
+      "coverage": 0.5975609756097561
+    },
+    {
+      "threshold": 1.0,
+      "cost": 27,
+      "unsupported_accepts": 1,
+      "false_refusals": 23,
+      "coverage": 0.5853658536585366
+    },
+    {
+      "threshold": 1.000001,
+      "cost": 70,
+      "unsupported_accepts": 0,
+      "false_refusals": 70,
+      "coverage": 0.0
+    }
+  ],
+  "label_status": "agent_authored_pending_independent_human_review",
+  "observations": [
+    {
+      "score": 0.6315752721495098,
+      "supported": 1,
+      "group_id": "policy-cedar",
+      "question_id": "V2-DEV-001",
+      "ranked_doc_ids": [
+        "cedar.eu.restore.v2",
+        "cedar.eu.restore.v1",
+        "cedar.eu.export.v2",
+        "cedar.us.restore.v2",
+        "cedar.us.restore.v1"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.777813466389974,
+      "supported": 1,
+      "group_id": "policy-cedar",
+      "question_id": "V2-DEV-002",
+      "ranked_doc_ids": [
+        "cedar.eu.restore.v2",
+        "cedar.us.restore.v2",
+        "cedar.eu.restore.v1",
+        "cedar.us.restore.v1",
+        "aspen.eu.restore.v2"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.574867706450205,
+      "supported": 1,
+      "group_id": "policy-cedar",
+      "question_id": "V2-DEV-003",
+      "ranked_doc_ids": [
+        "cedar.eu.export.v2",
+        "cedar.eu.restore.v2",
+        "cedar.eu.restore.v1",
+        "cedar.us.export.v2",
+        "cedar.us.restore.v2"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.8202319763955617,
+      "supported": 1,
+      "group_id": "policy-cedar",
+      "question_id": "V2-DEV-004",
+      "ranked_doc_ids": [
+        "cedar.eu.export.v2",
+        "cedar.us.export.v2",
+        "oak.eu.export.v2",
+        "willow.eu.export.v2",
+        "elm.eu.export.v2"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.5955159650908576,
+      "supported": 1,
+      "group_id": "policy-cedar",
+      "question_id": "V2-DEV-005",
+      "ranked_doc_ids": [
+        "cedar.us.restore.v2",
+        "cedar.us.restore.v1",
+        "cedar.eu.restore.v2",
+        "cedar.eu.restore.v1",
+        "cedar.us.export.v2"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.8499865604771508,
+      "supported": 1,
+      "group_id": "policy-cedar",
+      "question_id": "V2-DEV-006",
+      "ranked_doc_ids": [
+        "cedar.us.restore.v2",
+        "cedar.us.restore.v1",
+        "cedar.eu.restore.v2",
+        "cedar.eu.restore.v1",
+        "spruce.us.restore.v2"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.5358299711393931,
+      "supported": 1,
+      "group_id": "policy-cedar",
+      "question_id": "V2-DEV-007",
+      "ranked_doc_ids": [
+        "cedar.us.export.v2",
+        "cedar.us.restore.v2",
+        "cedar.us.restore.v1",
+        "cedar.eu.export.v2",
+        "cedar.eu.restore.v1"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.7804980539140247,
+      "supported": 1,
+      "group_id": "policy-cedar",
+      "question_id": "V2-DEV-008",
+      "ranked_doc_ids": [
+        "cedar.us.export.v2",
+        "cedar.eu.export.v2",
+        "spruce.us.export.v2",
+        "birch.us.export.v2",
+        "willow.us.export.v2"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.8089592401186625,
+      "supported": 1,
+      "group_id": "policy-cedar",
+      "question_id": "V2-DEV-009",
+      "ranked_doc_ids": [
+        "cedar.eu.export.v2",
+        "cedar.eu.restore.v2",
+        "cedar.eu.restore.v1",
+        "cedar.us.export.v2",
+        "cedar.us.restore.v2"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.665414379371537,
+      "supported": 1,
+      "group_id": "policy-cedar",
+      "question_id": "V2-DEV-010",
+      "ranked_doc_ids": [
+        "cedar.us.restore.v1",
+        "cedar.us.restore.v2",
+        "cedar.eu.restore.v1",
+        "cedar.eu.restore.v2",
+        "spruce.eu.restore.v1"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.8176891658041212,
+      "supported": 1,
+      "group_id": "policy-cedar",
+      "question_id": "V2-DEV-011",
+      "ranked_doc_ids": [
+        "cedar.eu.restore.v2",
+        "cedar.eu.restore.v1",
+        "cedar.eu.export.v2",
+        "cedar.us.restore.v2",
+        "cedar.us.restore.v1"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.6298524955246183,
+      "supported": 0,
+      "group_id": "policy-cedar",
+      "question_id": "V2-DEV-012",
+      "ranked_doc_ids": [
+        "cedar.us.restore.v2",
+        "cedar.us.export.v2",
+        "cedar.eu.restore.v2",
+        "cedar.eu.export.v2",
+        "cedar.us.restore.v1"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.592121363348431,
+      "supported": 0,
+      "group_id": "policy-cedar",
+      "question_id": "V2-DEV-013",
+      "ranked_doc_ids": [
+        "cedar.eu.restore.v2",
+        "cedar.eu.export.v2",
+        "cedar.eu.restore.v1",
+        "cedar.us.restore.v2",
+        "cedar.us.export.v2"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.6315950906938976,
+      "supported": 1,
+      "group_id": "policy-birch",
+      "question_id": "V2-DEV-014",
+      "ranked_doc_ids": [
+        "birch.eu.restore.v2",
+        "birch.eu.restore.v1",
+        "birch.eu.export.v2",
+        "birch.us.restore.v2",
+        "birch.us.restore.v1"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.7778545041879018,
+      "supported": 1,
+      "group_id": "policy-birch",
+      "question_id": "V2-DEV-015",
+      "ranked_doc_ids": [
+        "birch.eu.restore.v2",
+        "birch.us.restore.v2",
+        "birch.eu.restore.v1",
+        "birch.us.restore.v1",
+        "aspen.eu.restore.v2"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.5761622746312429,
+      "supported": 1,
+      "group_id": "policy-birch",
+      "question_id": "V2-DEV-016",
+      "ranked_doc_ids": [
+        "birch.eu.export.v2",
+        "birch.eu.restore.v2",
+        "birch.eu.restore.v1",
+        "birch.us.export.v2",
+        "birch.us.restore.v2"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.8205815218743824,
+      "supported": 1,
+      "group_id": "policy-birch",
+      "question_id": "V2-DEV-017",
+      "ranked_doc_ids": [
+        "birch.eu.export.v2",
+        "birch.us.export.v2",
+        "oak.eu.export.v2",
+        "elm.eu.export.v2",
+        "willow.eu.export.v2"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.5996683047877417,
+      "supported": 1,
+      "group_id": "policy-birch",
+      "question_id": "V2-DEV-018",
+      "ranked_doc_ids": [
+        "birch.us.restore.v2",
+        "birch.us.restore.v1",
+        "birch.eu.restore.v1",
+        "birch.eu.restore.v2",
+        "birch.us.export.v2"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.8500911129845514,
+      "supported": 1,
+      "group_id": "policy-birch",
+      "question_id": "V2-DEV-019",
+      "ranked_doc_ids": [
+        "birch.us.restore.v2",
+        "birch.us.restore.v1",
+        "birch.eu.restore.v2",
+        "birch.eu.restore.v1",
+        "spruce.us.restore.v2"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.5400557646202662,
+      "supported": 1,
+      "group_id": "policy-birch",
+      "question_id": "V2-DEV-020",
+      "ranked_doc_ids": [
+        "birch.us.export.v2",
+        "birch.us.restore.v2",
+        "birch.us.restore.v1",
+        "birch.eu.export.v2",
+        "birch.eu.restore.v1"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.7985875152406239,
+      "supported": 1,
+      "group_id": "policy-birch",
+      "question_id": "V2-DEV-021",
+      "ranked_doc_ids": [
+        "birch.us.export.v2",
+        "birch.eu.export.v2",
+        "spruce.us.export.v2",
+        "pine.us.export.v2",
+        "aspen.us.export.v2"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.8101925198237101,
+      "supported": 1,
+      "group_id": "policy-birch",
+      "question_id": "V2-DEV-022",
+      "ranked_doc_ids": [
+        "birch.eu.export.v2",
+        "birch.eu.restore.v2",
+        "birch.us.export.v2",
+        "birch.eu.restore.v1",
+        "birch.us.restore.v2"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.6653039587868584,
+      "supported": 1,
+      "group_id": "policy-birch",
+      "question_id": "V2-DEV-023",
+      "ranked_doc_ids": [
+        "birch.us.restore.v1",
+        "birch.us.restore.v2",
+        "birch.eu.restore.v1",
+        "birch.eu.restore.v2",
+        "aspen.eu.restore.v1"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.817790875169966,
+      "supported": 1,
+      "group_id": "policy-birch",
+      "question_id": "V2-DEV-024",
+      "ranked_doc_ids": [
+        "birch.eu.restore.v2",
+        "birch.eu.restore.v1",
+        "birch.eu.export.v2",
+        "birch.us.restore.v2",
+        "birch.us.restore.v1"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.6319666335317824,
+      "supported": 0,
+      "group_id": "policy-birch",
+      "question_id": "V2-DEV-025",
+      "ranked_doc_ids": [
+        "birch.us.restore.v2",
+        "birch.us.export.v2",
+        "birch.eu.restore.v2",
+        "birch.eu.export.v2",
+        "birch.us.restore.v1"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.5920876509613461,
+      "supported": 0,
+      "group_id": "policy-birch",
+      "question_id": "V2-DEV-026",
+      "ranked_doc_ids": [
+        "birch.eu.restore.v2",
+        "birch.eu.export.v2",
+        "birch.eu.restore.v1",
+        "birch.us.restore.v2",
+        "birch.us.export.v2"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.6315137094921536,
+      "supported": 1,
+      "group_id": "policy-maple",
+      "question_id": "V2-DEV-027",
+      "ranked_doc_ids": [
+        "maple.eu.restore.v2",
+        "maple.eu.restore.v1",
+        "maple.eu.export.v2",
+        "maple.us.restore.v2",
+        "maple.us.restore.v1"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.7777297010024389,
+      "supported": 1,
+      "group_id": "policy-maple",
+      "question_id": "V2-DEV-028",
+      "ranked_doc_ids": [
+        "maple.eu.restore.v2",
+        "maple.us.restore.v2",
+        "maple.eu.restore.v1",
+        "maple.us.restore.v1",
+        "beech.eu.restore.v2"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.5746667881333638,
+      "supported": 1,
+      "group_id": "policy-maple",
+      "question_id": "V2-DEV-029",
+      "ranked_doc_ids": [
+        "maple.eu.export.v2",
+        "maple.eu.restore.v2",
+        "maple.eu.restore.v1",
+        "maple.us.export.v2",
+        "maple.us.restore.v2"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.8199972294625781,
+      "supported": 1,
+      "group_id": "policy-maple",
+      "question_id": "V2-DEV-030",
+      "ranked_doc_ids": [
+        "maple.eu.export.v2",
+        "maple.us.export.v2",
+        "alder.eu.export.v2",
+        "oak.eu.export.v2",
+        "willow.eu.export.v2"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.5948171920246548,
+      "supported": 1,
+      "group_id": "policy-maple",
+      "question_id": "V2-DEV-031",
+      "ranked_doc_ids": [
+        "maple.us.restore.v2",
+        "maple.us.restore.v1",
+        "maple.eu.restore.v2",
+        "maple.eu.restore.v1",
+        "maple.us.export.v2"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.8499219192398919,
+      "supported": 1,
+      "group_id": "policy-maple",
+      "question_id": "V2-DEV-032",
+      "ranked_doc_ids": [
+        "maple.us.restore.v2",
+        "maple.us.restore.v1",
+        "maple.eu.restore.v2",
+        "maple.eu.restore.v1",
+        "alder.us.restore.v2"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.5344453499430701,
+      "supported": 1,
+      "group_id": "policy-maple",
+      "question_id": "V2-DEV-033",
+      "ranked_doc_ids": [
+        "maple.us.export.v2",
+        "maple.us.restore.v2",
+        "maple.us.restore.v1",
+        "maple.eu.export.v2",
+        "maple.eu.restore.v1"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.7766616903600239,
+      "supported": 1,
+      "group_id": "policy-maple",
+      "question_id": "V2-DEV-034",
+      "ranked_doc_ids": [
+        "maple.us.export.v2",
+        "maple.eu.export.v2",
+        "spruce.us.export.v2",
+        "birch.us.export.v2",
+        "alder.us.export.v2"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.8088233862320582,
+      "supported": 1,
+      "group_id": "policy-maple",
+      "question_id": "V2-DEV-035",
+      "ranked_doc_ids": [
+        "maple.eu.export.v2",
+        "maple.eu.restore.v2",
+        "maple.eu.restore.v1",
+        "maple.us.export.v2",
+        "maple.us.restore.v2"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.6654062509536743,
+      "supported": 1,
+      "group_id": "policy-maple",
+      "question_id": "V2-DEV-036",
+      "ranked_doc_ids": [
+        "maple.us.restore.v1",
+        "maple.us.restore.v2",
+        "maple.eu.restore.v1",
+        "maple.eu.restore.v2",
+        "alder.eu.restore.v1"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.8176274213525985,
+      "supported": 1,
+      "group_id": "policy-maple",
+      "question_id": "V2-DEV-037",
+      "ranked_doc_ids": [
+        "maple.eu.restore.v2",
+        "maple.eu.restore.v1",
+        "maple.eu.export.v2",
+        "maple.us.restore.v2",
+        "maple.us.restore.v1"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.6294915268156264,
+      "supported": 0,
+      "group_id": "policy-maple",
+      "question_id": "V2-DEV-038",
+      "ranked_doc_ids": [
+        "maple.us.restore.v2",
+        "maple.us.export.v2",
+        "maple.eu.restore.v2",
+        "maple.eu.export.v2",
+        "maple.us.restore.v1"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.5920749253696865,
+      "supported": 0,
+      "group_id": "policy-maple",
+      "question_id": "V2-DEV-039",
+      "ranked_doc_ids": [
+        "maple.eu.restore.v2",
+        "maple.eu.export.v2",
+        "maple.eu.restore.v1",
+        "maple.us.restore.v2",
+        "maple.us.export.v2"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.6316402143902249,
+      "supported": 1,
+      "group_id": "policy-oak",
+      "question_id": "V2-DEV-040",
+      "ranked_doc_ids": [
+        "oak.eu.restore.v2",
+        "oak.eu.restore.v1",
+        "oak.eu.export.v2",
+        "oak.us.restore.v2",
+        "oak.us.restore.v1"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.7778298010428747,
+      "supported": 1,
+      "group_id": "policy-oak",
+      "question_id": "V2-DEV-041",
+      "ranked_doc_ids": [
+        "oak.eu.restore.v2",
+        "oak.us.restore.v2",
+        "oak.eu.restore.v1",
+        "oak.us.restore.v1",
+        "alder.eu.restore.v2"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.5753889967524816,
+      "supported": 1,
+      "group_id": "policy-oak",
+      "question_id": "V2-DEV-042",
+      "ranked_doc_ids": [
+        "oak.eu.export.v2",
+        "oak.eu.restore.v2",
+        "oak.eu.restore.v1",
+        "oak.us.export.v2",
+        "oak.us.restore.v2"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.8207733266410373,
+      "supported": 1,
+      "group_id": "policy-oak",
+      "question_id": "V2-DEV-043",
+      "ranked_doc_ids": [
+        "oak.eu.export.v2",
+        "oak.us.export.v2",
+        "willow.eu.export.v2",
+        "alder.eu.export.v2",
+        "elm.eu.export.v2"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.5967754022942648,
+      "supported": 1,
+      "group_id": "policy-oak",
+      "question_id": "V2-DEV-044",
+      "ranked_doc_ids": [
+        "oak.us.restore.v2",
+        "oak.us.restore.v1",
+        "oak.eu.restore.v1",
+        "oak.eu.restore.v2",
+        "oak.us.export.v2"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.850007669462098,
+      "supported": 1,
+      "group_id": "policy-oak",
+      "question_id": "V2-DEV-045",
+      "ranked_doc_ids": [
+        "oak.us.restore.v2",
+        "oak.us.restore.v1",
+        "oak.eu.restore.v2",
+        "oak.eu.restore.v1",
+        "alder.us.restore.v2"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.5370614395255133,
+      "supported": 1,
+      "group_id": "policy-oak",
+      "question_id": "V2-DEV-046",
+      "ranked_doc_ids": [
+        "oak.us.export.v2",
+        "oak.us.restore.v2",
+        "oak.us.restore.v1",
+        "oak.eu.export.v2",
+        "oak.eu.restore.v1"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.7873089336213612,
+      "supported": 1,
+      "group_id": "policy-oak",
+      "question_id": "V2-DEV-047",
+      "ranked_doc_ids": [
+        "oak.us.export.v2",
+        "oak.eu.export.v2",
+        "spruce.us.export.v2",
+        "willow.us.export.v2",
+        "aspen.us.export.v2"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.8094532493750254,
+      "supported": 1,
+      "group_id": "policy-oak",
+      "question_id": "V2-DEV-048",
+      "ranked_doc_ids": [
+        "oak.eu.export.v2",
+        "oak.eu.restore.v2",
+        "oak.eu.restore.v1",
+        "oak.us.export.v2",
+        "oak.us.restore.v2"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.6654909074306488,
+      "supported": 1,
+      "group_id": "policy-oak",
+      "question_id": "V2-DEV-049",
+      "ranked_doc_ids": [
+        "oak.us.restore.v1",
+        "oak.us.restore.v2",
+        "oak.eu.restore.v1",
+        "oak.eu.restore.v2",
+        "spruce.eu.restore.v1"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.8177496764394971,
+      "supported": 1,
+      "group_id": "policy-oak",
+      "question_id": "V2-DEV-050",
+      "ranked_doc_ids": [
+        "oak.eu.restore.v2",
+        "oak.eu.restore.v1",
+        "oak.eu.export.v2",
+        "oak.us.restore.v2",
+        "oak.us.restore.v1"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.630419431063864,
+      "supported": 0,
+      "group_id": "policy-oak",
+      "question_id": "V2-DEV-051",
+      "ranked_doc_ids": [
+        "oak.us.restore.v2",
+        "oak.us.export.v2",
+        "oak.eu.restore.v2",
+        "oak.eu.export.v2",
+        "oak.us.restore.v1"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.5921460217899747,
+      "supported": 0,
+      "group_id": "policy-oak",
+      "question_id": "V2-DEV-052",
+      "ranked_doc_ids": [
+        "oak.eu.restore.v2",
+        "oak.eu.export.v2",
+        "oak.eu.restore.v1",
+        "oak.us.restore.v2",
+        "oak.us.export.v2"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.6315621501869625,
+      "supported": 1,
+      "group_id": "policy-pine",
+      "question_id": "V2-DEV-053",
+      "ranked_doc_ids": [
+        "pine.eu.restore.v2",
+        "pine.eu.restore.v1",
+        "pine.eu.export.v2",
+        "pine.us.restore.v2",
+        "pine.us.restore.v1"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.7778200646241507,
+      "supported": 1,
+      "group_id": "policy-pine",
+      "question_id": "V2-DEV-054",
+      "ranked_doc_ids": [
+        "pine.eu.restore.v2",
+        "pine.us.restore.v2",
+        "pine.eu.restore.v1",
+        "pine.us.restore.v1",
+        "birch.eu.restore.v2"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.5756524373614599,
+      "supported": 1,
+      "group_id": "policy-pine",
+      "question_id": "V2-DEV-055",
+      "ranked_doc_ids": [
+        "pine.eu.export.v2",
+        "pine.eu.restore.v2",
+        "pine.eu.restore.v1",
+        "pine.us.export.v2",
+        "pine.us.restore.v2"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.820289134269669,
+      "supported": 1,
+      "group_id": "policy-pine",
+      "question_id": "V2-DEV-056",
+      "ranked_doc_ids": [
+        "pine.eu.export.v2",
+        "pine.us.export.v2",
+        "alder.eu.export.v2",
+        "oak.eu.export.v2",
+        "cedar.eu.export.v2"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.5980749355422126,
+      "supported": 1,
+      "group_id": "policy-pine",
+      "question_id": "V2-DEV-057",
+      "ranked_doc_ids": [
+        "pine.us.restore.v2",
+        "pine.us.restore.v1",
+        "pine.eu.restore.v1",
+        "pine.eu.restore.v2",
+        "pine.us.export.v2"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.850026927722825,
+      "supported": 1,
+      "group_id": "policy-pine",
+      "question_id": "V2-DEV-058",
+      "ranked_doc_ids": [
+        "pine.us.restore.v2",
+        "pine.us.restore.v1",
+        "pine.eu.restore.v2",
+        "pine.eu.restore.v1",
+        "willow.us.restore.v2"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.5382766292208716,
+      "supported": 1,
+      "group_id": "policy-pine",
+      "question_id": "V2-DEV-059",
+      "ranked_doc_ids": [
+        "pine.us.export.v2",
+        "pine.us.restore.v2",
+        "pine.us.restore.v1",
+        "pine.eu.export.v2",
+        "pine.eu.restore.v1"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.7919475727138066,
+      "supported": 1,
+      "group_id": "policy-pine",
+      "question_id": "V2-DEV-060",
+      "ranked_doc_ids": [
+        "pine.us.export.v2",
+        "pine.eu.export.v2",
+        "spruce.us.export.v2",
+        "aspen.us.export.v2",
+        "willow.us.export.v2"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.8097421501080195,
+      "supported": 1,
+      "group_id": "policy-pine",
+      "question_id": "V2-DEV-061",
+      "ranked_doc_ids": [
+        "pine.eu.export.v2",
+        "pine.eu.restore.v2",
+        "pine.eu.restore.v1",
+        "pine.us.export.v2",
+        "pine.us.restore.v2"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.6654001802206039,
+      "supported": 1,
+      "group_id": "policy-pine",
+      "question_id": "V2-DEV-062",
+      "ranked_doc_ids": [
+        "pine.us.restore.v1",
+        "pine.us.restore.v2",
+        "pine.eu.restore.v1",
+        "pine.eu.restore.v2",
+        "spruce.eu.restore.v1"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.8177694174978468,
+      "supported": 1,
+      "group_id": "policy-pine",
+      "question_id": "V2-DEV-063",
+      "ranked_doc_ids": [
+        "pine.eu.restore.v2",
+        "pine.eu.restore.v1",
+        "pine.eu.export.v2",
+        "pine.us.restore.v2",
+        "pine.us.restore.v1"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.6311125168535444,
+      "supported": 0,
+      "group_id": "policy-pine",
+      "question_id": "V2-DEV-064",
+      "ranked_doc_ids": [
+        "pine.us.restore.v2",
+        "pine.us.export.v2",
+        "pine.eu.restore.v2",
+        "pine.eu.export.v2",
+        "pine.us.restore.v1"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.5921042568153805,
+      "supported": 0,
+      "group_id": "policy-pine",
+      "question_id": "V2-DEV-065",
+      "ranked_doc_ids": [
+        "pine.eu.restore.v2",
+        "pine.eu.export.v2",
+        "pine.eu.restore.v1",
+        "pine.us.restore.v2",
+        "pine.us.export.v2"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.6315154201454586,
+      "supported": 1,
+      "group_id": "policy-elm",
+      "question_id": "V2-DEV-066",
+      "ranked_doc_ids": [
+        "elm.eu.restore.v2",
+        "elm.eu.restore.v1",
+        "elm.eu.export.v2",
+        "elm.us.restore.v2",
+        "elm.us.restore.v1"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.7777214129765828,
+      "supported": 1,
+      "group_id": "policy-elm",
+      "question_id": "V2-DEV-067",
+      "ranked_doc_ids": [
+        "elm.eu.restore.v2",
+        "elm.us.restore.v2",
+        "elm.eu.restore.v1",
+        "elm.us.restore.v1",
+        "hazel.eu.restore.v2"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.5748976428830435,
+      "supported": 1,
+      "group_id": "policy-elm",
+      "question_id": "V2-DEV-068",
+      "ranked_doc_ids": [
+        "elm.eu.export.v2",
+        "elm.eu.restore.v2",
+        "elm.eu.restore.v1",
+        "elm.us.export.v2",
+        "elm.us.restore.v2"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.8201802634057545,
+      "supported": 1,
+      "group_id": "policy-elm",
+      "question_id": "V2-DEV-069",
+      "ranked_doc_ids": [
+        "elm.eu.export.v2",
+        "elm.us.export.v2",
+        "spruce.eu.export.v2",
+        "oak.eu.export.v2",
+        "alder.eu.export.v2"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.5951238370603985,
+      "supported": 1,
+      "group_id": "policy-elm",
+      "question_id": "V2-DEV-070",
+      "ranked_doc_ids": [
+        "elm.us.restore.v2",
+        "elm.us.restore.v1",
+        "elm.eu.restore.v2",
+        "elm.eu.restore.v1",
+        "elm.us.export.v2"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.8499222411049737,
+      "supported": 1,
+      "group_id": "policy-elm",
+      "question_id": "V2-DEV-071",
+      "ranked_doc_ids": [
+        "elm.us.restore.v2",
+        "elm.us.restore.v1",
+        "elm.eu.restore.v2",
+        "elm.eu.restore.v1",
+        "aspen.us.restore.v2"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.5351452992075965,
+      "supported": 1,
+      "group_id": "policy-elm",
+      "question_id": "V2-DEV-072",
+      "ranked_doc_ids": [
+        "elm.us.export.v2",
+        "elm.us.restore.v2",
+        "elm.us.restore.v1",
+        "elm.eu.export.v2",
+        "elm.eu.restore.v1"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.7787117027101063,
+      "supported": 1,
+      "group_id": "policy-elm",
+      "question_id": "V2-DEV-073",
+      "ranked_doc_ids": [
+        "elm.us.export.v2",
+        "elm.eu.export.v2",
+        "aspen.us.export.v2",
+        "willow.us.export.v2",
+        "spruce.us.export.v2"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.8090915534893671,
+      "supported": 1,
+      "group_id": "policy-elm",
+      "question_id": "V2-DEV-074",
+      "ranked_doc_ids": [
+        "elm.eu.export.v2",
+        "elm.eu.restore.v2",
+        "elm.eu.restore.v1",
+        "elm.us.export.v2",
+        "elm.us.restore.v2"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.6655174851417541,
+      "supported": 1,
+      "group_id": "policy-elm",
+      "question_id": "V2-DEV-075",
+      "ranked_doc_ids": [
+        "elm.us.restore.v1",
+        "elm.us.restore.v2",
+        "elm.eu.restore.v1",
+        "elm.eu.restore.v2",
+        "pine.eu.restore.v1"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.8176285210582945,
+      "supported": 1,
+      "group_id": "policy-elm",
+      "question_id": "V2-DEV-076",
+      "ranked_doc_ids": [
+        "elm.eu.restore.v2",
+        "elm.eu.restore.v1",
+        "elm.eu.export.v2",
+        "elm.us.restore.v2",
+        "elm.us.restore.v1"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.6297800639602873,
+      "supported": 0,
+      "group_id": "policy-elm",
+      "question_id": "V2-DEV-077",
+      "ranked_doc_ids": [
+        "elm.us.restore.v2",
+        "elm.us.export.v2",
+        "elm.eu.restore.v2",
+        "elm.eu.export.v2",
+        "elm.us.restore.v1"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.5920871085590786,
+      "supported": 0,
+      "group_id": "policy-elm",
+      "question_id": "V2-DEV-078",
+      "ranked_doc_ids": [
+        "elm.eu.restore.v2",
+        "elm.eu.export.v2",
+        "elm.eu.restore.v1",
+        "elm.us.restore.v2",
+        "elm.us.export.v2"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.7640670269727707,
+      "supported": 1,
+      "group_id": "python-PY-GATHER",
+      "question_id": "V2-DEV-079",
+      "ranked_doc_ids": [
+        "PY-GATHER",
+        "PY-SHIELD",
+        "PY-QUEUE",
+        "PY-WAIT"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.8172650989558962,
+      "supported": 1,
+      "group_id": "python-PY-WAIT-FOR",
+      "question_id": "V2-DEV-080",
+      "ranked_doc_ids": [
+        "PY-WAIT-FOR",
+        "PY-WAIT",
+        "PY-SHIELD",
+        "PY-TO-THREAD",
+        "PY-SEMAPHORE"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.6294783857133653,
+      "supported": 1,
+      "group_id": "python-PY-WAIT",
+      "question_id": "V2-DEV-081",
+      "ranked_doc_ids": [
+        "PY-WAIT",
+        "PY-GATHER",
+        "PY-WAIT-FOR",
+        "PY-TO-THREAD"
+      ],
+      "router_status": "DISABLED"
+    },
+    {
+      "score": 0.6752324498362011,
+      "supported": 1,
+      "group_id": "python-PY-SEMAPHORE",
+      "question_id": "V2-DEV-082",
+      "ranked_doc_ids": [
+        "PY-SEMAPHORE",
+        "PY-TO-THREAD",
+        "PY-WAIT-FOR",
+        "PY-QUEUE",
+        "PY-SHIELD"
+      ],
+      "router_status": "DISABLED"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+Resolved 1 package in 16ms
+   Building enterprise-rag-platform @ file:///Volumes/Data/Projects/Rag
+      Built enterprise-rag-platform @ file:///Volumes/Data/Projects/Rag
+Prepared 1 package in 240ms
+Uninstalled 1 package in 0.66ms
+Installed 1 package in 2ms
+ - enterprise-rag-platform==1.0.0 (from file:///Volumes/Data/Projects/Rag)
+ + enterprise-rag-platform==1.1.0 (from file:///Volumes/Data/Projects/Rag)

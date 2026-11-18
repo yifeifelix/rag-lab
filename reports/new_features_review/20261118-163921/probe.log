@@ -1,0 +1,113 @@
+{
+  "source_root": "/Volumes/Data/Projects/Rag/reports/new_features_review/20261118-163921/snapshot/src/rag_platform",
+  "scope": "frozen snapshot; local generation; no network or paid models",
+  "graph_when_disabled": {
+    "enable_graph_rag": false,
+    "constructor_calls": 1,
+    "construction_ms": [
+      120.58495776727796
+    ],
+    "entities": 2249,
+    "directed_neighbor_entries": 327014,
+    "ordinary_prose_entities": [
+      "and",
+      "ordinary",
+      "prose",
+      "the"
+    ]
+  },
+  "contextual_header": {
+    "indexed_chunks": 281,
+    "chunks_with_enricher_metadata": 0
+  },
+  "incorrect_router_cases": [
+    {
+      "query": "SOC2-CC6.7 zxqnonce0 zxqnonce1 zxqnonce2 zxqnonce3 zxqnonce4 zxqnonce5 zxqnonce6 zxqnonce7",
+      "crag_status": "INCORRECT",
+      "refused": false,
+      "confidence": 0.505,
+      "citations": [
+        "SEC-COMP-001",
+        "CLOUD-ARCH-010",
+        "CLOUD-ARCH-004"
+      ]
+    }
+  ],
+  "feature_toggle_cache": {
+    "first_status": "DISABLED",
+    "flag_after_toggle": true,
+    "cached_status": "DISABLED",
+    "cache_tier": "l1_exact",
+    "uncached_status": "CORRECT",
+    "note": "Programmatic hot configuration change; UI currently does not expose these flags"
+  },
+  "empty_tuner": {
+    "exception": "ZeroDivisionError",
+    "message": "division by zero"
+  },
+  "natural_compression": [
+    {
+      "question": "What does error code ERR_QDRANT_5032 indicate and how is it recovered?",
+      "ratio": 0.4582,
+      "lexical_grounding_proxy": 0.747
+    }
+  ],
+  "empty_tuner_http": {
+    "status": 500,
+    "body": "Internal Server Error"
+  },
+  "seven_architectures": [
+    {
+      "name": "1_fixed_dense_baseline",
+      "recall_at_5": 0.8971,
+      "mrr": 0.8922,
+      "ndcg_at_5": 0.8786,
+      "keyword_coverage": 0.5221
+    },
+    {
+      "name": "2_recursive_dense",
+      "recall_at_5": 0.902,
+      "mrr": 0.8578,
+      "ndcg_at_5": 0.8622,
+      "keyword_coverage": 0.5368
+    },
+    {
+      "name": "3_recursive_bm25",
+      "recall_at_5": 0.9559,
+      "mrr": 0.951,
+      "ndcg_at_5": 0.9398,
+      "keyword_coverage": 0.5588
+    },
+    {
+      "name": "4_semantic_hybrid_rrf",
+      "recall_at_5": 0.9706,
+      "mrr": 0.8995,
+      "ndcg_at_5": 0.9103,
+      "keyword_coverage": 0.6618
+    },
+    {
+      "name": "5_parent_child_hybrid_rrf",
+      "recall_at_5": 0.9706,
+      "mrr": 0.8721,
+      "ndcg_at_5": 0.8893,
+      "keyword_coverage": 0.5074
+    },
+    {
+      "name": "6_enterprise_full_rerank",
+      "recall_at_5": 0.9706,
+      "mrr": 0.9338,
+      "ndcg_at_5": 0.9362,
+      "keyword_coverage": 0.4779
+    },
+    {
+      "name": "7_awesome_crag_graph_hybrid",
+      "recall_at_5": 1.0,
+      "mrr": 1.0,
+      "ndcg_at_5": 0.9917,
+      "keyword_coverage": 0.5074
+    }
+  ]
+}
+Best tuner config: {'dense_weight': 0.45, 'sparse_weight': 0.35, 'graph_weight': 0.2, 'rrf_k': 60, 'recall_at_5': 1.0, 'mrr': 1.0, 'ndcg_at_5': 0.9917}
+Local compression proxy: 0.2289
+Domain comparisons: [{'enabled': False, 'recall_at_5': 1.0, 'mrr': 1.0, 'ndcg_at_5': 1.0, 'keyword_coverage': 0.3182}, {'enabled': True, 'recall_at_5': 1.0, 'mrr': 1.0, 'ndcg_at_5': 1.0, 'keyword_coverage': 0.3182}]

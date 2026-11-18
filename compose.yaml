@@ -1,0 +1,25 @@
+name: rag-workbench
+services:
+  app:
+    image: rag-learning-workbench:local
+    build:
+      context: .
+      target: runtime
+    init: true
+    user: "${LOCAL_UID:-1000}:${LOCAL_GID:-1000}"
+    restart: unless-stopped
+    ports:
+      - "${RAG_BIND_HOST:-127.0.0.1}:${RAG_PORT:-8000}:8000"
+    environment:
+      RAG_DATA_ROOT: /app
+      RAG_PROJECT_ROOT: /app
+      RAG_ADMIN_TOKEN: "${RAG_ADMIN_TOKEN:?Use scripts/orbstack to create a local owner token}"
+      RAG_TESTER_TOKEN: "${RAG_TESTER_TOKEN:-}"
+      RAG_LLM_MODE: local
+      RAG_EMBEDDING_BACKEND: local_svd
+      RAG_REPORTS_DIR: /app/reports/private
+      RAG_CALIBRATION_PATH: ""
+    volumes:
+      - ./data/workspaces:/app/data/workspaces
+      - ./reports/private:/app/reports/private
+      - ./.cache/orbstack:/app/.cache

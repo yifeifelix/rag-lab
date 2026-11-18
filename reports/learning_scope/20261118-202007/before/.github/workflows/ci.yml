@@ -1,0 +1,97 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      RAG_PROJECT_ROOT: ${{ github.workspace }}
+      RAG_DATA_ROOT: ${{ github.workspace }}
+      RAG_LLM_MODE: local
+      RAG_EMBEDDING_BACKEND: local_svd
+      UV_CACHE_DIR: ${{ github.workspace }}/.cache/uv
+      UV_TOOL_DIR: ${{ github.workspace }}/.cache/uv-tools
+      UV_TOOL_BIN_DIR: ${{ github.workspace }}/.cache/uv-bin
+      PIP_CACHE_DIR: ${{ github.workspace }}/.cache/pip
+      XDG_CACHE_HOME: ${{ github.workspace }}/.cache
+      TMPDIR: ${{ github.workspace }}/.cache/tmp
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - run: mkdir -p .cache/tmp
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          version: '0.12.23'
+          enable-cache: false
+      - name: Install locked CI dependencies
+        run: |
+          uv venv .venv
+          uv pip sync --require-hashes requirements/ci.lock
+          uv pip install --no-deps --no-build-isolation -e .
+          uv pip check
+      - name: Source sharing checks and correctness lint
+        run: |
+          .venv/bin/python scripts/check_repository.py
+          uvx --python .venv/bin/python --from ruff==0.14.0 ruff check src tests scripts
+          for file in scripts/workbench scripts/orbstack scripts/lock-models scripts/publish-github scripts/container-entrypoint.sh; do sh -n "$file"; done
+      - name: Unit and API regression tests
+        run: .venv/bin/python -m pytest -q --junitxml=.cache/ci-junit.xml
+      - name: Build Python distribution
+        run: |
+          uv build --no-build-isolation
+          .venv/bin/python scripts/check_wheel.py
+      - name: Real Qdrant REST integration
+        run: |
+          docker run -d --name qdrant-ci -p 127.0.0.1:6333:6333 qdrant/qdrant:v1.16.3
+          for attempt in $(seq 1 60); do
+            if curl --fail --silent http://127.0.0.1:6333/readyz; then break; fi
+            sleep 1
+          done
+          .venv/bin/python scripts/integration_qdrant.py
+      - name: Build and smoke test container
+        env:
+          RAG_ADMIN_TOKEN: ci-smoke-owner-token
+        run: |
+          docker build --target runtime --tag rag-workbench:ci .
+          docker run -d --name rag-ci -e RAG_ADMIN_TOKEN -p 127.0.0.1:8000:8000 rag-workbench:ci
+          for attempt in $(seq 1 90); do
+            status=$(docker inspect --format '{{.State.Health.Status}}' rag-ci)
+            if [ "$status" = healthy ]; then break; fi
+            if [ "$status" = unhealthy ]; then docker logs rag-ci; exit 1; fi
+            sleep 2
+          done
+          test "$(docker inspect --format '{{.State.Health.Status}}' rag-ci)" = healthy
+          .venv/bin/python scripts/smoke_http.py
+      - name: Container diagnostics
+        if: failure()
+        run: docker logs rag-ci || true
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: test-results
+          path: .cache/ci-junit.xml
+          retention-days: 14
+          include-hidden-files: true
+      - uses: actions/upload-artifact@v7
+        with:
+          name: python-distribution
+          path: dist/*
+          if-no-files-found: error
+          retention-days: 14

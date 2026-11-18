@@ -1,0 +1,35 @@
+...............F........                                                 [100%]
+=================================== FAILURES ===================================
+________________________ test_four_chunking_strategies _________________________
+
+    def test_four_chunking_strategies() -> None:
+        cfg = RAGConfig()
+>       docs = load_corpus_documents(cfg.corpus_path)[:10]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_platform.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/rag_platform/data_gen.py:1213: in load_corpus_documents
+    with Path(path).open("r", encoding="utf-8") as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/Volumes/Data/Projects/Rag/.cache/tmp/pytest-of-felix/pytest-3/test_four_chunking_strategies0/fixture/corpus.jsonl')
+mode = 'r', buffering = -1, encoding = 'utf-8', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/Volumes/Data/Projects/Rag/.cache/tmp/pytest-of-felix/pytest-3/test_four_chunking_strategies0/fixture/corpus.jsonl'
+
+../../uv/python/cpython-3.12.15-macos-aarch64-none/lib/python3.12/pathlib.py:1013: FileNotFoundError
+=========================== short test summary info ============================
+FAILED tests/test_platform.py::test_four_chunking_strategies - FileNotFoundEr...
+1 failed, 23 passed in 4.90s

@@ -1,0 +1,70 @@
+warning: The cache directory `.cache/uv` is inside the build source directory `.` and may be included in distributions
+Building wheel...
+running bdist_wheel
+running build
+running build_py
+copying src/rag_platform/config.py -> build/lib/rag_platform
+running egg_info
+writing src/enterprise_rag_platform.egg-info/PKG-INFO
+writing dependency_links to src/enterprise_rag_platform.egg-info/dependency_links.txt
+writing requirements to src/enterprise_rag_platform.egg-info/requires.txt
+writing top-level names to src/enterprise_rag_platform.egg-info/top_level.txt
+reading manifest file 'src/enterprise_rag_platform.egg-info/SOURCES.txt'
+writing manifest file 'src/enterprise_rag_platform.egg-info/SOURCES.txt'
+warning: build_py: byte-compiling is disabled, skipping.
+
+installing to build/bdist.macosx-11.0-arm64/wheel
+running install
+running install_lib
+creating build/bdist.macosx-11.0-arm64/wheel
+creating build/bdist.macosx-11.0-arm64/wheel/rag_platform
+copying build/lib/rag_platform/chunking.py -> build/bdist.macosx-11.0-arm64/wheel/./rag_platform
+copying build/lib/rag_platform/server.py -> build/bdist.macosx-11.0-arm64/wheel/./rag_platform
+copying build/lib/rag_platform/config.py -> build/bdist.macosx-11.0-arm64/wheel/./rag_platform
+copying build/lib/rag_platform/benchmark.py -> build/bdist.macosx-11.0-arm64/wheel/./rag_platform
+copying build/lib/rag_platform/knowledge_base.py -> build/bdist.macosx-11.0-arm64/wheel/./rag_platform
+copying build/lib/rag_platform/reranker.py -> build/bdist.macosx-11.0-arm64/wheel/./rag_platform
+copying build/lib/rag_platform/data_gen.py -> build/bdist.macosx-11.0-arm64/wheel/./rag_platform
+copying build/lib/rag_platform/evaluation.py -> build/bdist.macosx-11.0-arm64/wheel/./rag_platform
+copying build/lib/rag_platform/cache.py -> build/bdist.macosx-11.0-arm64/wheel/./rag_platform
+copying build/lib/rag_platform/__init__.py -> build/bdist.macosx-11.0-arm64/wheel/./rag_platform
+copying build/lib/rag_platform/runtime.py -> build/bdist.macosx-11.0-arm64/wheel/./rag_platform
+copying build/lib/rag_platform/embeddings.py -> build/bdist.macosx-11.0-arm64/wheel/./rag_platform
+copying build/lib/rag_platform/pipeline.py -> build/bdist.macosx-11.0-arm64/wheel/./rag_platform
+creating build/bdist.macosx-11.0-arm64/wheel/rag_platform/static
+copying build/lib/rag_platform/static/index.html -> build/bdist.macosx-11.0-arm64/wheel/./rag_platform/static
+copying build/lib/rag_platform/retrieval.py -> build/bdist.macosx-11.0-arm64/wheel/./rag_platform
+copying build/lib/rag_platform/provenance.py -> build/bdist.macosx-11.0-arm64/wheel/./rag_platform
+copying build/lib/rag_platform/index_store.py -> build/bdist.macosx-11.0-arm64/wheel/./rag_platform
+copying build/lib/rag_platform/resilience.py -> build/bdist.macosx-11.0-arm64/wheel/./rag_platform
+warning: install_lib: byte-compiling is disabled, skipping.
+
+running install_egg_info
+Copying src/enterprise_rag_platform.egg-info to build/bdist.macosx-11.0-arm64/wheel/./enterprise_rag_platform-1.1.0-py3.12.egg-info
+running install_scripts
+creating build/bdist.macosx-11.0-arm64/wheel/enterprise_rag_platform-1.1.0.dist-info/WHEEL
+creating '/Volumes/Data/Projects/Rag/dist/.tmp-yank0pst/enterprise_rag_platform-1.1.0-py3-none-any.whl' and adding 'build/bdist.macosx-11.0-arm64/wheel' to it
+adding 'rag_platform/__init__.py'
+adding 'rag_platform/benchmark.py'
+adding 'rag_platform/cache.py'
+adding 'rag_platform/chunking.py'
+adding 'rag_platform/config.py'
+adding 'rag_platform/data_gen.py'
+adding 'rag_platform/embeddings.py'
+adding 'rag_platform/evaluation.py'
+adding 'rag_platform/index_store.py'
+adding 'rag_platform/knowledge_base.py'
+adding 'rag_platform/pipeline.py'
+adding 'rag_platform/provenance.py'
+adding 'rag_platform/reranker.py'
+adding 'rag_platform/resilience.py'
+adding 'rag_platform/retrieval.py'
+adding 'rag_platform/runtime.py'
+adding 'rag_platform/server.py'
+adding 'rag_platform/static/index.html'
+adding 'enterprise_rag_platform-1.1.0.dist-info/METADATA'
+adding 'enterprise_rag_platform-1.1.0.dist-info/WHEEL'
+adding 'enterprise_rag_platform-1.1.0.dist-info/top_level.txt'
+adding 'enterprise_rag_platform-1.1.0.dist-info/RECORD'
+removing build/bdist.macosx-11.0-arm64/wheel
+Successfully built dist/enterprise_rag_platform-1.1.0-py3-none-any.whl

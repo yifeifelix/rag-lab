@@ -1,0 +1,46 @@
+# REFERENCE ONLY: local workbench; optional infrastructure is not connected to application code.
+# Note: Storage volumes bind cleanly to /Volumes/Data/Projects/Rag/deploy/volumes
+
+services:
+  rag-gateway:
+    image: python:3.12-slim
+    working_dir: /Volumes/Data/Projects/Rag
+    volumes:
+      - ../:/Volumes/Data/Projects/Rag
+    command: >
+      sh -c "pip install --no-cache-dir -e . &&
+      uvicorn rag_platform.server:create_app --factory --host 0.0.0.0 --port 8000 --workers 1"
+    ports:
+      - "127.0.0.1:8000:8000"
+    environment:
+      - RAG_LLM_MODE=local
+      - RAG_ADMIN_TOKEN=${RAG_ADMIN_TOKEN:?Set RAG_ADMIN_TOKEN before using Compose}
+    deploy:
+      resources:
+        limits:
+          cpus: "4.0"
+          memory: 4G
+
+  redis-l1:
+    profiles: ["reference-infra"]
+    image: redis:7.4-alpine
+    command: ["redis-server", "--maxmemory", "2gb", "--maxmemory-policy", "allkeys-lru"]
+    ports:
+      - "127.0.0.1:6379:6379"
+
+  qdrant:
+    profiles: ["reference-infra"]
+    image: qdrant/qdrant:v1.12.1
+    ports:
+      - "127.0.0.1:6333:6333"
+      - "127.0.0.1:6334:6334"
+    volumes:
+      - /Volumes/Data/Projects/Rag/deploy/volumes/qdrant_storage:/qdrant/storage
+
+  prometheus:
+    profiles: ["reference-infra"]
+    image: prom/prometheus:v2.55.0
+    ports:
+      - "127.0.0.1:9090:9090"
+    volumes:
+      - /Volumes/Data/Projects/Rag/deploy/volumes/prometheus_data:/prometheus

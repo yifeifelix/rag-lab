@@ -1,0 +1,35 @@
+{
+  "natural_compression": {
+    "answers_identical": true,
+    "baseline_proxy": 1.0,
+    "compressed_proxy": 0.747,
+    "compression_ratio": 0.4582,
+    "answer": "Code `ERR_QDRANT_5032` indicates shard quorum loss during segment compaction; recovery requires pausing bulk upserts and triggering `POST /collections/{name}/snapshots/recover`. [CLOUD-ARCH-002] [SLA-GOV-001] Enterprise Tier-0 SLA Contract, Error Budgets & Burn-Rate Alerts (Domain: sla_governance) [SLA-GOV-001] When error ERR_GW_4290 exceeds 1.5% of traffic for 3 consecutive minutes, the autoscaler expands Envoy ingress replicas from 8 to 24 pods and increases Redis L1 TTL from 900s to 3600s. [CLOUD-ARCH-001] SPARSE-CFG-K15 | Custom tokenizer preserves codes like SOC2-CC6.7 and ERR_QDRANT_5032 [CLOUD-ARCH-010]",
+    "compressed_evidence": [
+      "[CLOUD-ARCH-002] Qdrant Vector Cluster Sharding, HNSW Tuning & Quantization Guide (Domain: cloud_architecture)\n## Troubleshooting Codes\nCode `ERR_QDRANT_5032` indicates shard quorum loss during segment compaction; recovery requires pausing bulk upserts and triggering `POST /collections/{name}/snapshots/recover`.",
+      "[SLA-GOV-001] Enterprise Tier-0 SLA Contract, Error Budgets & Burn-Rate Alerts (Domain: sla_governance)\n# Enterprise Tier-0 SLA Contract, Error Budgets & Burn-Rate Alerts\n## Availability & Latency Commitments\n## Multi-Window Error Budget Burn Alerts",
+      "## Gateway Parameters & Error Codes\n| Component | Parameter | Production Value | Failure Code |\n| Token Bucket | Sustained RPS / Burst | 15,000 RPS / 12,000 burst | ERR_GW_4290 |\n| Concurrency Gate | Max In-Flight Pipelines | 256 per Pod (32 Pods) | ERR_GW_5031 |",
+      "[CLOUD-ARCH-010] BM25 Inverted Index Memory-Mapping & Stopword Tuning (Domain: cloud_architecture)\n# BM25 Inverted Index Memory-Mapping & Stopword Tuning\n## Policy & Engineering Specification\nSPARSE-CFG-K15 | Custom tokenizer preserves codes like SOC2-CC6.7 and ERR_QDRANT_5032",
+      "[SLA-GOV-002] Circuit Breaker, Graceful Degradation & Chaos Engineering Runbook (Domain: sla_governance)\n# Circuit Breaker, Graceful Degradation & Chaos Engineering Runbook\n## Tri-State Circuit Breaker Mechanics\n## Half-Open Recovery & Chaos Drills"
+    ]
+  },
+  "crag_correct_path": {
+    "initial_assessment": "AMBIGUOUS",
+    "initial_confidence": 0.4641,
+    "reported_final_status": "AMBIGUOUS_CORRECTED",
+    "expanded_terms": [
+      "int8",
+      "scalar",
+      "quantization",
+      "ram",
+      "recall",
+      "rescoring",
+      "reduction",
+      "footprint",
+      "hbm",
+      "ndcg",
+      "accuracy",
+      "precision"
+    ]
+  }
+}

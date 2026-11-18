@@ -1,0 +1,91 @@
+{
+  "scope": "single_process_synthetic_asyncio_experiment",
+  "timestamp_utc": "2026-11-18T13:55:30.523900+00:00",
+  "llm_mode": "local_extractive_with_simulated_wait",
+  "http_tested": false,
+  "real_model_tested": false,
+  "quality_validated": false,
+  "workload_notes": "Fixed 35/10/30/25 proportions; paraphrases selected for cache compatibility, not observed production traffic",
+  "latency_notes": "Starts on coroutine entry; excludes client networking and initial scheduler delay",
+  "config": {
+    "total_requests": 10000,
+    "chunking_strategy": "parent_child",
+    "retrieval_mode": "hybrid_rrf",
+    "use_reranker": true,
+    "max_concurrent_pipelines": 256,
+    "l2_similarity_threshold": 0.9,
+    "simulated_llm_latency_ms": 2.0
+  },
+  "summary": {
+    "wall_time_seconds": 2.75,
+    "achieved_rps": 3636.7,
+    "succeeded": 10000,
+    "failed": 0,
+    "success_rate": 1.0,
+    "peak_backend_concurrency": 256,
+    "effective_cache_and_coalesce_rate": 0.7486
+  },
+  "overall_latency_ms": {
+    "count": 10000,
+    "min": 0.008,
+    "p50": 311.928,
+    "p95": 1960.058,
+    "p99": 2328.818,
+    "max": 2380.917,
+    "mean": 455.339
+  },
+  "tier_breakdown": {
+    "l1_exact": {
+      "count": 3500,
+      "share_pct": 35.0,
+      "latency_ms": {
+        "count": 3500,
+        "min": 0.008,
+        "p50": 0.011,
+        "p95": 0.015,
+        "p99": 0.017,
+        "max": 0.059,
+        "mean": 0.012
+      }
+    },
+    "l2_semantic": {
+      "count": 1156,
+      "share_pct": 11.56,
+      "latency_ms": {
+        "count": 1156,
+        "min": 0.017,
+        "p50": 0.02,
+        "p95": 0.025,
+        "p99": 0.029,
+        "max": 0.04,
+        "mean": 0.02
+      }
+    },
+    "singleflight_coalesced": {
+      "count": 2830,
+      "share_pct": 28.3,
+      "latency_ms": {
+        "count": 2830,
+        "min": 281.896,
+        "p50": 400.265,
+        "p95": 565.352,
+        "p99": 610.53,
+        "max": 638.071,
+        "mean": 413.71
+      }
+    },
+    "miss": {
+      "count": 2514,
+      "share_pct": 25.14,
+      "latency_ms": {
+        "count": 2514,
+        "min": 349.179,
+        "p50": 1306.859,
+        "p95": 2315.7,
+        "p99": 2367.871,
+        "max": 2380.917,
+        "mean": 1345.475
+      }
+    }
+  }
+}

@@ -1,0 +1,18 @@
+include LICENSE THIRD_PARTY_NOTICES.md README.md pyproject.toml
+include Dockerfile compose.yaml compose.models.yaml .dockerignore .env.example
+include scripts/workbench scripts/orbstack scripts/publish-github scripts/lock-models scripts/container-entrypoint.sh
+recursive-include scripts *.py
+recursive-include tests *.py
+recursive-include docs *.md
+recursive-include .github *.yml
+recursive-include requirements *.lock *.in *.md
+include data/corpus/documents.jsonl data/eval/golden_qa.jsonl
+recursive-include data/learning_v2 *.json *.jsonl
+include data/python_support/documents.jsonl data/python_support/qa_dev.jsonl data/python_support/qa_test.jsonl
+include data/python_support/dataset_manifest.json data/python_support/PYTHON_LICENSE.txt
+include reports/ablation_results.json reports/benchmark_10k.json
+global-exclude *.pyc
+prune .cache
+prune .venv
+prune data/workspaces
+prune reports/private

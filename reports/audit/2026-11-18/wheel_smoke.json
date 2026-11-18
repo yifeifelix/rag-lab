@@ -1,0 +1,8 @@
+{
+  "passed": true,
+  "version": "1.1.0",
+  "imported_from_wheel": true,
+  "packaged_ui_served": true,
+  "document_import_and_query": true,
+  "scope": "ASGI integration; no network socket"
+}

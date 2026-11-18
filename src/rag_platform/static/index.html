@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RAG Learning &amp; Evaluation Workbench</title>
+  <style>
+    [hidden] { display: none !important; }
+    input[type="checkbox"] { width: auto; margin-right: 6px; }
+    :root {
+      --bg: #0b1020;
+      --surface: #121931;
+      --surface-2: #192241;
+      --border: #27335e;
+      --text: #e6ecff;
+      --muted: #93a3cf;
+      --accent: #6366f1;
+      --accent-2: #22d3ee;
+      --ok: #10b981;
+      --warn: #f59e0b;
+      --bad: #ef4444;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: radial-gradient(circle at top right, #162044, var(--bg) 55%);
+      color: var(--text);
+      line-height: 1.5;
+    }
+    .container { max-width: 1320px; margin: 0 auto; padding: 24px; }
+    header {
+      display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
+      gap: 16px; border-bottom: 1px solid var(--border); padding-bottom: 18px; margin-bottom: 20px;
+    }
+    .brand h1 { margin: 0; font-size: 1.45rem; letter-spacing: -0.02em; }
+    .brand p { margin: 4px 0 0; color: var(--muted); font-size: 0.9rem; }
+    .status-pills { display: flex; gap: 10px; flex-wrap: wrap; }
+    .pill {
+      background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: 999px; padding: 6px 12px; font-size: 0.8rem; color: var(--muted);
+    }
+    .pill strong { color: var(--text); }
+    .tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+    .tab-btn {
+      background: var(--surface); border: 1px solid var(--border); color: var(--muted);
+      padding: 10px 16px; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 0.9rem;
+      transition: all 0.15s ease;
+    }
+    .tab-btn:hover { color: var(--text); border-color: var(--accent); }
+    .tab-btn.active {
+      background: linear-gradient(135deg, var(--accent), #4f46e5);
+      color: #fff; border-color: transparent;
+    }
+    .panel { display: none; }
+    .panel.active { display: block; }
+    .grid-2 { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 18px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; margin-bottom: 18px; }
+    @media (max-width: 960px) { .grid-2 { grid-template-columns: 1fr; } }
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 14px; padding: 18px; margin-bottom: 16px;
+    }
+    .card h2, .card h3 { margin: 0 0 12px; font-size: 1.05rem; }
+    .kpi-label { font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    .kpi-val { font-size: 1.6rem; font-weight: 700; margin-top: 4px; color: var(--accent-2); }
+    .kpi-sub { font-size: 0.8rem; color: var(--muted); margin-top: 2px; }
+    textarea, select, input {
+      width: 100%; background: var(--surface-2); color: var(--text);
+      border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; font-size: 0.92rem;
+    }
+    .controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 12px 0; }
+    label.small { display: block; font-size: 0.78rem; color: var(--muted); margin-bottom: 4px; }
+    .btn {
+      background: linear-gradient(135deg, var(--accent), #4338ca); color: #fff;
+      border: none; border-radius: 8px; padding: 10px 18px; font-weight: 600; cursor: pointer;
+    }
+    .btn:disabled { opacity: 0.55; cursor: not-allowed; }
+    .btn-secondary {
+      background: var(--surface-2); border: 1px solid var(--border); color: var(--text);
+      border-radius: 8px; padding: 8px 12px; font-size: 0.82rem; cursor: pointer;
+    }
+    .btn-secondary:hover { border-color: var(--accent-2); }
+    .sample-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+    .chip {
+      background: var(--surface-2); border: 1px solid var(--border); color: var(--muted);
+      border-radius: 8px; padding: 5px 10px; font-size: 0.78rem; cursor: pointer;
+    }
+    .chip:hover { color: var(--text); border-color: var(--accent); }
+    .answer-box {
+      background: #0e1529; border: 1px solid var(--border); border-radius: 10px;
+      padding: 14px; min-height: 110px; white-space: pre-wrap; font-size: 0.94rem;
+    }
+    .badge {
+      display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 600;
+    }
+    .b-ok { background: rgba(16,185,129,0.18); color: #34d399; }
+    .b-warn { background: rgba(245,158,11,0.18); color: #fbbf24; }
+    .b-bad { background: rgba(239,68,68,0.18); color: #f87171; }
+    .b-info { background: rgba(34,211,238,0.16); color: #67e8f9; }
+    .chunk-item {
+      background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px;
+      padding: 12px; margin-bottom: 10px; font-size: 0.85rem;
+    }
+    .chunk-meta { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 6px; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+    th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--border); }
+    th { color: var(--muted); font-weight: 600; font-size: 0.78rem; text-transform: uppercase; }
+    .bar-track { background: #0d1326; border-radius: 999px; height: 9px; width: 100%; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--accent), var(--accent-2)); }
+    code { background: #0e1529; padding: 2px 5px; border-radius: 4px; color: var(--accent-2); font-size: 0.85em; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="brand">
+      <h1>RAG Learning &amp; Evaluation Workbench</h1>
+      <p>以学习为主：看懂每一步 → 一次改变一个变量 → 核查证据 → 解释失败</p>
+    </div>
+    <div class="status-pills" id="header-pills">
+      <div class="pill">Docs: <strong id="pill-docs">--</strong></div>
+      <div class="pill">Chunks: <strong id="pill-chunks">--</strong></div>
+      <div class="pill" hidden>Cache Hit: <strong id="pill-hit">--</strong></div>
+      <div class="pill" hidden>Breaker: <strong id="pill-breaker">CLOSED</strong></div>
+    </div>
+  </header>
+
+  <div class="card">
+    <label class="small" for="owner-token">Access token (owner or tester; kept only in this page)</label>
+    <div class="controls"><input id="owner-token" type="password" autocomplete="off" placeholder="Enter your access token" />
+    <button class="btn-secondary" onclick="connectWorkspace()">Connect / Refresh</button></div>
+    <div id="app-status" role="status">Enter your token, connect, then ask a question. Quality metrics require human review.</div>
+  </div>
+  <nav class="tabs">
+    <button class="tab-btn active" data-tab="learning" onclick="openPanel('learning')">1. 学习路径</button>
+    <button class="tab-btn" data-tab="playground" onclick="openPanel('playground')">2. 链路观察</button>
+    <button class="tab-btn" data-tab="lab" onclick="openPanel('lab')">3. 单变量 Lab</button>
+    <button class="tab-btn" data-tab="documents" onclick="openPanel('documents'); refreshDocuments()">4. 文档工作区</button>
+    <button class="btn-secondary" id="advanced-toggle" hidden onclick="toggleAdvanced()">展开进阶实验</button>
+    <button class="tab-btn" data-tab="ablation" data-advanced="true" hidden onclick="openPanel('ablation'); loadAblation(false).catch(() => {})">批量评测（进阶）</button>
+    <button class="tab-btn" data-tab="benchmark" data-advanced="true" hidden onclick="openPanel('benchmark')">缓存与并发（进阶）</button>
+    <button class="tab-btn" data-tab="roadmap" data-advanced="true" hidden onclick="openPanel('roadmap')">附加原理（进阶）</button>
+  </nav>
+  <section id="tab-learning" class="panel active">
+    <div class="card">
+      <h2>从一个问题，看懂 RAG</h2>
+      <p>先跑通本地基线，再比较方案。默认不下载模型、不调用云端 API、不自动调参或校准。</p>
+      <p><strong>原文 → 分块 → 检索 → 重排（可选）→ 回答 → 引用核查</strong></p>
+      <p>先猜会发生什么，运行后找原句，再写出为什么。做完一个练习再进入下一课。</p>
+      <p>默认向量是 TF-IDF + SVD；默认回答是抽取式。示例基于开发练习资料，换工作区后请据自己的文档改题。演示政策是虚构资料。</p>
+      <div id="lesson-progress" role="status"></div>
+    </div>
+    <div id="lesson-list" class="grid-2"><p>连接工作区后加载七个练习。</p></div>
+    <div class="card"><h3>完成主线后再选专题</h3><p>预训练模型与神经重排、压缩/扩展/共现图、拒答校准、缓存与并发、Qdrant。它们都可以单独学习，无须先搭齐基础设施。</p></div>
+  </section>
+  <section id="tab-lab" class="panel">
+    <div class="card">
+      <h2>一次只改一个变量</h2>
+      <p>同一份工作区语料与问题；本地 SVD、抽取回答、关闭答案缓存和校准。比较一条问题只能帮助理解，不能证明方案普遍更好。</p>
+      <label for="lab-query">问题</label><textarea id="lab-query" rows="2">What is the current EU restore recovery target for Cedar?</textarea>
+      <div class="controls">
+        <div><label for="lab-variable">本次改变</label><select id="lab-variable" onchange="labValues()"><option value="retrieval_mode">检索方式</option><option value="chunking_strategy">分块策略</option><option value="use_reranker">特征重排</option><option value="top_k">证据数量 top-k</option><option value="min_confidence_threshold">拒答阈值</option></select></div>
+        <div><label for="lab-a">A</label><select id="lab-a"></select></div>
+        <div><label for="lab-b">B</label><select id="lab-b"></select></div>
+      </div>
+      <label for="lab-hypothesis">运行前：你的假设</label><input id="lab-hypothesis" maxlength="500" placeholder="我预计……因为……" />
+      <label><input id="lab-save" type="checkbox" /> 保存本次运行到私有实验目录（owner）</label>
+      <button class="btn" id="lab-run" onclick="runLearningComparison()">运行 A / B</button>
+      <p id="lab-status" role="status"></p>
+      <pre id="lab-controls" style="white-space:pre-wrap"></pre>
+    </div>
+    <div class="grid-2" id="lab-results"></div>
+    <div class="card"><h3>运行后：解释观察</h3><p>哪条证据变化了？条件和数字是否完整？有没有无依据的回答或错误拒答？用一个失败例子解释取舍。</p><textarea rows="3" placeholder="观察笔记仅留在当前页面；需要保留时请另行记录。"></textarea></div>
+    <div class="card">
+      <h3>先看分块，再讨论分数</h3><div class="controls"><select id="preview-doc"></select><select id="preview-strategy"><option value="fixed">fixed</option><option value="recursive">recursive</option><option value="parent_child">parent_child</option></select><button class="btn-secondary" onclick="previewChunks()">查看原文与块</button></div>
+      <div id="chunk-preview"></div>
+    </div>
+  </section>
+
+  <!-- TAB 1: PLAYGROUND -->
+  <section id="tab-playground" class="panel">
+    <div class="grid-2">
+      <div>
+        <div class="card">
+          <h2>Query Console</h2>
+          <textarea id="q-input" rows="3" placeholder="先选一条资料，写一个能由原句回答的问题……">What is the current EU restore recovery target for Cedar?</textarea>
+          <div class="controls">
+            <div>
+              <label class="small">Retrieval Mode</label>
+              <select id="q-mode">
+                <option value="hybrid_rrf">Hybrid RRF (Dense + BM25)</option>
+                <option value="dense">Dense Vector Only</option>
+                <option value="bm25" selected>Okapi BM25 Only</option>
+              </select>
+            </div>
+            <div>
+              <label class="small">Reranker</label>
+              <select id="q-rerank">
+                <option value="true">Cross-Feature Reranker ON</option>
+                <option value="false" selected>Reranker OFF</option>
+              </select>
+            </div>
+            <div>
+              <label class="small">L1/L2 Cache</label>
+              <select id="q-cache">
+                <option value="true">L1 + L2 Semantic ON</option>
+                <option value="false" selected>Bypass Cache (Cold)</option>
+              </select>
+            </div>
+            <div>
+              <label class="small">Domain Filter</label>
+              <select id="q-domain">
+                <option value="">All Domains</option>
+              </select>
+            </div>
+          </div>
+          <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+            <button class="btn" id="btn-run-query" onclick="runQuery()">运行并检查证据</button>
+            <button class="btn-secondary" onclick="runQueryStream()">Stream SSE Response</button>
+          </div>
+          <div class="sample-chips" id="sample-chips"></div>
+        </div>
+
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <h2 style="margin:0;">Synthesized Grounded Answer</h2>
+            <div id="resp-badges"></div>
+          </div>
+          <div class="answer-box" id="answer-box">Submit a query to inspect grounded citations, lexical overlap, and multi-tier cache routing.</div>
+          <div id="metrics-strip" style="display:flex; gap:16px; flex-wrap:wrap; margin-top:10px; font-size:0.82rem; color:var(--muted);"></div>
+          <details style="margin-top:14px"><summary>Review this answer</summary>
+            <p>Check the answer against the complete evidence. Feedback stores the response ID, rating and your comment; it does not save the query or answer. Please omit personal information.</p>
+            <label for="feedback-rating">Rating</label><select id="feedback-rating"><option value="5">5 — useful and correct</option><option value="4">4</option><option value="3">3</option><option value="2">2</option><option value="1">1 — unusable</option></select>
+            <label for="feedback-issue">Result</label><select id="feedback-issue"><option value="correct">Correct</option><option value="wrong_answer">Wrong answer</option><option value="bad_citation">Evidence does not support answer</option><option value="wrong_refusal">Should have answered</option><option value="slow">Slow</option><option value="other">Other</option></select>
+            <label for="feedback-comment">Optional comment</label><textarea id="feedback-comment" maxlength="2000" rows="3"></textarea>
+            <button class="btn-secondary" onclick="submitFeedback()">Submit feedback</button>
+            <p id="feedback-status" role="status"></p>
+          </details>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <h2>Retrieved Parent-Child Evidence &amp; Ranking Scores</h2>
+          <div id="evidence-list" style="color:var(--muted); font-size:0.9rem;">
+            Retrieved chunks with Dense cosine, Okapi BM25, RRF fusion, and Reranker scores will appear here.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="tab-documents" class="panel">
+    <div class="card">
+      <h2>Document import, update and deletion</h2>
+      <p>Import UTF-8 Markdown or text. Owner changes preserve the source and clear answer caches. Fixed encoders support incremental updates; local SVD refits its vector space. Testers can view documents in this shared workspace.</p>
+      <label class="small" for="doc-file">Load a .md or .txt file into the editor</label>
+      <input id="doc-file" type="file" accept=".md,.txt,text/plain,text/markdown" onchange="readDocumentFile(this)" />
+      <div class="controls">
+        <div><label class="small" for="doc-id">Document ID</label><input id="doc-id" value="SUPPORT-001" /></div>
+        <div><label class="small" for="doc-title">Title</label><input id="doc-title" placeholder="Support handbook" /></div>
+        <div><label class="small" for="doc-domain">Domain</label><input id="doc-domain" value="support" /></div>
+        <div><label class="small" for="doc-version">Version</label><input id="doc-version" value="1" /></div>
+      </div>
+      <label class="small" for="doc-source">Source URL or reference</label><input id="doc-source" />
+      <label class="small" for="doc-license">License / permission</label><input id="doc-license" />
+      <label class="small" for="doc-text">Document text</label><textarea id="doc-text" rows="10"></textarea>
+      <button class="btn" id="doc-save" onclick="saveDocument()">Import / Save changes</button>
+      <p id="doc-revision" style="overflow-wrap:anywhere"></p>
+      <div id="doc-list"></div>
+    </div>
+  </section>
+
+  <!-- TAB 2: ABLATION LAB -->
+  <section id="tab-ablation" class="panel">
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+        <div>
+          <h2 style="margin:0;">Architecture Comparison (configured corpus and QA)</h2>
+          <span style="color:var(--muted); font-size:0.84rem;" id="ablation-sig">Loading significance metrics...</span>
+        </div>
+        <button class="btn-secondary" onclick="loadAblation(true)">Run Configured-Model Comparison</button>
+      </div>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>Architecture</th>
+              <th>Chunks</th>
+              <th>Recall@3</th>
+              <th>Recall@5 (95% CI)</th>
+              <th>MRR</th>
+              <th>NDCG@5 (95% CI)</th>
+              <th>Lexical Grounding Proxy</th>
+              <th>Refusal Acc</th>
+              <th>Latency</th>
+            </tr>
+          </thead>
+          <tbody id="ablation-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Flagship Category Breakdown (`Parent-Child + Hybrid RRF + Reranker`)</h3>
+      <div class="grid-4" id="category-cards"></div>
+    </div>
+  </section>
+
+  <!-- TAB 3: 10K BENCHMARK -->
+  <section id="tab-benchmark" class="panel">
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+        <div>
+          <h2 style="margin:0;">10,000 Coroutine Experiment &amp; Tail Latency</h2>
+          <span style="color:var(--muted); font-size:0.84rem;">Constructed proportions (single process, no HTTP, simulated LLM): 35% L1 Hot · 10% Singleflight Viral Burst · 30% L2 Semantic Paraphrase · 25% Cold Tail RAG</span>
+        </div>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <select id="bench-size" style="width:auto;">
+            <option value="2000">2,000 Coroutines</option>
+            <option value="5000">5,000 Coroutines</option>
+            <option value="10000" selected>10,000 Coroutines</option>
+          </select>
+          <button class="btn" id="btn-bench" onclick="runLiveBenchmark()">Run Synthetic Experiment</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-4" id="bench-kpis"></div>
+
+    <div class="card">
+      <h3>Execution Tier Breakdown (L1 Exact / L2 Semantic / Singleflight / Cold Miss)</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Cache / Execution Tier</th>
+            <th>Requests</th>
+            <th>Traffic Share</th>
+            <th>P50 (ms)</th>
+            <th>P95 (ms)</th>
+            <th>P99 (ms)</th>
+            <th>Visual Share</th>
+          </tr>
+        </thead>
+        <tbody id="bench-tbody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- TAB 4: LEARNING & INTERVIEW GUIDE -->
+  <section id="tab-roadmap" class="panel">
+    <div class="grid-2">
+      <div class="card">
+        <h2>Little's Law Capacity Calculator (Interactive)</h2>
+        <p style="font-size:0.86rem; color:var(--muted);">
+          Formula: <code>L = λ × W</code> (Mean in-flight requests = Throughput RPS × Mean Latency). Tune cache hit rate below 观察固定假设下缓存如何改变平均在途请求；这是附加练习，不是主线验收目标。
+        </p>
+        <div class="controls">
+          <div>
+            <label class="small">Uncached in-flight requests at fixed throughput (L)</label>
+            <input type="number" id="ll-users" value="10000" oninput="calcLittles()" />
+          </div>
+          <div>
+            <label class="small">Combined L1+L2+SF Hit Rate (%)</label>
+            <input type="number" id="ll-hit" value="75" min="0" max="99" oninput="calcLittles()" />
+          </div>
+          <div>
+            <label class="small">Cold LLM Latency (ms)</label>
+            <input type="number" id="ll-cold" value="320" oninput="calcLittles()" />
+          </div>
+        </div>
+        <div class="answer-box" id="ll-output" style="min-height:80px;"></div>
+      </div>
+
+      <div class="card">
+        <h2>Data Scientist Portfolio &amp; Interview Highlights</h2>
+        <ul style="font-size:0.88rem; color:var(--muted); padding-left:18px; margin:0;">
+          <li><strong>Ablation Rigor</strong>: 先完成单变量练习，再在明确的数据划分上做批量对照；可查看 <code>500x Bootstrap 95% CIs</code> and descriptive paired bootstrap differences; independent human review remains pending.</li>
+          <li><strong>OOV Failure Mode</strong>: Demonstrated why pure Dense vectors fail on exact codes (<code>ERR_QDRANT_5032</code>, <code>SOC2-CC6.7</code>) and why single-word OOV collisions require vocabulary coverage gating.</li>
+          <li><strong>Concurrency Mechanisms</strong>: Eliminates duplicate cold LLM calls via <code>Singleflight</code>, serves paraphrases via <code>L2 cosine &gt;= 0.90</code>, and prevents overload via bounded semaphores + circuit breakers.</li>
+          <li><strong>Docs Included</strong>: Read <code>docs/01_DS_RAG_LEARNING_ROADMAP.md</code>, <code>docs/02_ARCHITECTURE_10K_CONCURRENCY.md</code>, and <code>docs/03_INTERVIEW_AND_FREELANCE_PLAYBOOK.md</code>.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+let documentRevision = null;
+let accessRole = 'tester';
+let lastRequestId = null;
+let learningLessons = [];
+let advancedExpanded = false;
+function openPanel(id) {
+  const button = document.querySelector('[data-tab="' + id + '"]');
+  if (button) switchTab(id, button);
+}
+function updateAdvancedVisibility() {
+  document.querySelectorAll('[data-advanced]').forEach(button => { button.hidden = !(advancedExpanded && accessRole === 'owner'); });
+}
+function toggleAdvanced() {
+  advancedExpanded = !advancedExpanded;
+  updateAdvancedVisibility();
+  if (!advancedExpanded) openPanel('learning');
+  document.getElementById('advanced-toggle').textContent = advancedExpanded ? '收起进阶实验' : '展开进阶实验';
+}
+function lessonCompletion() {
+  try { const ids = JSON.parse(localStorage.getItem('rag-lesson-completion-v1') || '[]'); return Array.isArray(ids) ? ids : []; } catch { return []; }
+}
+function markLesson(id, checked) {
+  const ids = new Set(lessonCompletion()); checked ? ids.add(id) : ids.delete(id);
+  try { localStorage.setItem('rag-lesson-completion-v1', JSON.stringify([...ids])); } catch { /* Progress is optional. */ }
+  updateLessonProgress();
+}
+function updateLessonProgress() {
+  const done = new Set(lessonCompletion());
+  document.getElementById('lesson-progress').textContent = '自评完成：' + learningLessons.filter(lesson => done.has(lesson.id)).length + ' / ' + learningLessons.length + '。仅在本浏览器保存课号，不保存 token 或问题。';
+}
+async function loadLessons() {
+  const data = await (await apiFetch('/api/v1/learning')).json();
+  learningLessons = data.lessons;
+  const done = new Set(lessonCompletion());
+  document.getElementById('lesson-list').innerHTML = learningLessons.map(lesson => `<article class="card">
+    <h3>${escapeHTML(lesson.id)} · ${escapeHTML(lesson.title)}</h3><p>${escapeHTML(lesson.concept)}</p>
+    <p><strong>动手：</strong>${escapeHTML(lesson.task)}</p><p><strong>完成标准：</strong>${escapeHTML(lesson.check)}</p>
+    <p>代码阅读：<code>${escapeHTML(lesson.source)}</code></p>
+    <button class="btn-secondary" onclick="startLesson('${lesson.id}')">开始这个练习</button>
+    <label><input type="checkbox" ${done.has(lesson.id) ? 'checked' : ''} onchange="markLesson('${lesson.id}', this.checked)" /> 我能解释这一步了</label>
+  </article>`).join('');
+  updateLessonProgress();
+}
+function startLesson(id) {
+  const lesson = learningLessons.find(value => value.id === id); if (!lesson) return;
+  if (lesson.action === 'playground') {
+    document.getElementById('q-input').value = lesson.question;
+    document.getElementById('q-mode').value = 'bm25';
+    document.getElementById('q-rerank').value = 'false';
+    document.getElementById('q-cache').value = 'false';
+    openPanel('playground');
+  } else {
+    document.getElementById('lab-query').value = lesson.question;
+    document.getElementById('lab-variable').value = lesson.variable;
+    labValues();
+    document.getElementById('lab-a').value = String(lesson.a);
+    document.getElementById('lab-b').value = String(lesson.b);
+    openPanel('lab');
+  }
+}
+function labValues() {
+  const options = {
+    retrieval_mode:['bm25','dense','hybrid_rrf'], chunking_strategy:['fixed','parent_child','recursive','semantic'],
+    use_reranker:['false','true'], top_k:['1','3','5','10'], min_confidence_threshold:['0.22','0.5','0.7']
+  }[document.getElementById('lab-variable').value];
+  for (const id of ['lab-a','lab-b']) {
+    const select = document.getElementById(id); select.replaceChildren();
+    for (const value of options) { const option = document.createElement('option'); option.value=value; option.textContent=value; select.appendChild(option); }
+  }
+  document.getElementById('lab-b').selectedIndex = 1;
+}
+function labValue(id, variable) {
+  const value = document.getElementById(id).value;
+  return variable === 'use_reranker' ? value === 'true' : ['top_k','min_confidence_threshold'].includes(variable) ? Number(value) : value;
+}
+async function runLearningComparison() {
+  const button = document.getElementById('lab-run'); button.disabled=true;
+  const status = document.getElementById('lab-status'); status.textContent='正在运行两个本地配置……';
+  const variable = document.getElementById('lab-variable').value;
+  try {
+    const data = await (await apiFetch('/api/v1/learning/compare', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({
+      query:document.getElementById('lab-query').value, variable, a:labValue('lab-a',variable), b:labValue('lab-b',variable),
+      hypothesis:document.getElementById('lab-hypothesis').value, save_report:document.getElementById('lab-save').checked
+    })})).json();
+    status.textContent='只改变 ' + data.variable + (data.saved ? '；已保存到 ' + data.report_path : '；本次未保存报告。');
+    document.getElementById('lab-controls').textContent='保持固定：' + JSON.stringify(data.controlled_settings, null, 2);
+    document.getElementById('lab-results').innerHTML=data.results.map(result => `<article class="card">
+      <h3>${escapeHTML(result.label)} · ${escapeHTML(String(result.value))}</h3><p>索引块：${result.chunks} · 本次耗时：${result.response.latency_ms} ms（不是速度基准）</p>
+      <p>是否拒答：${result.response.refused} · 相关性分数：${metric(result.response.confidence)}（非正确概率）</p>
+      <div class="answer-box">${escapeHTML(result.response.answer)}</div>
+      <h4>按顺序核查证据</h4>${result.response.evidence.map((e,index) => `<details><summary>${index+1}. [${escapeHTML(e.doc_id)}] ${escapeHTML(e.title)}</summary><pre style="white-space:pre-wrap">${escapeHTML(e.parent_text)}</pre></details>`).join('')}
+    </article>`).join('');
+  } catch(error) { status.textContent=error.message; } finally { button.disabled=false; }
+}
+async function previewChunks() {
+  const target = document.getElementById('chunk-preview'); target.textContent='加载中……';
+  try {
+    const query = new URLSearchParams({doc_id:document.getElementById('preview-doc').value, strategy:document.getElementById('preview-strategy').value});
+    const data = await (await apiFetch('/api/v1/learning/chunks?' + query)).json();
+    target.innerHTML=`<details open><summary>原文</summary><pre style="white-space:pre-wrap">${escapeHTML(data.original_text)}</pre></details><p>${data.total_chunks} 个块，长度单位：字符${data.truncated ? '；仅显示前 50 个' : ''}</p>` + data.chunks.map((chunk,index) => `<details><summary>块 ${index+1} · ${chunk.text.length} 字符</summary><h4>检索文本</h4><pre style="white-space:pre-wrap">${escapeHTML(chunk.text)}</pre><h4>返回上下文</h4><pre style="white-space:pre-wrap">${escapeHTML(chunk.parent_text)}</pre></details>`).join('');
+  } catch(error) { target.textContent=error.message; }
+}
+
+
+async function connectWorkspace() {
+  lastRequestId = null;
+  const capabilities = await (await apiFetch('/api/v1/capabilities')).json();
+  accessRole = capabilities.role;
+  updateAdvancedVisibility();
+  document.getElementById("advanced-toggle").hidden = accessRole !== "owner";
+  document.getElementById("lab-save").disabled = accessRole !== "owner";
+  if (accessRole !== "owner") document.getElementById("lab-save").checked = false;
+  for (const input of document.querySelectorAll('#tab-documents input, #tab-documents textarea')) input.disabled = !capabilities.can_edit_documents;
+  document.getElementById('doc-save').hidden = !capabilities.can_edit_documents;
+  await Promise.all([refreshStats(), refreshDocuments(), loadLessons()]);
+  document.getElementById('app-status').textContent = 'Connected as ' + accessRole + '. Shared workspace; human answer review is required.';
+}
+
+async function submitFeedback() {
+  if (!lastRequestId) { document.getElementById('feedback-status').textContent = 'Run a query before sending feedback.'; return; }
+  const payload = {request_id:lastRequestId, rating:Number(document.getElementById('feedback-rating').value),
+    issue:document.getElementById('feedback-issue').value, comment:document.getElementById('feedback-comment').value};
+  try {
+    await apiFetch('/api/v1/feedback', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)});
+    document.getElementById('feedback-status').textContent = 'Feedback saved. Thank you. Response ID: ' + lastRequestId;
+  } catch (error) { document.getElementById('feedback-status').textContent = error.message; }
+}
+function escapeHTML(value) {
+  return String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function metric(value, digits=3) { return value == null ? 'N/A' : value.toFixed(digits); }
+function proxyPercent(value) { return value == null ? 'N/A' : (value * 100).toFixed(0) + '%'; }
+async function apiFetch(url, options = {}) {
+  const token = document.getElementById('owner-token').value;
+  options.headers = {...options.headers, ...(token ? {'Authorization':'Bearer ' + token} : {})};
+  try {
+    const response = await window.fetch(url, options);
+    if (!response.ok) {
+      const detail = await response.text();
+      throw new Error('HTTP ' + response.status + ': ' + detail);
+    }
+    document.getElementById('app-status').textContent = 'Connected. Lexical overlap does not establish answer correctness.';
+    return response;
+  } catch (error) {
+    document.getElementById('app-status').textContent = error.message;
+    throw error;
+  }
+}
+async function readDocumentFile(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 500000) { document.getElementById('app-status').textContent = 'File exceeds 500 KB'; return; }
+  document.getElementById('doc-text').value = await file.text();
+  if (!document.getElementById('doc-title').value) document.getElementById('doc-title').value = file.name;
+}
+async function refreshDocuments() {
+  const data = await (await apiFetch('/api/v1/documents')).json();
+  documentRevision = data.corpus_revision;
+  document.getElementById('doc-revision').textContent = 'Corpus revision: ' + documentRevision;
+  const list = document.getElementById('doc-list'); list.replaceChildren();
+  const select = document.getElementById('preview-doc'); select.replaceChildren();
+  for (const doc of data.documents) { const option = document.createElement('option'); option.value=doc.doc_id; option.textContent=doc.title; select.appendChild(option); }
+  for (const doc of data.documents) {
+    const row = document.createElement('div'); row.className = 'chunk-item';
+    const label = document.createElement('span');
+    label.textContent = doc.doc_id + ' · ' + doc.title + ' · v' + (doc.version || '?') + ' · ' + doc.characters + ' chars ';
+    row.appendChild(label);
+    const edit = document.createElement('button'); edit.className = 'btn-secondary'; edit.textContent = 'Edit';
+    edit.onclick = async () => {
+      const result = await (await apiFetch('/api/v1/documents/' + encodeURIComponent(doc.doc_id))).json();
+      documentRevision = result.corpus_revision;
+      for (const [field, key] of Object.entries({'id':'doc_id','title':'title','domain':'domain','version':'version','source':'source','license':'license','text':'text'}))
+        document.getElementById('doc-' + field).value = result.document[key] || '';
+    };
+    const remove = document.createElement('button'); remove.className = 'btn-secondary'; remove.textContent = 'Delete';
+    remove.onclick = async () => {
+      if (!window.confirm('Delete ' + doc.doc_id + ' and rebuild its index?')) return;
+      await apiFetch('/api/v1/documents/' + encodeURIComponent(doc.doc_id), {method:'DELETE',headers:{'If-Match':documentRevision}});
+      await refreshDocuments(); await refreshStats();
+    };
+    edit.textContent = accessRole === 'owner' ? 'Edit' : 'View'; remove.hidden = accessRole !== 'owner';
+    row.append(edit, remove); list.appendChild(row);
+  }
+}
+async function saveDocument() {
+  const button = document.getElementById('doc-save'); button.disabled = true;
+  try {
+    const payload = {};
+    for (const [field, key] of Object.entries({'id':'doc_id','title':'title','domain':'domain','version':'version','source':'source','license':'license','text':'text'}))
+      payload[key] = document.getElementById('doc-' + field).value;
+    await apiFetch('/api/v1/documents', {method:'POST',headers:{'Content-Type':'application/json',...(documentRevision ? {'If-Match':documentRevision} : {})},body:JSON.stringify(payload)});
+    await refreshDocuments(); await refreshStats();
+  } finally { button.disabled = false; }
+}
+
+function switchTab(id, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+async function refreshStats() {
+  const res = await apiFetch('/api/v1/stats');
+  const data = await res.json();
+  const t = data.telemetry;
+  document.getElementById('pill-docs').textContent = t.corpus_documents;
+  document.getElementById('pill-chunks').textContent = t.indexed_chunks;
+  document.getElementById('pill-hit').textContent = (t.effective_cache_hit_rate * 100).toFixed(1) + '%';
+  document.getElementById('pill-breaker').textContent = t.circuit_breaker_state;
+
+  const domSel = document.getElementById('q-domain');
+  if (domSel.options.length <= 1) {
+    data.domains.forEach(d => {
+      const opt = document.createElement('option');
+      opt.value = d; opt.textContent = d;
+      domSel.appendChild(opt);
+    });
+  }
+
+  const chips = document.getElementById('sample-chips');
+  if (chips.children.length === 0) {
+    data.sample_queries.slice(0, 10).forEach(s => {
+      const btn = document.createElement('button');
+      btn.className = 'chip';
+      btn.textContent = `[${s.category}] ${s.question.slice(0, 48)}...`;
+      btn.onclick = () => { document.getElementById('q-input').value = s.question; runQuery(); };
+      chips.appendChild(btn);
+    });
+  }
+}
+
+function renderQueryResponse(data) {
+  lastRequestId = data.request_id || null;
+  document.getElementById('feedback-status').textContent = lastRequestId ? 'Response ID: ' + lastRequestId : '';
+  document.getElementById('answer-box').textContent = data.answer;
+  const tierClass = data.blocked_by_guardrail ? 'b-bad' : (data.cache_tier === 'miss' ? 'b-warn' : 'b-ok');
+  document.getElementById('resp-badges').innerHTML = `
+    <span class="badge ${tierClass}">Tier: ${data.cache_tier}</span>
+    <span class="badge b-info">Lexical Grounding Proxy: ${proxyPercent(data.lexical_grounding_proxy)}</span>
+    <span class="badge b-info">${escapeHTML(data.confidence_kind || "uncalibrated_relevance")}: ${data.confidence.toFixed(3)}</span>
+  `;
+  document.getElementById('metrics-strip').innerHTML = `
+    <span>Generation: <strong>${escapeHTML(data.generation_mode)}</strong></span>
+    <span>Latency: <strong>${data.latency_ms} ms</strong></span>
+    <span>Citations: <strong>${escapeHTML(data.citations.join(', ') || 'None')}</strong></span>
+    <span>PII Redacted: <strong>${data.pii_redacted}</strong></span>
+    <span>L2 Sim: <strong>${data.l2_similarity}</strong></span>
+  `;
+
+  const evDiv = document.getElementById('evidence-list');
+  if (!data.evidence || data.evidence.length === 0) {
+    evDiv.innerHTML = '<div class="chunk-item">No chunks passed security/confidence gates.</div>';
+  } else {
+    evDiv.innerHTML = data.evidence.map((ev, i) => `
+      <div class="chunk-item">
+        <div class="chunk-meta">
+          <strong>#${i + 1} [${escapeHTML(ev.doc_id)}] ${escapeHTML(ev.title)}</strong>
+          <span class="badge b-info">${escapeHTML(ev.domain)}</span>
+        </div>
+        <div style="color:var(--muted); font-size:0.78rem; margin-bottom:6px;">
+          Dense: <code>${ev.dense_score}</code> · BM25: <code>${ev.bm25_score}</code> · RRF: <code>${ev.rrf_score}</code> · Rerank: <code>${ev.rerank_score}</code>
+        </div>
+        <div>${escapeHTML(ev.parent_text.slice(0, 320))}</div><details><summary>Show complete evidence used for this answer</summary><pre style="white-space:pre-wrap;overflow-wrap:anywhere">${escapeHTML(ev.parent_text)}</pre></details><small>Source: ${escapeHTML(ev.source || "synthetic / unspecified")} · Version: ${escapeHTML(ev.version || "unspecified")}</small>
+      </div>
+    `).join('');
+  }
+  refreshStats();
+}
+
+async function runQuery() {
+  const btn = document.getElementById('btn-run-query');
+  btn.disabled = true;
+  try {
+    const payload = {
+      query: document.getElementById('q-input').value,
+      retrieval_mode: document.getElementById('q-mode').value,
+      use_reranker: document.getElementById('q-rerank').value === 'true',
+      use_cache: document.getElementById('q-cache').value === 'true',
+      domain_filter: document.getElementById('q-domain').value || null,
+    };
+    const res = await apiFetch('/api/v1/query', {
+      method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    renderQueryResponse(data);
+  } finally { btn.disabled = false; }
+}
+
+async function runQueryStream() {
+  const ansBox = document.getElementById('answer-box');
+  ansBox.textContent = '';
+  lastRequestId = null;
+  const payload = {
+    query: document.getElementById('q-input').value,
+    retrieval_mode: document.getElementById('q-mode').value,
+    use_reranker: document.getElementById('q-rerank').value === 'true',
+    use_cache: document.getElementById('q-cache').value === 'true',
+    domain_filter: document.getElementById('q-domain').value || null,
+  };
+  const res = await apiFetch('/api/v1/query/stream', {
+    method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload)
+  });
+  const reader = res.body.getReader();
+  const dec = new TextDecoder();
+  let buf = '';
+  while (true) {
+    const {value, done} = await reader.read();
+    if (done) break;
+    buf += dec.decode(value, {stream: true});
+    const parts = buf.split('\n\n');
+    buf = parts.pop() || '';
+    for (const part of parts) {
+      const lines = part.split('\n');
+      const evLine = lines.find(l => l.startsWith('event: '));
+      const dataLine = lines.find(l => l.startsWith('data: '));
+      if (!evLine || !dataLine) continue;
+      const ev = evLine.slice(7).trim();
+      const obj = JSON.parse(dataLine.slice(6));
+      if (ev === 'metadata') { renderQueryResponse({...obj, answer:''}); }
+      if (ev === 'delta') ansBox.textContent += obj.token;
+      if (ev === 'done') {
+        document.getElementById('resp-badges').innerHTML = `
+          <span class="badge b-info">Buffered SSE Replay</span>
+          <span class="badge b-info">Lexical Grounding Proxy: ${proxyPercent(obj.lexical_grounding_proxy)}</span>
+          <span class="badge b-info">Latency: ${obj.latency_ms} ms</span>
+        `;
+        refreshStats();
+      }
+    }
+  }
+}
+
+async function loadAblation(refresh = false) {
+  const res = await apiFetch('/api/v1/ablation?refresh=' + refresh);
+  const data = await res.json();
+  const sig = data.significance_flagship_vs_baseline;
+  document.getElementById('ablation-sig').textContent =
+    (data.report_matches_current_data === false ? 'Historical report differs from current code or data. ' : '') + `Full pipeline vs Baseline: Recall@5 +${sig.recall_at_5.delta.toFixed(4)} (bootstrap fraction=${sig.recall_at_5.bootstrap_nonpositive_fraction}) | NDCG@5 +${sig.ndcg_at_5.delta.toFixed(4)} (bootstrap fraction=${sig.ndcg_at_5.bootstrap_nonpositive_fraction})`;
+
+  const tbody = document.getElementById('ablation-tbody');
+  tbody.innerHTML = data.experiments.map((exp, idx) => {
+    const m = exp.metrics;
+    const isBest = false; // No architecture is presumed to be the winner.
+    return `<tr style="${isBest ? 'background:rgba(99,102,241,0.12); font-weight:600;' : ''}">
+      <td>${escapeHTML(exp.spec.label)}</td>
+      <td>${exp.num_chunks}</td>
+      <td>${metric(m.recall_at_3.mean, 3)}</td>
+      <td>${metric(m.recall_at_5.mean, 3)} <span style="color:var(--muted);font-size:0.78em;">[${metric(m.recall_at_5.ci_low, 2)}, ${metric(m.recall_at_5.ci_high, 2)}]</span></td>
+      <td>${metric(m.mrr.mean, 3)}</td>
+      <td>${metric(m.ndcg_at_5.mean, 3)} <span style="color:var(--muted);font-size:0.78em;">[${metric(m.ndcg_at_5.ci_low, 2)}, ${metric(m.ndcg_at_5.ci_high, 2)}]</span></td>
+      <td>${metric(m.lexical_grounding_proxy.mean, 3)}</td>
+      <td>${metric(m.refusal_accuracy.mean, 3)}</td>
+      <td>${metric(m.latency_ms.mean, 2)} ms</td>
+    </tr>`;
+  }).join('');
+
+  const cats = data.experiments[data.experiments.length - 1].by_category;
+  document.getElementById('category-cards').innerHTML = Object.entries(cats).map(([k, v]) => `
+    <div class="card" style="margin:0;">
+      <div class="kpi-label">${k} (${v.count})</div>
+      <div class="kpi-val">${((v.recall_at_5 ?? v.refusal_accuracy) * 100).toFixed(1)}%</div>
+      <div class="kpi-sub">${v.mrr !== undefined ? `MRR: ${v.mrr.toFixed(3)} · NDCG@5: ${v.ndcg_at_5.toFixed(3)}` : `Lexical Grounding Proxy: ${(v.lexical_grounding_proxy == null ? 'N/A' : v.lexical_grounding_proxy.toFixed(3))}`}</div>
+    </div>
+  `).join('');
+}
+
+function renderBenchmark(rep) {
+  const s = rep.summary;
+  const ol = rep.overall_latency_ms;
+  document.getElementById('bench-kpis').innerHTML = `
+    <div class="card"><div class="kpi-label">Completion Rate</div><div class="kpi-val">${(s.success_rate * 100).toFixed(2)}%</div><div class="kpi-sub">${s.succeeded.toLocaleString()} / ${rep.config.total_requests.toLocaleString()} OK</div></div>
+    <div class="card"><div class="kpi-label">Achieved Throughput</div><div class="kpi-val">${s.achieved_rps.toLocaleString()} RPS</div><div class="kpi-sub">Wall time: ${s.wall_time_seconds} s</div></div>
+    <div class="card"><div class="kpi-label">P50 / P99 Latency</div><div class="kpi-val">${ol.p50} ms</div><div class="kpi-sub">P99: ${ol.p99} ms · Peak Gate: ${s.peak_backend_concurrency}</div></div>
+    <div class="card"><div class="kpi-label">Cache + Singleflight Offload</div><div class="kpi-val">${(s.effective_cache_and_coalesce_rate * 100).toFixed(1)}%</div><div class="kpi-sub">Avoided backend executions in this experiment</div></div>
+  `;
+  document.getElementById('bench-tbody').innerHTML = Object.entries(rep.tier_breakdown).map(([tier, info]) => `
+    <tr>
+      <td><code>${tier}</code></td>
+      <td>${info.count.toLocaleString()}</td>
+      <td>${info.share_pct}%</td>
+      <td>${info.latency_ms.p50}</td>
+      <td>${info.latency_ms.p95}</td>
+      <td>${info.latency_ms.p99}</td>
+      <td style="width:180px;"><div class="bar-track"><div class="bar-fill" style="width:${info.share_pct}%"></div></div></td>
+    </tr>
+  `).join('');
+}
+
+async function loadBenchmark() {
+  const res = await apiFetch('/api/v1/benchmark');
+  renderBenchmark(await res.json());
+}
+
+async function runLiveBenchmark() {
+  const btn = document.getElementById('btn-bench');
+  btn.disabled = true;
+  btn.textContent = 'Running Experiment...';
+  try {
+    const n = parseInt(document.getElementById('bench-size').value, 10);
+    const res = await apiFetch('/api/v1/benchmark/run', {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({total_requests: n, simulated_llm_latency_ms: 2.0})
+    });
+    renderBenchmark(await res.json());
+    refreshStats();
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Run Synthetic Experiment';
+  }
+}
+
+function calcLittles() {
+  const L = parseFloat(document.getElementById('ll-users').value) || 10000;
+  const hit = Math.min(99, Math.max(0, parseFloat(document.getElementById('ll-hit').value) || 75)) / 100;
+  const coldMs = parseFloat(document.getElementById('ll-cold').value) || 320;
+  const cacheMs = 2.0;
+  const blendedW = (hit * cacheMs + (1 - hit) * coldMs) / 1000.0;
+  const coldOnlyW = coldMs / 1000.0;
+  const lambdaBlended = L / coldOnlyW;
+  const coldRequestsPerSec = lambdaBlended * (1 - hit);
+  const coldConcurrentSlots = coldRequestsPerSec * coldOnlyW;
+  document.getElementById('ll-output').textContent =
+    `Blended Latency W = ${(blendedW * 1000).toFixed(1)} ms (vs ${coldMs} ms uncached)\n` +
+    `Fixed offered throughput: ${Math.round(lambdaBlended).toLocaleString()} RPS; mean in-flight after caching: ${Math.round(lambdaBlended * blendedW)}\n` +
+    `Active Cold LLM Slots Needed: ${Math.round(coldConcurrentSlots).toLocaleString()} slots (vs ${L.toLocaleString()} without cache -> ${((1 - coldConcurrentSlots / L) * 100).toFixed(1)}% fewer cold slots; model assumptions apply)`;
+}
+
+calcLittles();
+labValues();
+if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') connectWorkspace().catch(() => {});
+</script>
+</body>
+</html>

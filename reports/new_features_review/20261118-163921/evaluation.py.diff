@@ -1,0 +1,42 @@
+--- previous/evaluation.py
++++ snapshot/evaluation.py
+@@ -182,6 +182,9 @@
+     retrieval_mode: str
+     use_reranker: bool
+     description: str
++    enable_crag: bool = False
++    enable_graph_rag: bool = False
++    enable_query_expansion: bool = False
+ 
+ 
+ DEFAULT_ABLATION_SPECS: list[AblationExperimentSpec] = [
+@@ -231,7 +234,18 @@
+         chunking_strategy="parent_child",
+         retrieval_mode="hybrid_rrf",
+         use_reranker=True,
+-        description="Flagship Enterprise RAG: Parent-Child indexing, Hybrid RRF, and Cross-Feature Reranker.",
++        description="Enterprise baseline: Parent-Child indexing, Hybrid RRF, and Cross-Feature Reranker.",
++    ),
++    AblationExperimentSpec(
++        name="7_awesome_crag_graph_hybrid",
++        label="Awesome-RAG: LightRAG + CRAG + Reranker",
++        chunking_strategy="parent_child",
++        retrieval_mode="hybrid_rrf",
++        use_reranker=True,
++        enable_crag=True,
++        enable_graph_rag=True,
++        enable_query_expansion=True,
++        description="Awesome-RAG flagship: Parent-Child + LightRAG Entity Graph + CRAG Self-Correction + Pseudo-HyDE Expansion + Reranker.",
+     ),
+ ]
+ 
+@@ -325,6 +339,9 @@
+             chunking_strategy=spec.chunking_strategy,
+             retrieval_mode=spec.retrieval_mode,
+             use_reranker=spec.use_reranker,
++            enable_crag=spec.enable_crag,
++            enable_graph_rag=spec.enable_graph_rag,
++            enable_query_expansion=spec.enable_query_expansion,
+             use_cache=False,
+         )
+         pipeline = EnterpriseRAGPipeline(config=exp_cfg, documents=documents)

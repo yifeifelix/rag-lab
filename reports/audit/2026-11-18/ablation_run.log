@@ -1,0 +1,11 @@
+Running 6-architecture RAG ablation study on the configured corpus and QA set...
+
+=== Ablation Summary ===
+Fixed Chunk + Naive Dense                | R@5=0.897 | MRR=0.892 | NDCG@5=0.879 | LexicalProxy=1.000 | Refusal=1.000
+Recursive MD + Dense                     | R@5=0.902 | MRR=0.858 | NDCG@5=0.862 | LexicalProxy=1.000 | Refusal=1.000
+Recursive MD + Okapi BM25                | R@5=0.956 | MRR=0.951 | NDCG@5=0.940 | LexicalProxy=1.000 | Refusal=1.000
+Semantic Breakpoint + Hybrid RRF         | R@5=0.971 | MRR=0.899 | NDCG@5=0.910 | LexicalProxy=1.000 | Refusal=1.000
+Parent-Child + Hybrid RRF                | R@5=0.971 | MRR=0.872 | NDCG@5=0.889 | LexicalProxy=1.000 | Refusal=1.000
+Parent-Child + Hybrid RRF + Reranker     | R@5=0.971 | MRR=0.934 | NDCG@5=0.936 | LexicalProxy=1.000 | Refusal=1.000
+
+Flagship vs Naive Baseline: Recall@5 +0.0735 (bootstrap fraction=0.0480), MRR +0.0417 (bootstrap fraction=0.1300), NDCG@5 +0.0576 (bootstrap fraction=0.0460)

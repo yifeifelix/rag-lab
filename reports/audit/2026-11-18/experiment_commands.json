@@ -1,0 +1,54 @@
+[
+  {
+    "command": [
+      "scripts/workbench",
+      "ablation"
+    ],
+    "returncode": 0,
+    "log": "ablation_run.log"
+  },
+  {
+    "command": [
+      "scripts/workbench",
+      "evaluate-domain",
+      "--split",
+      "dev"
+    ],
+    "returncode": 0,
+    "log": "domain_dev_run.log"
+  },
+  {
+    "command": [
+      "scripts/workbench",
+      "evaluate-domain",
+      "--split",
+      "test"
+    ],
+    "returncode": 0,
+    "log": "domain_test_run.log"
+  },
+  {
+    "command": [
+      "scripts/workbench",
+      "synthetic",
+      "--requests",
+      "10000"
+    ],
+    "returncode": 0,
+    "log": "synthetic_run.log"
+  },
+  {
+    "command": [
+      "uv",
+      "build",
+      "--offline",
+      "--no-build-isolation",
+      "--wheel",
+      "--out-dir",
+      "dist"
+    ],
+    "returncode": 0,
+    "log": "wheel_build.log",
+    "backend": "existing Data-volume cached setuptools 84.2.1"
+  }
+]

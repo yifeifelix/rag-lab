@@ -1,0 +1,42 @@
+#!/bin/sh
+# Run from a normal local terminal when the agent cannot write Git metadata.
+set -eu
+project_dir=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+cd "$project_dir"
+python_bin="$project_dir/.venv/bin/python"
+if [ ! -x "$python_bin" ]; then python_bin=$(command -v python3); fi
+repo_name=${1:-rag-learning-workbench}
+case "$repo_name" in ''|*[!A-Za-z0-9_.-]*) echo 'Expected a repository name, without owner or URL' >&2; exit 2;; esac
+export TMPDIR="$project_dir/.cache/tmp"
+mkdir -p "$TMPDIR"
+gh auth status >/dev/null 2>&1 || gh auth login --hostname github.com --web --git-protocol https
+login=$(gh api user --jq .login)
+account_id=$(gh api user --jq .id)
+repository="$login/$repo_name"
+if [ ! -d .git ]; then git init -b main; fi
+if [ "$(git branch --show-current)" != main ]; then
+  echo 'Switch to main before publishing; no branches are renamed automatically' >&2; exit 1
+fi
+remote=$(git remote get-url origin 2>/dev/null || true)
+if [ -n "$remote" ]; then
+  case "$remote" in "https://github.com/$repository"|"https://github.com/$repository.git"|"git@github.com:$repository.git") ;;
+    *) echo 'origin differs from the requested repository; inspect it before publishing' >&2; exit 1;;
+  esac
+fi
+git config user.name >/dev/null || git config user.name "$login"
+git config user.email >/dev/null || git config user.email "$account_id+$login@users.noreply.github.com"
+git add --all
+"$python_bin" scripts/check_repository.py
+if ! git diff --cached --quiet; then git commit -m 'Add RAG learning workbench with local OrbStack deployment and CI'; fi
+if [ -z "$remote" ]; then
+  gh repo create "$repository" --public --source . --remote origin --push \
+    --description 'Local RAG learning and evaluation workbench: document lifecycle, experiments, audits, and OrbStack deployment'
+else
+  visibility=$(gh repo view "$repository" --json visibility --jq .visibility)
+  if [ "$visibility" != PUBLIC ]; then
+    echo 'Existing repository is private; visibility was left unchanged' >&2
+  fi
+  git push -u origin main
+fi
+gh repo view "$repository" --json url --jq .url
+echo 'Follow CI with: gh run list --workflow ci.yml'

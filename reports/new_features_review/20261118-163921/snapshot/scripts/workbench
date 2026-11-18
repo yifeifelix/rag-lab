@@ -1,0 +1,28 @@
+#!/bin/sh
+set -eu
+project_dir=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+case "$project_dir" in /Volumes/Data/*) ;; *) echo 'Project must be under /Volumes/Data' >&2; exit 1;; esac
+export HF_HOME="$project_dir/.cache/huggingface"
+export TORCH_HOME="$project_dir/.cache/torch"
+export UV_CACHE_DIR="$project_dir/.cache/uv"
+export PIP_CACHE_DIR="$project_dir/.cache/pip"
+export XDG_CACHE_HOME="$project_dir/.cache"
+export TMPDIR="$project_dir/.cache/tmp"
+export PYTHONPYCACHEPREFIX="$project_dir/.cache/pycache"
+mkdir -p "$TMPDIR" "$PYTHONPYCACHEPREFIX"
+cd "$project_dir"
+action=${1:-start}
+if [ "$#" -gt 0 ]; then shift; fi
+case "$action" in
+  start) exec .venv/bin/python -m uvicorn rag_platform.server:create_app --factory --host 127.0.0.1 --port 8000 "$@" ;;
+  install) exec uv pip install --python .venv/bin/python -e ".[${1:-dev}]" ;;
+  download-model) exec .venv/bin/python scripts/download_model.py "$@" ;;
+  test) exec .venv/bin/python -m pytest "$@" ;;
+  prepare-domain) exec .venv/bin/python scripts/prepare_python_support.py "$@" ;;
+  evaluate-domain) exec .venv/bin/python scripts/run_domain_evaluation.py "$@" ;;
+  ablation) exec .venv/bin/python scripts/run_ablation_study.py "$@" ;;
+  synthetic) exec .venv/bin/python scripts/run_10k_benchmark.py "$@" ;;
+  http-benchmark) exec .venv/bin/python scripts/run_http_benchmark.py "$@" ;;
+  audit) exec .venv/bin/python scripts/audit_project.py "$@" ;;
+  *) echo 'Usage: scripts/workbench {start|install|download-model|test|prepare-domain|evaluate-domain|ablation|synthetic|http-benchmark} [args]' >&2; exit 2 ;;
+esac

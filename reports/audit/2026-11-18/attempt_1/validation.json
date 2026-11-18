@@ -1,0 +1,37 @@
+{
+  "timestamp_utc": "2026-11-18T13:51:59.156096+00:00",
+  "scope": "offline_implementation_checks",
+  "real_model_validated": false,
+  "browser_rendering_validated": false,
+  "http_network_load_validated": false,
+  "python_syntax": {
+    "passed": true,
+    "files": 28
+  },
+  "javascript_syntax": {
+    "passed": true,
+    "returncode": 0
+  },
+  "pytest": {
+    "passed": false,
+    "returncode": 1,
+    "command": [
+      "/Volumes/Data/Projects/Rag/.venv/bin/python",
+      "-m",
+      "pytest",
+      "-q",
+      "-p",
+      "no:cacheprovider",
+      "--junitxml=/Volumes/Data/Projects/Rag/reports/audit/2026-11-18/pytest.xml"
+    ]
+  },
+  "wheel": {
+    "passed": true,
+    "path": "dist/enterprise_rag_platform-1.1.0-py3-none-any.whl",
+    "sha256": "71ab14d84ddeff51ac6908a917b51490a68d3f4b1f3b410f77c8e31fbf7894ae",
+    "matches_current_source": true,
+    "static_ui_included": true,
+    "no_runtime_data_or_secrets_packaged": true
+  },
+  "passed": false
+}

@@ -1,0 +1,41 @@
+services:
+  app:
+    image: rag-learning-workbench:models
+    build:
+      target: models
+    environment:
+      RAG_CORPUS_PATH: /app/data/workspaces/models_testing_v2/documents.jsonl
+      RAG_LLM_MODE: local
+      RAG_EMBEDDING_BACKEND: sentence_transformers
+      RAG_EMBEDDING_MODEL: "${RAG_EMBEDDING_MODEL:-sentence-transformers/all-MiniLM-L6-v2}"
+      RAG_RERANKER_BACKEND: cross_encoder
+      RAG_RERANKER_MODEL: "${RAG_RERANKER_MODEL:-BAAI/bge-reranker-base}"
+      RAG_VECTOR_BACKEND: qdrant
+      RAG_QDRANT_URL: http://qdrant:6333
+      RAG_REPORTS_DIR: /app/reports/private/models
+      RAG_CALIBRATION_PATH: ""
+    healthcheck:
+      start_period: 10m
+    depends_on:
+      qdrant:
+        condition: service_started
+  qdrant:
+    image: qdrant/qdrant:v1.16.3
+    restart: unless-stopped
+    volumes:
+      - ./.cache/orbstack/qdrant:/qdrant/storage
+  model-download:
+    profiles: [models]
+    image: rag-learning-workbench:models
+    build:
+      context: .
+      target: models
+    user: "${LOCAL_UID:-1000}:${LOCAL_GID:-1000}"
+    entrypoint: [python, /app/scripts/download_model.py, --both]
+    environment:
+      RAG_DATA_ROOT: /app
+      RAG_PROJECT_ROOT: /app
+      RAG_EMBEDDING_MODEL: "${RAG_EMBEDDING_MODEL:-sentence-transformers/all-MiniLM-L6-v2}"
+      RAG_RERANKER_MODEL: "${RAG_RERANKER_MODEL:-BAAI/bge-reranker-base}"
+    volumes:
+      - ./.cache/orbstack:/app/.cache

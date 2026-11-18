@@ -1,0 +1,28 @@
+{
+  "canonical_only": {
+    "texts": 40,
+    "raw_substring_trigger_count": 20,
+    "actual_matching_trigger_count": 20,
+    "unmatched_actual": [
+      "delete",
+      "outage",
+      "payment"
+    ]
+  },
+  "canonical_and_paraphrases": {
+    "texts": 120,
+    "raw_substring_trigger_count": 22,
+    "actual_matching_trigger_count": 22,
+    "unmatched_actual": [
+      "delete"
+    ]
+  },
+  "entire_json_objects": {
+    "texts": 40,
+    "raw_substring_trigger_count": 22,
+    "actual_matching_trigger_count": 22,
+    "unmatched_actual": [
+      "delete"
+    ]
+  }
+}

@@ -1,0 +1,65 @@
+#!/bin/sh
+set -eu
+project_dir=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+cd "$project_dir"
+python_bin="$project_dir/.venv/bin/python"
+if [ ! -x "$python_bin" ]; then python_bin=$(command -v python3); fi
+case "$project_dir/" in /Volumes/Data/*) ;; *) echo 'Local deployment must reside under /Volumes/Data' >&2; exit 1;; esac
+action=${1:-up}
+case "$action" in up|up-models|down|logs|status|config|config-models|token|tester-token|smoke) ;; *) echo 'Usage: scripts/orbstack {up|up-models|down|logs|status|config|config-models|token|tester-token|smoke}' >&2; exit 2;; esac
+LOCAL_UID=$(id -u); LOCAL_GID=$(id -g)
+export LOCAL_UID LOCAL_GID
+export TMPDIR="$project_dir/.cache/tmp"
+mkdir -p "$TMPDIR" .cache/orbstack data/workspaces reports/private .orbstack
+(umask 077; "$python_bin" - <<'PY'
+from pathlib import Path
+import secrets
+path = Path('.orbstack.env')
+text = path.read_text() if path.exists() else ''
+keys = {line.split('=',1)[0] for line in text.splitlines()}
+for key in ['RAG_ADMIN_TOKEN','RAG_TESTER_TOKEN']:
+    if key not in keys:
+        text = text.rstrip('\n') + '\n' + key + '=' + secrets.token_urlsafe(32) + '\n'
+path.write_text(text.lstrip('\n'))
+path.chmod(0o600)
+PY
+)
+case "$action" in
+  token) sed -n 's/^RAG_ADMIN_TOKEN=//p' .orbstack.env; exit 0 ;;
+  tester-token) sed -n 's/^RAG_TESTER_TOKEN=//p' .orbstack.env; exit 0 ;;
+esac
+RAG_ADMIN_TOKEN=$(sed -n 's/^RAG_ADMIN_TOKEN=//p' .orbstack.env)
+RAG_TESTER_TOKEN=$(sed -n 's/^RAG_TESTER_TOKEN=//p' .orbstack.env)
+export RAG_ADMIN_TOKEN RAG_TESTER_TOKEN
+RAG_PORT=${RAG_PORT:-8000}
+export RAG_PORT
+profile=offline
+if [ -f .orbstack/profile ]; then profile=$(cat .orbstack/profile); fi
+case "$action" in up|config) profile=offline;; up-models|config-models) profile=models;; esac
+compose() {
+  if [ "$profile" = models ]; then
+    docker --context orbstack compose --env-file .orbstack.env -f compose.yaml -f compose.models.yaml --profile models "$@"
+  else
+    docker --context orbstack compose --env-file .orbstack.env -f compose.yaml "$@"
+  fi
+}
+case "$action" in config|config-models) compose config --quiet; exit 0;; esac
+docker --context orbstack info >/dev/null
+case "$action" in
+  up-models)
+    if [ ! -f requirements/models.lock ]; then scripts/lock-models; fi
+    compose run --rm --no-deps --build model-download
+    compose up -d --build --remove-orphans --wait --wait-timeout 900 app
+    compose exec -T app python /app/scripts/integration_qdrant.py --url http://qdrant:6333
+    printf '%s\n' models > .orbstack/profile
+    "$python_bin" scripts/smoke_http.py --env-file .orbstack.env --url "http://127.0.0.1:$RAG_PORT" ;;
+  up)
+    compose up -d --build --remove-orphans --wait --wait-timeout 180 app
+    printf '%s\n' offline > .orbstack/profile
+    "$python_bin" scripts/smoke_http.py --env-file .orbstack.env --url "http://127.0.0.1:$RAG_PORT" ;;
+  down) compose down --remove-orphans ;;
+  logs) compose logs --tail=100 -f ;;
+  status) compose ps ;;
+  smoke) "$python_bin" scripts/smoke_http.py --env-file .orbstack.env --url "http://127.0.0.1:$RAG_PORT" ;;
+esac
+case "$action" in up|up-models) echo "Workbench: http://127.0.0.1:$RAG_PORT; tester access: scripts/orbstack tester-token";; esac

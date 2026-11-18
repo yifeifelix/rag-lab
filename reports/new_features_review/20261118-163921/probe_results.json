@@ -1,0 +1,359 @@
+{
+  "source_root": "/Volumes/Data/Projects/Rag/reports/new_features_review/20261118-163921/snapshot/src/rag_platform",
+  "scope": "frozen snapshot; local generation; no network or paid models",
+  "source_sha256": {
+    "chunking.py": "54df4b092c2e322594324946740fc3ac721c0642af16d3a54010a96a2d262408",
+    "server.py": "0a1f32b41b22f7968cb5dd40f5a1d04cbfcf72878b4acadc097b900cff41a028",
+    "config.py": "15ca2c7d32aa4f9cd9bd7a4ccbd6f23104951d330dd5305fb1e4ca78a0c34c9d",
+    "benchmark.py": "c7f5638e5dd0a75bd77e1e051c0eed2db21afc92928147fc2120cb6858141dc2",
+    "knowledge_base.py": "d9bb0b3b0d7987643afd03422f802226c5a6a30eac4cdd599587ca96aeef7785",
+    "reranker.py": "75db3674cec2d18a1c837d50639c6e483b23c30af40010a1ecccfc975a6a0170",
+    "data_gen.py": "7811893eda2d8b677e5047bdde03278cb0dc3a3a5d7a5649411f666e292e8a96",
+    "awesome_rag.py": "b93cbad758eff0b524ba1de21b843184791fd838575c815d6e080458828ae719",
+    "evaluation.py": "de9d0c56d85d8ab16ea39f27d41ee66a9a44f5cfcc66bd012b297af08a461e00",
+    "cache.py": "70512268bee6bdf3bb0a531c75f61df21db2d3b3756fc6ec6aa2b6346d6ba7eb",
+    "__init__.py": "cd4c6570ec3a3255f4bb469b3ca6f37d15d1a1d261485ac2f771223b36f1a52d",
+    "runtime.py": "cc27f9ff9cd8cbe88be0a28e1fff0f0e57f2b90f9da0dd87b760a108dca17915",
+    "embeddings.py": "55596ff78d7455aa6a7d663d6de2f530edeb27a7e2a0113f9b910c276e9f086f",
+    "pipeline.py": "ef17314ab762fe2768921c51ddd4c37cc72e59e3dc9574837c0b189698442313",
+    "retrieval.py": "0c707e8fbc569872fd7c6cd5abd519b942a8551d93146cf4d3f405cb792c46b0",
+    "provenance.py": "cea144f0f0e462b233bfd699f317ce96e6993243061c811d76312131efb7fcac",
+    "index_store.py": "bbf8bd2a2355ac272f3c73e53d388b32a624e3ab67d3aa87b4c5ec7d76f0bb69",
+    "resilience.py": "9533c8bb31d1d7bc006bc4422e91a43ed33fd66085af18ebd63a34a71d36922a"
+  },
+  "graph_when_disabled": {
+    "enable_graph_rag": false,
+    "constructor_calls": 1,
+    "construction_ms": [
+      120.58495776727796
+    ],
+    "entities": 2249,
+    "directed_neighbor_entries": 327014,
+    "ordinary_prose_entities": [
+      "and",
+      "ordinary",
+      "prose",
+      "the"
+    ]
+  },
+  "contextual_header": {
+    "indexed_chunks": 281,
+    "chunks_with_enricher_metadata": 0
+  },
+  "incorrect_router_cases": [
+    {
+      "query": "SOC2-CC6.7 zxqnonce0 zxqnonce1 zxqnonce2 zxqnonce3 zxqnonce4 zxqnonce5 zxqnonce6 zxqnonce7",
+      "crag_status": "INCORRECT",
+      "refused": false,
+      "confidence": 0.505,
+      "citations": [
+        "SEC-COMP-001",
+        "CLOUD-ARCH-010",
+        "CLOUD-ARCH-004"
+      ]
+    }
+  ],
+  "feature_toggle_cache": {
+    "first_status": "DISABLED",
+    "flag_after_toggle": true,
+    "cached_status": "DISABLED",
+    "cache_tier": "l1_exact",
+    "uncached_status": "CORRECT",
+    "note": "Programmatic hot configuration change; UI currently does not expose these flags"
+  },
+  "tuner": {
+    "configured_dense_weight": 0.9,
+    "configured_sparse_weight": 0.1,
+    "effective_trimodal_weights": [
+      {
+        "dense_weight": 0.45,
+        "sparse_weight": 0.35,
+        "graph_weight": 0.2,
+        "rrf_k": 60
+      }
+    ],
+    "graph_weight_configurable": false,
+    "selection": {
+      "best_config": {
+        "dense_weight": 0.45,
+        "sparse_weight": 0.35,
+        "graph_weight": 0.2,
+        "rrf_k": 60,
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "ndcg_at_5": 0.9917
+      },
+      "all_trials": [
+        {
+          "dense_weight": 0.45,
+          "sparse_weight": 0.35,
+          "graph_weight": 0.2,
+          "rrf_k": 60,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 0.9917
+        },
+        {
+          "dense_weight": 0.4,
+          "sparse_weight": 0.4,
+          "graph_weight": 0.2,
+          "rrf_k": 40,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 0.9917
+        },
+        {
+          "dense_weight": 0.5,
+          "sparse_weight": 0.3,
+          "graph_weight": 0.2,
+          "rrf_k": 60,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 0.9917
+        },
+        {
+          "dense_weight": 0.35,
+          "sparse_weight": 0.45,
+          "graph_weight": 0.2,
+          "rrf_k": 60,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 0.9917
+        },
+        {
+          "dense_weight": 0.55,
+          "sparse_weight": 0.45,
+          "graph_weight": 0.0,
+          "rrf_k": 60,
+          "recall_at_5": 1.0,
+          "mrr": 1.0,
+          "ndcg_at_5": 0.9885
+        }
+      ],
+      "num_queries_evaluated": 34
+    },
+    "applied_dense_weight_after_tuning": 0.9
+  },
+  "empty_tuner": {
+    "exception": "ZeroDivisionError",
+    "message": "division by zero"
+  },
+  "natural_compression": [
+    {
+      "question": "What does error code ERR_QDRANT_5032 indicate and how is it recovered?",
+      "ratio": 0.4582,
+      "lexical_grounding_proxy": 0.747
+    }
+  ],
+  "controlled_compression": {
+    "answer": "Code `ERR_QDRANT_5032` indicates shard quorum loss during segment compaction; recovery requires pausing bulk upserts and triggering `POST /collections/{name}/snapshots/recover`. [CLOUD-ARCH-002] [SLA-GOV-001] Enterprise Tier-0 SLA Contract, Error Budgets & Burn-Rate Alerts (Domain: sla_governance) [SLA-GOV-001] When error ERR_GW_4290 exceeds 1.5% of traffic for 3 consecutive minutes, the autoscaler expands Envoy ingress replicas from 8 to 24 pods and increases Redis L1 TTL from 900s to 3600s. [CLOUD-ARCH-001] SPARSE-CFG-K15 | Custom tokenizer preserves codes like SOC2-CC6.7 and ERR_QDRANT_5032 [CLOUD-ARCH-010]",
+    "compressed_evidence": [
+      "[CLOUD-ARCH-002] Qdrant Vector Cluster Sharding, HNSW Tuning & Quantization Guide (Domain: cloud_architecture)",
+      "[SLA-GOV-001] Enterprise Tier-0 SLA Contract, Error Budgets & Burn-Rate Alerts (Domain: sla_governance)",
+      "[CLOUD-ARCH-001] High-Concurrency API Gateway & Singleflight Coalescing Specification (Domain: cloud_architecture)",
+      "[CLOUD-ARCH-010] BM25 Inverted Index Memory-Mapping & Stopword Tuning (Domain: cloud_architecture)",
+      "[SLA-GOV-002] Circuit Breaker, Graceful Degradation & Chaos Engineering Runbook (Domain: sla_governance)"
+    ],
+    "lexical_grounding_proxy": 0.2289,
+    "note": "Compressor forced to retain only existing first line. Local synthesis still reads original candidates."
+  },
+  "empty_tuner_http": {
+    "status": 500,
+    "body": "Internal Server Error"
+  },
+  "seven_architectures": [
+    {
+      "name": "1_fixed_dense_baseline",
+      "recall_at_5": 0.8971,
+      "mrr": 0.8922,
+      "ndcg_at_5": 0.8786,
+      "keyword_coverage": 0.5221
+    },
+    {
+      "name": "2_recursive_dense",
+      "recall_at_5": 0.902,
+      "mrr": 0.8578,
+      "ndcg_at_5": 0.8622,
+      "keyword_coverage": 0.5368
+    },
+    {
+      "name": "3_recursive_bm25",
+      "recall_at_5": 0.9559,
+      "mrr": 0.951,
+      "ndcg_at_5": 0.9398,
+      "keyword_coverage": 0.5588
+    },
+    {
+      "name": "4_semantic_hybrid_rrf",
+      "recall_at_5": 0.9706,
+      "mrr": 0.8995,
+      "ndcg_at_5": 0.9103,
+      "keyword_coverage": 0.6618
+    },
+    {
+      "name": "5_parent_child_hybrid_rrf",
+      "recall_at_5": 0.9706,
+      "mrr": 0.8721,
+      "ndcg_at_5": 0.8893,
+      "keyword_coverage": 0.5074
+    },
+    {
+      "name": "6_enterprise_full_rerank",
+      "recall_at_5": 0.9706,
+      "mrr": 0.9338,
+      "ndcg_at_5": 0.9362,
+      "keyword_coverage": 0.4779
+    },
+    {
+      "name": "7_awesome_crag_graph_hybrid",
+      "recall_at_5": 1.0,
+      "mrr": 1.0,
+      "ndcg_at_5": 0.9917,
+      "keyword_coverage": 0.5074
+    }
+  ],
+  "advanced_real_domain": [
+    {
+      "enabled": false,
+      "metrics": {
+        "recall_at_3": {
+          "mean": 1.0,
+          "ci_low": 1.0,
+          "ci_high": 1.0,
+          "n": 11
+        },
+        "recall_at_5": {
+          "mean": 1.0,
+          "ci_low": 1.0,
+          "ci_high": 1.0,
+          "n": 11
+        },
+        "mrr": {
+          "mean": 1.0,
+          "ci_low": 1.0,
+          "ci_high": 1.0,
+          "n": 11
+        },
+        "ndcg_at_5": {
+          "mean": 1.0,
+          "ci_low": 1.0,
+          "ci_high": 1.0,
+          "n": 11
+        },
+        "context_precision_at_5": {
+          "mean": 1.0,
+          "ci_low": 1.0,
+          "ci_high": 1.0,
+          "n": 11
+        },
+        "keyword_coverage": {
+          "mean": 0.3182,
+          "ci_low": 0.1364,
+          "ci_high": 0.5455,
+          "n": 11
+        },
+        "citation_precision": {
+          "mean": 0.3788,
+          "ci_low": 0.3333,
+          "ci_high": 0.4242,
+          "n": 11
+        },
+        "lexical_grounding_proxy": {
+          "mean": 1.0,
+          "ci_low": 1.0,
+          "ci_high": 1.0,
+          "n": 11
+        },
+        "false_refusal_rate": {
+          "mean": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "n": 11
+        },
+        "refusal_accuracy": {
+          "mean": 1.0,
+          "ci_low": 1.0,
+          "ci_high": 1.0,
+          "n": 2
+        },
+        "latency_ms": {
+          "mean": 0.7615,
+          "ci_low": 0.5181,
+          "ci_high": 1.1274,
+          "n": 13
+        }
+      }
+    },
+    {
+      "enabled": true,
+      "metrics": {
+        "recall_at_3": {
+          "mean": 1.0,
+          "ci_low": 1.0,
+          "ci_high": 1.0,
+          "n": 11
+        },
+        "recall_at_5": {
+          "mean": 1.0,
+          "ci_low": 1.0,
+          "ci_high": 1.0,
+          "n": 11
+        },
+        "mrr": {
+          "mean": 1.0,
+          "ci_low": 1.0,
+          "ci_high": 1.0,
+          "n": 11
+        },
+        "ndcg_at_5": {
+          "mean": 1.0,
+          "ci_low": 1.0,
+          "ci_high": 1.0,
+          "n": 11
+        },
+        "context_precision_at_5": {
+          "mean": 1.0,
+          "ci_low": 1.0,
+          "ci_high": 1.0,
+          "n": 11
+        },
+        "keyword_coverage": {
+          "mean": 0.3182,
+          "ci_low": 0.1364,
+          "ci_high": 0.5455,
+          "n": 11
+        },
+        "citation_precision": {
+          "mean": 0.3788,
+          "ci_low": 0.3333,
+          "ci_high": 0.4242,
+          "n": 11
+        },
+        "lexical_grounding_proxy": {
+          "mean": 1.0,
+          "ci_low": 1.0,
+          "ci_high": 1.0,
+          "n": 11
+        },
+        "false_refusal_rate": {
+          "mean": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "n": 11
+        },
+        "refusal_accuracy": {
+          "mean": 1.0,
+          "ci_low": 1.0,
+          "ci_high": 1.0,
+          "n": 2
+        },
+        "latency_ms": {
+          "mean": 0.9491,
+          "ci_low": 0.6795,
+          "ci_high": 1.3103,
+          "n": 13
+        }
+      }
+    }
+  ]
+}

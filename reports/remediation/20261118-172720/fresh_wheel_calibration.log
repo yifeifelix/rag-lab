@@ -1,0 +1,2 @@
+Saved /Volumes/Data/Projects/Rag/.cache/tmp/rag-image-c_kr9sd9/app/reports/private/calibration.json
+OOF Brier: 0.10312825259366885 operating point: {'threshold': 0.9999702368680484, 'cost': 27, 'unsupported_accepts': 1, 'false_refusals': 23, 'coverage': 0.5853658536585366}

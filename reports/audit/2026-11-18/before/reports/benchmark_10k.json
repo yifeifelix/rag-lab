@@ -1,0 +1,83 @@
+{
+  "config": {
+    "total_requests": 10000,
+    "chunking_strategy": "parent_child",
+    "retrieval_mode": "hybrid_rrf",
+    "use_reranker": true,
+    "max_concurrent_pipelines": 256,
+    "l2_similarity_threshold": 0.9,
+    "simulated_llm_latency_ms": 2.0
+  },
+  "summary": {
+    "wall_time_seconds": 2.866,
+    "achieved_rps": 3488.6,
+    "succeeded": 10000,
+    "failed": 0,
+    "success_rate": 1.0,
+    "peak_backend_concurrency": 256,
+    "effective_cache_and_coalesce_rate": 0.7496
+  },
+  "overall_latency_ms": {
+    "count": 10000,
+    "min": 0.005,
+    "p50": 0.017,
+    "p95": 2061.733,
+    "p99": 2462.802,
+    "max": 2520.68,
+    "mean": 382.208
+  },
+  "tier_breakdown": {
+    "l1_exact": {
+      "count": 3500,
+      "share_pct": 35.0,
+      "latency_ms": {
+        "count": 3500,
+        "min": 0.005,
+        "p50": 0.007,
+        "p95": 0.009,
+        "p99": 0.019,
+        "max": 0.252,
+        "mean": 0.007
+      }
+    },
+    "l2_semantic": {
+      "count": 3000,
+      "share_pct": 30.0,
+      "latency_ms": {
+        "count": 3000,
+        "min": 0.014,
+        "p50": 0.017,
+        "p95": 0.025,
+        "p99": 0.045,
+        "max": 0.14,
+        "mean": 0.018
+      }
+    },
+    "singleflight_coalesced": {
+      "count": 996,
+      "share_pct": 9.96,
+      "latency_ms": {
+        "count": 996,
+        "min": 262.832,
+        "p50": 359.191,
+        "p95": 519.271,
+        "p99": 563.493,
+        "max": 576.887,
+        "mean": 373.747
+      }
+    },
+    "miss": {
+      "count": 2504,
+      "share_pct": 25.04,
+      "latency_ms": {
+        "count": 2504,
+        "min": 318.217,
+        "p50": 1339.544,
+        "p95": 2449.089,
+        "p99": 2506.315,
+        "max": 2520.68,
+        "mean": 1377.693
+      }
+    }
+  }
+}

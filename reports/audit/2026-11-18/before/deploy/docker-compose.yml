@@ -1,0 +1,47 @@
+# Production-topology reference stack for Enterprise 10k-Concurrency RAG
+# Note: Storage volumes bind cleanly to /Volumes/Data/Projects/Rag/deploy/volumes
+
+services:
+  rag-gateway:
+    image: python:3.12-slim
+    working_dir: /app
+    volumes:
+      - ../:/app
+    command: >
+      sh -c "pip install --no-cache-dir -e . &&
+      uvicorn rag_platform.server:app --host 0.0.0.0 --port 8000 --workers 4"
+    ports:
+      - "8000:8000"
+    environment:
+      - RAG_LLM_MODE=local
+      - REDIS_URL=redis://redis-l1:6379/0
+      - QDRANT_URL=http://qdrant:6333
+    depends_on:
+      - redis-l1
+      - qdrant
+    deploy:
+      resources:
+        limits:
+          cpus: "4.0"
+          memory: 4G
+
+  redis-l1:
+    image: redis:7.4-alpine
+    command: ["redis-server", "--maxmemory", "2gb", "--maxmemory-policy", "allkeys-lru"]
+    ports:
+      - "6379:6379"
+
+  qdrant:
+    image: qdrant/qdrant:v1.12.1
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - /Volumes/Data/Projects/Rag/deploy/volumes/qdrant_storage:/qdrant/storage
+
+  prometheus:
+    image: prom/prometheus:v2.55.0
+    ports:
+      - "9090:9090"
+    volumes:
+      - /Volumes/Data/Projects/Rag/deploy/volumes/prometheus_data:/prometheus

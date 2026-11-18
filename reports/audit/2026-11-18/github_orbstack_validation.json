@@ -1,0 +1,102 @@
+{
+  "recorded_at_utc": "2026-11-18T17:20:07.497776+00:00",
+  "scope": "GitHub source sharing and CI, manually triggered local OrbStack build/deploy",
+  "sha256": {
+    "Dockerfile": "48f52d9d3f852140fdcf4828b54f8320ff9598baa0a7532ce0ddb96f9349a02b",
+    ".dockerignore": "dbd195db1fcf19d16a9f2006ad009ea7414806dcb974f0d0add372d820e9b724",
+    "compose.yaml": "a17ca069077a7c6d73917a9ea307167b448c5628e00f843b38dc057d6508bb2b",
+    ".gitignore": "d99909b1f4b55e6a0b7ae30e41b1d4657f5316dd966aeec7253479281c8230c9",
+    "pyproject.toml": "d58fc86cd956e717823a504666ab875af38e3d4850d380ab91698a9eb082063b",
+    "README.md": "548a76e712352395cbe2568519ce1a2836d1a217ee8ea4438ad2bd7a4eb38baf",
+    "LICENSE": "179302244208d72cfcff601be135d328f4f937b27361a904029c6d6ebc05b260",
+    "THIRD_PARTY_NOTICES.md": "b56c2abe1557d0ae548947d2e0215a0f308bd2f794d9b78c10014aa63ad50474",
+    "src/rag_platform/runtime.py": "27dff645fbaed587fd18ce6e579e9f7cc21af99113a65f27ad0059a36a56b8e1",
+    "scripts/workbench": "0ffa53da3a5b2684b07c0dca288c66e9a9726974f03ba153fa6562bfb47c0b8f",
+    "scripts/orbstack": "1cfb35f440c0acbb0ce3cbeb385bf53c3ea96576d4561d9b79acc78fb7c017a5",
+    "scripts/publish-github": "07428bdbd616b5aef74f51dc8c4011233404786435d6975a9056a7e8792fd64b",
+    "scripts/smoke_http.py": "c444b4b60c291380fe41c234a71b8e96ecec1116ca9a6e2a3a203e061e99e1e9",
+    "scripts/check_repository.py": "5a9e85c709a5979b8181f8c8b925c3ab3be2264c4d2815b7bc2cadba9e498372",
+    "scripts/check_wheel.py": "b791cad61727dfc289b5f55771e5d4a21aa93132db6bdcc7c99f35555b2f1917",
+    "scripts/container-entrypoint.sh": "3c85a35e52c63408e19e05071463b83358c984ce4e0d688cd878ef95a91a7812",
+    "scripts/prepare_python_support.py": "a28f6d4e30ffeba1f6c0451769ac54540056f9bf906bc7ceb1ae68377a85d324",
+    "tests/test_runtime_portability.py": "dc446cf77f5739e0819a2cf1a436645c1ffaf8a7aedae52ed0b0e5e9025bb7d3",
+    ".github/workflows/ci.yml": "5e37b3f037d3732cbb81c8bd692b7f8ac15db49cd4ddf11f10ee4e2106ed3d28",
+    ".github/dependabot.yml": "13bcb9beeb9e9b7c28efdb3c132a3978e158fa5b528c2a22f120e5da4380f19e",
+    "requirements/runtime.lock": "5fa6bd25672a293df9446bad812107abdd9402629d1f96d4ee62b289320ea536",
+    "requirements/ci.lock": "0548bfe2218b62a6875cc02c5ac6e930699966a0c4b5a7c1d04730c100048787",
+    "requirements/build.in": "7886595e0c22b774c86de1b5c5dca5aea51c686811c8c1124ffc0c62c58302a4",
+    "requirements/build.lock": "4c93afc69adc353f57e47e6ce48d752547f31945d8a977dd27b14fc5739be4d6",
+    "requirements/README.md": "e67603892a53febaf0233629516da892461db2954f9bfd13f73d11d95e26336a",
+    "data/python_support/PYTHON_LICENSE.txt": "6c4cb3ac7183d140222e754bbb81ae02c67a1cbe30352077358bca4b6c0f732a",
+    "docs/09_GITHUB_ORBSTACK_CICD.md": "d62c00be049db8dda76f099976ec9aae3259d9d9b124dc9831fe623034ca60a2",
+    "reports/audit/2026-11-18/github_orbstack_junit.xml": "d84a298da9d8daed1327e7bae541626fc49992f08c8e2688f2d7b13ae94565a7"
+  },
+  "validation": {
+    "pytest": {
+      "status": "passed",
+      "tests": 27,
+      "seconds": 8.18,
+      "junit": "reports/audit/2026-11-18/github_orbstack_junit.xml"
+    },
+    "compose_config": "passed_without_daemon",
+    "yaml_parse": "passed",
+    "shell_syntax": "passed",
+    "python_ast": {
+      "status": "passed",
+      "files": 33
+    },
+    "locked_ci_dry_run": {
+      "status": "passed",
+      "packages": 31,
+      "target": "local macOS ARM64 Python 3.12",
+      "installation_performed": false
+    },
+    "installed_dependency_check": "passed",
+    "wheel_and_sdist": "built",
+    "wheel_source_and_ui_bytes": "matched",
+    "wheel_asgi": {
+      "status": "passed",
+      "checks": [
+        "isolated package import",
+        "UI",
+        "health",
+        "owner auth 401",
+        "authorized local query"
+      ],
+      "network_socket_used": false
+    },
+    "publish_check": {
+      "status": "passed",
+      "files": 251,
+      "scope": "known credential formats and private/runtime paths",
+      "final_recheck_files": 252
+    },
+    "ruff": "not_run_no_cached_package_and_network_unavailable",
+    "http_socket_smoke": "blocked_by_sandbox_bind_and_connect_permissions",
+    "docker_build_and_runtime": "not_run_socket_permission_denied",
+    "remote_github_ci": "not_run_no_repository_created_or_pushed"
+  },
+  "blocked_actions": [
+    {
+      "action": "git init -b main",
+      "reason": ".git: Operation not permitted"
+    },
+    {
+      "action": "docker --context orbstack info",
+      "reason": "permission denied connecting to OrbStack Docker socket"
+    },
+    {
+      "action": "gh auth status / gh api user",
+      "reason": "existing yifeifelix credentials reported invalid; API network unavailable"
+    }
+  ],
+  "external_state": {
+    "github_repository_created": false,
+    "github_push_completed": false,
+    "orbstack_container_started": false
+  },
+  "next_commands_in_normal_terminal": [
+    "scripts/publish-github",
+    "scripts/orbstack up"
+  ]
+}

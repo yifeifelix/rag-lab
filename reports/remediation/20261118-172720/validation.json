@@ -1,0 +1,125 @@
+{
+  "recorded_at_utc": "2026-11-18T18:42:50.736334+00:00",
+  "application_version": "1.2.0",
+  "status": "local_implementation_verified_external_deployment_blocked",
+  "requested_scope": "Audit remediation, RAG learning/evaluation workflows, OrbStack deployment, closed user testing",
+  "checks": {
+    "pytest": {
+      "status": "passed",
+      "tests": 57,
+      "failures": 0,
+      "errors": 0,
+      "seconds": 11.21,
+      "warnings": 1,
+      "evidence": "pytest.xml"
+    },
+    "source_wheel_byte_match": "passed",
+    "wheel_and_sdist_build": "passed",
+    "fresh_workspace_wheel_asgi": "passed",
+    "python_ast": {
+      "status": "passed",
+      "files": 46
+    },
+    "page_javascript_syntax": "passed",
+    "shell_syntax": "passed",
+    "yaml_parse": {
+      "status": "passed",
+      "files": 4
+    },
+    "compose_offline_and_models_config": "passed_without_daemon",
+    "base_ci_lock_recompile": "byte_identical",
+    "installed_dependencies": "compatible",
+    "qdrant_rest_mock_contract": "passed",
+    "cross_encoder_adapter_mock_contract": "passed",
+    "real_qdrant_integration": "not_run_docker_socket_denied",
+    "real_model_inference": "not_run_dependencies_and_models_unavailable",
+    "ruff": "not_run_pypi_dns_failure",
+    "linux_dependency_install": "not_run",
+    "real_http_and_lan": "not_run_sandbox_network_restrictions",
+    "orbstack_deployment": "attempt_failed_socket_permission_denied",
+    "github_push_and_remote_ci": "not_completed",
+    "source_archive_private_paths": "passed",
+    "fresh_workspace_conditional_answer": "passed_current_EU_only",
+    "publish_surface": "passed_after_audit_generation"
+  },
+  "quality": {
+    "evaluation_role": "seen_test_diagnostic_after_dev_acceptance_fix",
+    "independent_blind_test": false,
+    "questions": 83,
+    "recall_at_5": {
+      "mean": 1.0,
+      "ci_low": 1.0,
+      "ci_high": 1.0,
+      "n": 71
+    },
+    "mrr": {
+      "mean": 0.9887,
+      "ci_low": 0.9549,
+      "ci_high": 1.0,
+      "n": 71
+    },
+    "false_refusal_rate": {
+      "mean": 0.3521,
+      "ci_low": 0.2535,
+      "ci_high": 0.4648,
+      "n": 71
+    },
+    "refusal_accuracy": {
+      "mean": 1.0,
+      "ci_low": 1.0,
+      "ci_high": 1.0,
+      "n": 12
+    },
+    "human_correctness_review": "pending",
+    "dev_oof_brier": 0.10312825259366885,
+    "dev_operating_point": {
+      "threshold": 0.9999702368680484,
+      "cost": 27,
+      "unsupported_accepts": 1,
+      "false_refusals": 23,
+      "coverage": 0.5853658536585366
+    },
+    "prior_frozen_baseline": "development_iterations/first_frozen_baseline/",
+    "limitations": [
+      "Recall is still saturated on this fixture",
+      "Test author is the implementation agent",
+      "Initial test was observed before a dev acceptance bug fix; latest scores are diagnostic",
+      "Conservative offline calibration still falsely refuses 25 of 71 answerable questions",
+      "Independent user questions and actual model comparisons are still required"
+    ]
+  },
+  "external_state": {
+    "agent_started_orbstack_container": false,
+    "existing_container_state": "cannot_inspect_socket_denied",
+    "agent_pushed_github": false,
+    "models_lock_generated": false,
+    "real_paid_llm_calls": false
+  },
+  "artifacts_sha256": {
+    "before_manifest.json": "243d76741903f6d9ab32c5b9d7397c37aa618e88ce2d51857c57c158c72caafc",
+    "after_manifest.json": "58834cf893c275711dd74dcb337fca24b82d467728e790b1e574d8b99849dd83",
+    "changes.patch": "67b043365aed35a08f602d0c9dbf179bfa424af0b950d2d0537e12532e0a0876",
+    "pytest.xml": "a776c56eb150bbf78f192de64ced620194eac30882d070cf7cd1279154868e0a",
+    "tuning_dev.json": "feb07ae51d2f67630bf3956bf184833a343d017b0049dd3f5fd7b64bc14672bf",
+    "comparison_dev.json": "908449519774a86654db2f9e2843c0d476d534aefe8de8f2adc4d8c0f36a4540",
+    "calibration_dev.json": "07b7c2649ee3e395a74b23f4295afa0c73c01feb818cd78d41c291eb6afe015f",
+    "freeze.json": "3bddb4778f39fedc5a66fb1d4064b3dda4f0edb463bbdaf21ce5221a1c0d4e75",
+    "seen_test_diagnostic.json": "9bb77b27cec7218acb5b509af602bbead97ce37bdb7d34e43ef9430dffb772c6",
+    "fresh_wheel_acceptance.json": "9601105b4b2bc609cc1fed622cc1adec634a49b15c07ed8256a028a9a4c96287",
+    "fresh_wheel_acceptance.log": "c81c6b269d0119c2aa1fabf6e9980b296b2de59ac207697960b6fdb222b653db",
+    "fresh_wheel_calibration.log": "fde4d22a229406961cd69a37510a6b3bacc31b8daffd5a8fc0b0a25653d277d8",
+    "fresh_wheel_probe.py": "53e70f12e8bf04895c20cb5afdabf80ad73712356af90106bb342a21b32fc496",
+    "orbstack_attempt.log": "45fbe7c3ee2125083654cd2c68e3734c07770be7c6064665de1d5b4dfc1d382b"
+  },
+  "distributions_sha256": {
+    "dist/enterprise_rag_platform-1.2.0-py3-none-any.whl": "9686df2a2963d569ec07145ee1134a9b386e729ae331497873245d0f6c970a30",
+    "dist/enterprise_rag_platform-1.2.0.tar.gz": "57700632029355d259e72fc17815adcdbd8fd9740a7260c7b5aaee003adde7ea"
+  },
+  "next_commands_in_normal_terminal": [
+    "scripts/orbstack up",
+    "scripts/orbstack up-models",
+    "scripts/orbstack tester-token",
+    "scripts/publish-github"
+  ],
+  "data_location": "Runtime workspaces, caches and reports are routed under the configured Data root; OrbStack VM/image disk location is controlled by OrbStack settings"
+}

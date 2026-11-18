@@ -1,0 +1,20 @@
+{
+  "python_version": "3.12.15",
+  "corpus_kind": "real_cpython_docstrings",
+  "documents": 9,
+  "dev_questions": 9,
+  "test_questions": 13,
+  "human_review_status": "pending",
+  "independent_test_author": false,
+  "sha256": {
+    "documents.jsonl": "9c2ceab4773127b5690fca6baf4e257a9fa932cea5d556256b76877511e2a88f",
+    "qa_dev.jsonl": "98c8aa742d77dd896392720d8aeab72c790cdf89e046cc4bac3d2a355f144602",
+    "qa_test.jsonl": "39a3ac63ab5470b253100d350d4c7f263950f211a28a7a785132a2dfd2ca1326"
+  },
+  "limitations": [
+    "Small technical domain",
+    "Not a multilingual benchmark",
+    "Current runtime docstrings may lag online documentation",
+    "Test split is frozen but not blind to the implementation agent"
+  ]
+}

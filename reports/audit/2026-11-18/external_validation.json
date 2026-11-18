@@ -1,0 +1,43 @@
+{
+  "external_dns": {
+    "status": "blocked",
+    "command": "curl -I --max-time 15 https://raw.githubusercontent.com/python/cpython/v3.12.8/Doc/library/asyncio-task.rst",
+    "exit_code": 6,
+    "error": "Could not resolve host: raw.githubusercontent.com"
+  },
+  "browser_rendering": {
+    "status": "blocked",
+    "tool": "orca-cli",
+    "command": "orca tab list --json",
+    "error_code": "runtime_access_denied",
+    "system_code": "EPERM",
+    "error": "The Codex sandbox blocked this command from connecting to Orca"
+  },
+  "http_network_load": {
+    "status": "blocked",
+    "command": "scripts/workbench start --port 8765",
+    "error": "[Errno 1] error while attempting to bind on address (127.0.0.1, 8765): operation not permitted",
+    "server_stopped": true
+  },
+  "pretrained_model": {
+    "status": "not_run",
+    "reason": "sentence_transformers and torch are absent; external DNS is unavailable; no model downloaded"
+  },
+  "cloud_generation": {
+    "status": "not_run",
+    "reason": "No OPENAI_API_KEY or GEMINI_API_KEY was available at baseline; no live API request made"
+  },
+  "independent_human_review": {
+    "status": "pending",
+    "reason": "QA authored by implementation agent; review templates exported without assigning success labels"
+  },
+  "docker_kubernetes": {
+    "status": "not_run",
+    "reason": "Reference topology only; not connected or deployed"
+  },
+  "initial_wheel_build": {
+    "status": "resolved",
+    "initial_error": "ModuleNotFoundError: No module named setuptools with --no-build-isolation",
+    "resolution": "Used existing read-only Data-volume cached setuptools 84.2.1 as PYTHONPATH build backend; no package download or system install"
+  }
+}

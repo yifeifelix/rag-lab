@@ -1,0 +1,74 @@
+"""Configuration dataclasses for the Enterprise RAG Platform."""
+
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+from pathlib import Path
+import os
+
+
+def get_project_root() -> Path:
+    """Return the root directory of the RAG repository."""
+    return Path(__file__).resolve().parents[2]
+
+
+@dataclass
+class RAGConfig:
+    """Central configuration for chunking, retrieval, caching, resilience, and generation."""
+
+    # Paths (kept strictly under project root on /Volumes/Data)
+    project_root: Path = field(default_factory=get_project_root)
+    corpus_path: Path | None = None
+    golden_qa_path: Path | None = None
+    reports_dir: Path | None = None
+
+    # Chunking parameters
+    chunking_strategy: str = "parent_child"  # fixed | recursive | semantic | parent_child
+    fixed_chunk_size: int = 260
+    fixed_overlap: int = 40
+    recursive_max_chars: int = 500
+    semantic_breakpoint_percentile: float = 80.0
+    parent_max_chars: int = 900
+    child_max_chars: int = 260
+
+    # Embedding & retrieval parameters
+    embedding_dim: int = 48
+    retrieval_mode: str = "hybrid_rrf"  # dense | bm25 | hybrid_rrf
+    top_k_candidates: int = 36
+    top_k_final: int = 5
+    rrf_k: int = 60
+    dense_weight: float = 0.55
+    sparse_weight: float = 0.45
+
+    # Reranker & relevance threshold
+    use_reranker: bool = True
+    min_confidence_threshold: float = 0.22
+
+    # Multi-tier caching & coalescing
+    use_cache: bool = True
+    l1_max_size: int = 4096
+    l1_ttl_seconds: float = 3600.0
+    l2_max_size: int = 2048
+    l2_similarity_threshold: float = 0.90
+    l2_ttl_seconds: float = 3600.0
+    enable_singleflight: bool = True
+
+    # 10k-Concurrency resilience & backpressure
+    max_concurrent_pipelines: int = 256
+    queue_timeout_seconds: float = 5.0
+    rate_limit_rps: float = 50000.0
+    rate_limit_burst: float = 20000.0
+    circuit_breaker_failure_threshold: int = 10
+    circuit_breaker_reset_seconds: float = 15.0
+
+    # Synthesis / LLM mode
+    llm_mode: str = field(default_factory=lambda: os.getenv("RAG_LLM_MODE", "local"))
+    simulated_llm_latency_ms: float = 0.0
+
+    def __post_init__(self) -> None:
+        if self.corpus_path is None:
+            self.corpus_path = self.project_root / "data" / "corpus" / "documents.jsonl"
+        if self.golden_qa_path is None:
+            self.golden_qa_path = self.project_root / "data" / "eval" / "golden_qa.jsonl"
+        if self.reports_dir is None:
+            self.reports_dir = self.project_root / "reports"

@@ -1,0 +1,35 @@
+#!/bin/sh
+set -eu
+project_dir=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+data_root=${RAG_DATA_ROOT:-/Volumes/Data}
+case "$project_dir/" in "${data_root%/}/"*) ;; *) echo 'Project must be under RAG_DATA_ROOT (default /Volumes/Data)' >&2; exit 1;; esac
+export HF_HOME="$project_dir/.cache/huggingface"
+export TORCH_HOME="$project_dir/.cache/torch"
+export UV_CACHE_DIR="$project_dir/.cache/uv"
+export UV_TOOL_DIR="$project_dir/.cache/uv-tools"
+export UV_TOOL_BIN_DIR="$project_dir/.cache/uv-bin"
+export UV_PYTHON_INSTALL_DIR="$project_dir/.cache/uv-python"
+export PIP_CACHE_DIR="$project_dir/.cache/pip"
+export XDG_CACHE_HOME="$project_dir/.cache"
+export TMPDIR="$project_dir/.cache/tmp"
+export PYTHONPYCACHEPREFIX="$project_dir/.cache/pycache"
+mkdir -p "$TMPDIR" "$PYTHONPYCACHEPREFIX"
+cd "$project_dir"
+action=${1:-start}
+if [ "$#" -gt 0 ]; then shift; fi
+case "$action" in
+  start) exec .venv/bin/python -m uvicorn rag_platform.server:create_app --factory --host 127.0.0.1 --port 8000 "$@" ;;
+  install) exec uv pip install --python .venv/bin/python -e ".[${1:-dev}]" ;;
+  download-model) exec .venv/bin/python -m rag_platform.cli download_model.py "$@" ;;
+  test) exec .venv/bin/python -m pytest "$@" ;;
+  prepare-domain) exec .venv/bin/python -m rag_platform.cli prepare_python_support.py "$@" ;;
+  evaluate-domain) exec .venv/bin/python -m rag_platform.cli run_domain_evaluation.py "$@" ;;
+  prepare-learning) exec .venv/bin/python -m rag_platform.cli prepare_learning_dataset.py "$@" ;;
+  study) exec .venv/bin/python -m rag_platform.cli run_learning_study.py "$@" ;;
+  ablation) exec .venv/bin/python -m rag_platform.cli run_ablation_study.py "$@" ;;
+  synthetic) exec .venv/bin/python -m rag_platform.cli run_10k_benchmark.py "$@" ;;
+  http-benchmark) exec .venv/bin/python -m rag_platform.cli run_http_benchmark.py "$@" ;;
+  audit) exec .venv/bin/python -m rag_platform.cli audit_project.py "$@" ;;
+  lint) exec uvx --python .venv/bin/python --from ruff==0.14.0 ruff check src tests scripts ;;
+  *) echo 'Usage: scripts/workbench {start|install|download-model|test|prepare-domain|evaluate-domain|ablation|synthetic|http-benchmark|audit|lint|prepare-learning|study} [args]' >&2; exit 2 ;;
+esac

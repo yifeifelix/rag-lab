@@ -1,0 +1,15 @@
+--- previous/config.py
++++ snapshot/config.py
+@@ -56,6 +56,12 @@
+     use_reranker: bool = True
+     min_confidence_threshold: float = 0.22
+ 
++    # Awesome-RAG techniques (opt-in flags; tested in Ablation #7 & AutoRAG tuner)
++    enable_crag: bool = False
++    enable_graph_rag: bool = False
++    enable_query_expansion: bool = False
++    enable_contextual_compression: bool = False
++
+     # Multi-tier caching & coalescing
+     use_cache: bool = True
+     l1_max_size: int = 4096
