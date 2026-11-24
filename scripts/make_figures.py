@@ -520,8 +520,69 @@ def fig_crag():
     svg("10_crag.svg", 900, 400, b, "Corrective RAG and the agent loop")
 
 
+# --- Lesson 11: the NLP map ----------------------------------------------------------
+
+def fig_nlp_map():
+    b = ""
+    b += text(40, 38, "NLP: one kitchen, many dishes", 16, anchor="start", weight="bold")
+    b += rect(450, 62, 420, 178, YELLOW, rx=16, dash=True)
+    b += text(660, 228, "RAG = Search + Generate (this course)", 14, weight="bold", fill=YELLOW[1])
+    families = [("🗂️ Classify", ["spam or not?", "good or bad review?", "which topic?"], "Lesson 11", PURPLE, 40),
+                ("🔎 Extract", ["names, dates,", "amounts in a", "contract"], "Lesson 12 path", GREY, 245),
+                ("🧑‍💼 Search", ["find the text", "that matches", "a question"], "Lessons 2-6", GREEN, 465),
+                ("✍️ Generate", ["translate, summarise,", "answer, chat"], "Lesson 7", ORANGE, 670)]
+    for title, lines, where, colors, x in families:
+        b += rect(x, 78, 190, 126, colors, rx=12)
+        b += text(x + 95, 104, title, 15, weight="bold", fill=colors[1])
+        b += text(x + 95, 128, lines, 13)
+        b += text(x + 95, 194, where, 12, fill=MUTED, italic=True)
+    b += path("M 135 252 L 135 266 L 765 266 L 765 252", MUTED, end=False, width=2)
+    b += path("M 450 266 L 450 286", MUTED)
+    b += text(470, 282, "all built from the same ingredients", 12, anchor="start", fill=MUTED, italic=True)
+    ingredients = [("tokens", "split text into pieces", "Lessons 4, 12"),
+                   ("embeddings", "meaning as numbers", "Lesson 2"),
+                   ("Transformers / LLMs", "models that read and write", "Lessons 6, 7"),
+                   ("evaluation", "fair tests, read failures", "Lessons 8, 11")]
+    for i, (name, what, where) in enumerate(ingredients):
+        x = 40 + i * 210
+        b += rect(x, 296, 190, 84, BLUE, rx=12)
+        b += text(x + 95, 322, name, 15, weight="bold", fill=BLUE[1])
+        b += text(x + 95, 344, what, 13)
+        b += text(x + 95, 366, where, 12, fill=MUTED, italic=True)
+    svg("11_nlp_map.svg", 900, 400, b, "A map of NLP: task families built from shared ingredients")
+
+
+# --- Lesson 12: the learning path ----------------------------------------------------------
+
+def fig_learning_path():
+    b = ""
+    b += text(40, 38, "From driver to engineer: five stages", 16, anchor="start", weight="bold")
+    b += f'<line x1="70" y1="120" x2="860" y2="120" stroke="{LINE}" stroke-width="10" stroke-linecap="round"/>'
+    b += f'<line x1="70" y1="120" x2="860" y2="120" stroke="#ffffff" stroke-width="2" stroke-dasharray="14 12"/>'
+    b += text(70, 84, "🚗 you are here: driver", 13, anchor="start", weight="bold", fill=GREEN[1])
+    b += text(380 + 80, 84, "🔧 mechanic", 13, weight="bold", fill=PURPLE[1])
+    b += text(550 + 80, 84, "🏭 engineer", 13, weight="bold", fill=ORANGE[1])
+    stages = [("Text as data", ["Yandex NLP, week 1", "nlp-tutorial", "sentiment-analysis"], "≈ 2 weeks", BLUE),
+              ("How networks learn", ["Karpathy:", "Zero to Hero"], "≈ 3 weeks", PURPLE),
+              ("Transformers", ["Hugging Face course", "ch. 1-3 and 7"], "≈ 3 weeks", GREEN),
+              ("Build a small GPT", ["LLMs from Scratch", "nanoGPT"], "≈ 4 weeks", ORANGE),
+              ("LLM applications", ["mlabonne llm-course", "Yandex week 9 (RAG)"], "ongoing", YELLOW)]
+    for i, (title, lines, time, colors) in enumerate(stages):
+        x = 40 + i * 170
+        cx = x + 80
+        b += circle(cx, 120, 20, colors, width=3)
+        b += text(cx, 127, str(i + 1), 17, weight="bold", fill=colors[1])
+        b += rect(x, 152, 160, 170, colors, rx=12)
+        b += text(cx, 180, title, 14, weight="bold", fill=colors[1])
+        b += text(cx, 212, lines, 13)
+        b += text(cx, 306, time, 12, fill=MUTED, italic=True)
+    b += text(40, 356, "All five are free on GitHub and already downloaded into the references folder.",
+              13, anchor="start", fill=MUTED, italic=True)
+    svg("12_learning_path.svg", 900, 380, b, "A five-stage NLP learning path")
+
+
 if __name__ == "__main__":
     for fig in (fig_three_helpers, fig_chunking, fig_meaning_map, fig_vector_search, fig_bm25, fig_rrf,
-                fig_rerank, fig_prompt, fig_eval, fig_query, fig_crag):
+                fig_rerank, fig_prompt, fig_eval, fig_query, fig_crag, fig_nlp_map, fig_learning_path):
         fig()
     print("wrote", len(list(OUT.glob("*.svg"))), "figures to", OUT)

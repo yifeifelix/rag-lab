@@ -227,8 +227,11 @@ Lesson 8. If it doesn't improve the scores **on your questions**, it isn't worth
 - An **agent** lets the AI choose when and what to search.
 - Every extra decision is an extra AI call - more time and more cost. Measure before adopting.
 
-🎉 **Congratulations - you've finished the course!** You now know how every part of a RAG system
-works, how to measure it, and where to look next.
+🎉 **Congratulations - you've finished the RAG part of the course!** You now know how every part
+of a RAG system works and how to measure it.
+
+**Next:** two final lessons zoom out from RAG to the whole field it belongs to - **NLP** - and give
+you a learning path for going further.
 
 ## Want to go deeper? (optional)
 

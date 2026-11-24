@@ -1,7 +1,7 @@
 # RAG Lab
 
 A hands-on course for learning **Retrieval-Augmented Generation** from first principles.
-Eleven lessons, each with a short explanation, runnable code, auto-checked exercises and links to
+Thirteen lessons, each with a short explanation, runnable code, auto-checked exercises and links to
 the best community notebooks for going deeper.
 
 | You get | Where |
@@ -28,6 +28,8 @@ the best community notebooks for going deeper.
 | 8 | Evaluation | implement Recall@k and MRR, build a leaderboard |
 | 9 | Query transformations (Multi-Query, HyDE) | build query decomposition |
 | 10 | Self-correcting and agentic RAG | evaluate CRAG vs. plain RAG |
+| 11 | The bigger picture: where RAG sits in NLP | implement accuracy, sort text into topics three ways |
+| 12 | Your NLP learning path (tokens, five study stages) | count tokens, make a study plan |
 
 Lessons 0-6 and 8 (retrieval parts) run fully offline: the embedding model
 (`BAAI/bge-small-en-v1.5`) and re-ranker (`cross-encoder/ms-marco-MiniLM-L-6-v2`) are baked into
@@ -79,6 +81,17 @@ open-source licence, so their content is never copied into this project):
 - [pguso/rag-from-scratch](https://github.com/pguso/rag-from-scratch)
 - [IlyaRice/RAG-Challenge-2](https://github.com/IlyaRice/RAG-Challenge-2)
 - [HKUDS/LightRAG](https://github.com/HKUDS/LightRAG), [VectifyAI/PageIndex](https://github.com/VectifyAI/PageIndex)
+
+For the NLP learning path (lesson 12):
+
+- [huggingface/course](https://github.com/huggingface/course) - the Hugging Face Transformers course
+- [graykode/nlp-tutorial](https://github.com/graykode/nlp-tutorial) - classic NLP models in compact code
+- [yandexdataschool/nlp_course](https://github.com/yandexdataschool/nlp_course) - a full university course (large: about 1 GB with slides)
+- [karpathy/nn-zero-to-hero](https://github.com/karpathy/nn-zero-to-hero), [karpathy/nanoGPT](https://github.com/karpathy/nanoGPT)
+- [rasbt/LLMs-from-scratch](https://github.com/rasbt/LLMs-from-scratch) - build a GPT step by step
+- [mlabonne/llm-course](https://github.com/mlabonne/llm-course) - LLM roadmap and notebooks
+- [bentrevett/pytorch-sentiment-analysis](https://github.com/bentrevett/pytorch-sentiment-analysis)
+- [oxford-cs-deepnlp-2017/lectures](https://github.com/oxford-cs-deepnlp-2017/lectures) - lecture slides
 
 ## Data and licences
 

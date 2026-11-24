@@ -19,6 +19,10 @@ parts:
     chapters:
       - file: 09_query_transformations
       - file: 10_advanced_patterns
+  - caption: The bigger picture (NLP)
+    chapters:
+      - file: 11_nlp_big_picture
+      - file: 12_nlp_learning_path
   - caption: Reference
     chapters:
       - file: glossary

@@ -172,3 +172,38 @@ class SplittingLibrarian:
 Count LLM calls by wrapping `llm.chat`. Typical result: CRAG refuses the unanswerable questions
 more reliably, but costs ~5 calls per question instead of 1, and occasionally rejects a relevant
 chunk (a false "no" from the grader) - so it can also refuse answerable questions.
+
+## 11.1 Accuracy
+
+```python
+def accuracy(predictions, labels):
+    correct = sum(1 for p, l in zip(predictions, labels) if p == l)
+    return correct / len(labels)
+```
+
+## 11.2 Better topic descriptions
+
+Longer descriptions that name typical words of each topic usually help. One version that scores
+higher than the plain descriptions:
+
+```python
+my_descriptions = {
+    "files & data formats": "Python functions for reading and writing files and folders, compressing "
+                            "data, and saving data in formats like JSON, CSV, zip and databases",
+    "numbers & maths": "Python functions for mathematics, statistics, random numbers, fractions "
+                       "and exact decimal arithmetic",
+    "running things at the same time": "Python tools for running tasks concurrently: threads, "
+                                       "asyncio coroutines, queues, locks and subprocesses",
+    "text": "Python functions for working with text strings: regular expressions, searching, "
+            "formatting and wrapping text",
+}
+```
+
+Exact numbers vary, and a description can also get *worse* if it uses words that belong to
+another topic - try it and look at which sections change.
+
+## 12.1 Counting tokens
+
+Documentation and code use many rare names and symbols, so they need more tokens per character
+than everyday English; long lists of numbers are usually the most "expensive" because digits get
+split into many small pieces.

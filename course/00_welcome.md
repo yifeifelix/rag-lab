@@ -85,6 +85,7 @@ three helpers** do a better job.
 | The writer | 7 · Answering only from the cards | how to get honest answers with sources |
 | Checking the work | 8 · Grading the system | how to know if a change really helped |
 | Advanced tricks | 9 · Improving the question<br>10 · A system that checks itself | ideas from the newest RAG research |
+| The bigger picture | 11 · Where RAG sits in NLP<br>12 · Your NLP learning path | the wider field, and what to study next |
 
 Each lesson follows the same pattern:
 

@@ -131,6 +131,16 @@ def check_recall_at_k(fn: Callable[..., float]) -> bool:
     ])
 
 
+def check_accuracy(fn: Callable[[list, list], float]) -> bool:
+    return _run("accuracy", [
+        ("all right", lambda: fn(["a", "b"], ["a", "b"]) == 1.0, "every prediction matches -> 1.0"),
+        ("half right", lambda: fn(["a", "b", "a", "a"], ["a", "a", "a", "b"]) == 0.5, "2 of 4 match -> 0.5"),
+        ("all wrong", lambda: fn(["a"], ["b"]) == 0.0, "nothing matches -> 0.0"),
+        ("order matters", lambda: fn(["a", "b"], ["b", "a"]) == 0.0,
+         "compare position by position: prediction 1 with label 1, prediction 2 with label 2"),
+    ])
+
+
 def check_mrr(fn: Callable[..., float]) -> bool:
     return _run("reciprocal_rank", [
         ("first", lambda: fn(["a", "b"], ["a"]) == 1.0, "relevant at rank 1 -> 1.0"),

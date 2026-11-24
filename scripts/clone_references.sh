@@ -1,5 +1,5 @@
 #!/bin/sh
-# Shallow-clone the community RAG learning repositories into references/.
+# Shallow-clone the community RAG and NLP learning repositories into references/.
 # They are for private study only: several have no open-source licence, so the
 # folder is git-ignored and never published with this project.
 set -eu
@@ -23,4 +23,13 @@ pguso/rag-from-scratch
 IlyaRice/RAG-Challenge-2
 HKUDS/LightRAG
 VectifyAI/PageIndex
+huggingface/course
+graykode/nlp-tutorial
+yandexdataschool/nlp_course
+karpathy/nn-zero-to-hero
+karpathy/nanoGPT
+rasbt/LLMs-from-scratch
+mlabonne/llm-course
+bentrevett/pytorch-sentiment-analysis
+oxford-cs-deepnlp-2017/lectures
 EOF

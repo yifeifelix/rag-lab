@@ -44,4 +44,14 @@ and points to the lesson that explains it.
 | **Multi-Query** | Search with several rewrites of the question, then combine the results | Asking three librarians to each search their own way | 9 |
 | **HyDE** | Ask the AI to imagine an answer, then search for real chunks that look like it | Showing a photo of a similar dog when looking for a lost one | 9 |
 | **CRAG** (Corrective RAG) | Check whether the found chunks help; if not, search again or say "I don't know" | A student checking library books before writing an essay | 10 |
+| **NLP** (Natural Language Processing) | The whole field of computers working with human language. RAG is one part of it | Cooking - RAG is one dish | 11 |
+| **Text classification** | Putting a piece of text into one of several boxes (spam / not spam, topic A / B / C) | Sorting post into pigeonholes | 11 |
+| **Supervised learning** | Learning from examples that already have the right answer attached | A child learning from labelled picture cards | 11 |
+| **Classifier** | A model that does classification | The person sorting the post | 11 |
+| **Accuracy** | The share of guesses that are right | 7 right out of 10 = 70% | 11 |
+| **Zero-shot** | Doing a task with zero training examples, just a description | Sorting post by reading the label on each pigeonhole | 11 |
+| **Data leakage** | When test examples (or near-copies) sneak into training, making scores look better than they are | Seeing the exam before taking it | 8, 11 |
+| **Transformer** | The neural-network design inside almost every modern language model | The engine inside the car | 11, 12 |
+| **Subword tokens** | The pieces modern models split text into: common words whole, rare words in parts | Reading "un-believ-able" in chunks | 12 |
+| **Fine-tuning** | Further training a pretrained model on your own examples | A trained chef learning your restaurant's menu | 12 |
 | **Agent / agentic RAG** | An AI that decides for itself when and what to search, in a loop | A detective following clues | 10 |

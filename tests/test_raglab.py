@@ -69,3 +69,16 @@ def test_metrics_and_citations():
     assert ndcg_at_k(["a", "b"], ["a"], 5) == 1.0
     assert ndcg_at_k(["b", "a"], ["a"], 5) < 1.0
     assert cited_numbers("Use dumps [1][3] and [1].") == [1, 3]
+
+
+def test_topic_split_keeps_test_pages_unseen():
+    from raglab.nlp import TEST_PAGES, topic_split
+    train, test = topic_split()
+    assert train and test
+    assert {e.doc_id for e in test} <= TEST_PAGES
+    assert not {e.doc_id for e in train} & TEST_PAGES
+    assert {e.label for e in test} == {e.label for e in train}
+
+
+def test_accuracy_checker_accepts_reference():
+    assert checks.check_accuracy(lambda p, l: sum(a == b for a, b in zip(p, l)) / len(l))
