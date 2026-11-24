@@ -58,6 +58,10 @@ It has three parts:
 2. **Numbered cards** - the ones the librarian found, each labelled `[1]`, `[2]`, ...,
 3. **The question**.
 
+![The writer receives rules, numbered cards and the question](images/07_prompt.svg)
+
+*Everything the writer sees is on the left. The footnote in its answer lets you trace each fact back to a card.*
+
 The box below builds this text for a question and prints it, so you can see **exactly** what the
 writer will read:
 

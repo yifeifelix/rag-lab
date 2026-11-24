@@ -73,6 +73,10 @@ Card **A** wins - not because it was first anywhere special, but because **both*
 put it near the top. That's exactly what we want: agreement between two very different methods
 is a strong signal.
 
+![Reciprocal Rank Fusion combines two ranked lists](images/05_rrf.svg)
+
+*The same example as a picture: each list votes by position, and the votes are added up.*
+
 **Why the 60?** It's a "calming" number. Without it, 1st place would get 1/1 = 1 point and
 2nd place 1/2 = 0.5 - a huge gap. With 60, 1st gets 1/61 and 2nd gets 1/62 - nearly the same.
 So no single list can bully the result. 60 is simply the value the original researchers found

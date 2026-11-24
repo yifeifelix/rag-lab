@@ -29,13 +29,9 @@ that map. When a question arrives:
 3. We hand back the closest few - say 5. The number of cards to hand back is usually called **k**,
    so this is called **top-k** search.
 
-```text
-            ● card about JSON files
-        ● card about saving data
-   ★ your question: "how do I save a dict to a file?"
-        ● card about pickle
-                                        ● card about random numbers   (far away - ignored)
-```
+![Vector search keeps the k nearest cards](images/03_vector_search.svg)
+
+*The question becomes a pin on the map; the librarian hands back the k cards closest to it.*
 
 That's the whole idea. Search engines with millions of documents use clever tricks to be fast,
 but they still do exactly this.

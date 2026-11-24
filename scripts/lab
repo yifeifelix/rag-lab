@@ -17,7 +17,8 @@ sync_workspace() {
   for f in course/[0-9]*.md; do
     [ -e "workspace/$(basename "$f")" ] || cp "$f" workspace/
   done
-  [ -e workspace/images ] || cp -R course/images workspace/images 2>/dev/null || true
+  # Pictures are never edited by learners, so always refresh them.
+  mkdir -p workspace/images && cp course/images/*.svg workspace/images/ 2>/dev/null || true
 }
 
 host_ip() { ipconfig getifaddr en0 2>/dev/null || ipconfig getifaddr en1 2>/dev/null || echo localhost; }

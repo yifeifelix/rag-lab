@@ -37,6 +37,10 @@ Our search can work the same way:
 
 Stage 2 is called **re-ranking** - putting the shortlist in a new, better order.
 
+![Re-ranking: quick screening then careful reading](images/06_rerank.svg)
+
+*Top: the two stages. Bottom: why reading question and card together is more accurate (and slower).*
+
 ## Why is the second model smarter?
 
 Our meaning librarian (Lessons 2-3) turns the question and each card into numbers

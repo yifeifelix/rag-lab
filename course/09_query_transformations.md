@@ -37,6 +37,10 @@ call it?"* and search for that. That's what these tricks do.
 | **Multi-Query** | writes **several** versions of the question, searches each, combines the results | asking three librarians to each search in their own way |
 | **HyDE** | writes a **made-up answer**, then searches for real cards that look like it | "I don't know the answer, but I know roughly what it would look like" |
 
+![Multi-Query and HyDE](images/09_query.svg)
+
+*Top: Multi-Query searches with several rewrites and combines the lists. Bottom: HyDE searches with an imagined answer.*
+
 First, set up the librarians from earlier lessons:
 
 ```{code-cell} ipython3

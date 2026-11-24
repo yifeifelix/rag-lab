@@ -48,6 +48,14 @@ There is no perfect size for every situation - that's why we'll try different on
 
 ---
 
+Here are the four ways of cutting that we'll try in this lesson, at a glance:
+
+![Four ways to cut a document into cards](images/01_chunking.svg)
+
+*Scissors that don't read, overlapping tiles, cutting at the author's pauses, and small-card-inside-big-section.*
+
+---
+
 ## Let's look at a real document
 
 We'll use the documentation for `heapq`, a Python tool for keeping things sorted by priority

@@ -66,6 +66,12 @@ Include tricky ones: questions needing two documents, and questions your documen
 
 ---
 
+![Scoring retrieval with Recall@k and reciprocal rank](images/08_eval.svg)
+
+*One question, two scores - and the golden rule of not peeking at the final exam. Each part is explained below.*
+
+---
+
 ## Score 1 · "Did it find it?" (Recall@k)
 
 **Recall@k** asks: *of the documents needed to answer, how many are in the top k results?*

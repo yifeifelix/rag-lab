@@ -58,13 +58,9 @@ text on the internet, so they know a lot. But:
 
 Throughout this course we'll use one picture. Think of a small library with three helpers:
 
-```text
-   📚 THE LIBRARY             🧑‍💼 THE LIBRARIAN               ✍️ THE WRITER
-   your documents,            hears your question and         reads only the cards the
-   cut into small             quickly brings back the         librarian brought, writes
-   index cards                5 most useful cards             an answer, and adds footnotes
-                                                              like [1], [2]
-```
+![The library, the librarian and the writer](images/00_three_helpers.svg)
+
+*The three helpers. Every lesson in this course improves one of them.*
 
 1. **The library** - Before anyone asks anything, we cut our documents into small pieces
    (we'll call them **chunks**, think "index cards") and organise them so they're easy to search.

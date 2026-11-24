@@ -34,16 +34,9 @@ meanings get similar numbers.
 Imagine a big map. Every word or sentence is a pin placed somewhere on it. The rule is:
 **things that mean similar things are placed close together.**
 
-```text
-           ▲ "animal-ness"
-           │
-   kitten ●│● cat
-           │      ● dog
-           │
-           │                         ● stock market
-           │                     ● interest rate
-           └───────────────────────────────────────► "money-ness"
-```
+![A map of meaning and cosine similarity](images/02_meaning_map.svg)
+
+*Left: similar meanings sit close together. Right: cosine similarity asks whether two arrows point the same way.*
 
 On this tiny two-direction map, every pin has two numbers: how far right (money-ness) and how
 far up (animal-ness). For example, *cat* might be at `[0.1, 0.9]` and *stock market* at `[0.9, 0.1]`.

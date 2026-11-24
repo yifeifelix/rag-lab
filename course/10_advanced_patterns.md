@@ -42,17 +42,9 @@ techniques add exactly these **decisions** to the line.
 This idea comes from a 2024 research paper called **CRAG** (*Corrective* RAG). We'll build a
 simplified version:
 
-```text
-question ─► librarian finds cards ─► check each card: "does this help?"
-                                        │
-                     ┌──────────────────┴──────────────────┐
-              some cards help                         no card helps
-                     │                                     │
-       writer answers from the                 rewrite the question and
-       helpful cards only                      search once more
-                                                           │
-                                               still nothing? → "I don't know"
-```
+![Corrective RAG and the agent loop](images/10_crag.svg)
+
+*Left: check the cards, retry once, otherwise say "I don't know" (Part 1). Right: an agent that loops until it's ready (Part 2).*
 
 Like a student writing an essay: they check each book from the library, keep the useful ones,
 and if none were useful, they go back with a better search term. If there's still nothing, they
