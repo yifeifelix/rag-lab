@@ -9,18 +9,35 @@ kernelspec:
   name: python3
 ---
 
-# 9 · Query transformations: Multi-Query and HyDE
+# Lesson 9 · Improving the question before searching
 
-**Time:** 45 minutes · **Needs:** an LLM · **You will:** let the LLM rewrite questions before retrieval, and measure whether it helps.
+> **In one sentence:** people ask short, vague or oddly-worded questions - so before searching,
+> we let the AI rephrase the question (or even imagine the answer), and search with that instead.
 
-Users write short, vague or oddly-worded questions. Instead of searching with the raw question,
-we can ask the LLM to **transform** it first. Three classic techniques:
+**Time:** about 45 minutes · **Needs:** the AI writer · **You will:** try two popular tricks,
+*Multi-Query* and *HyDE*, and measure whether they're worth their cost.
 
-| Technique | Idea | Helps with |
+---
+
+## The problem: people don't talk like documentation
+
+A real user types: *"how do I make my script stop for a bit"*.
+The documentation says: *"Delay execution for a given number of seconds."*
+
+They mean the same thing, but share almost no words. In Lesson 4 you fixed this **by hand** -
+you rewrote the question using the documentation's words. Now we'll let the AI do it.
+
+Think of a good reference librarian in a real library. When a visitor asks a vague question,
+the librarian doesn't search for those exact words. They think: *"what would the book about this
+call it?"* and search for that. That's what these tricks do.
+
+| Trick | What the AI does | Everyday version |
 |---|---|---|
-| **Rewriting** | rephrase in the documents' vocabulary | vocabulary mismatch (lesson 4) |
-| **Multi-Query** | generate several variants, retrieve for each, fuse with RRF | ambiguous questions |
-| **HyDE** | write a *hypothetical answer*, search with that | questions that look nothing like answers |
+| **Rewriting** | rephrases the question in the documents' style | "you mean *sleep* - let me look that up" |
+| **Multi-Query** | writes **several** versions of the question, searches each, combines the results | asking three librarians to each search in their own way |
+| **HyDE** | writes a **made-up answer**, then searches for real cards that look like it | "I don't know the answer, but I know roughly what it would look like" |
+
+First, set up the librarians from earlier lessons:
 
 ```{code-cell} ipython3
 import pandas as pd
@@ -28,14 +45,22 @@ from raglab import llm, load_documents, load_qa, chunk_documents
 from raglab.retrieval import BM25Retriever, VectorRetriever, HybridRetriever, Hit, reciprocal_rank_fusion
 from raglab.evaluation import evaluate_retriever, summarize
 
-chunks = chunk_documents(load_documents("python_docs"), "recursive", max_chars=800)
-vec = VectorRetriever(chunks)
-hybrid = HybridRetriever([BM25Retriever(chunks), vec])
-qa = load_qa("python_docs")
-print("LLM ready:", llm.llm_available())
+cards = chunk_documents(load_documents("python_docs"), "recursive", max_chars=800)
+meaning_librarian = VectorRetriever(cards)
+hybrid_librarian = HybridRetriever([BM25Retriever(cards), meaning_librarian])
+exam = load_qa("python_docs")
+print("Writer connected:", llm.llm_available())
 ```
 
-## Multi-Query
+---
+
+## Trick 1 · Multi-Query: ask the question several ways
+
+We ask the AI to write 3 different search queries for the same question. Then we search with
+**each one** and combine the result lists using RRF from Lesson 5 - cards that show up in
+several lists rise to the top.
+
+First, see what the AI writes:
 
 ```{code-cell} ipython3
 MULTI_QUERY_PROMPT = """Write 3 different search queries that would find documentation answering
@@ -45,34 +70,51 @@ Question: {question}"""
 
 def multi_query(question: str) -> list[str]:
     reply = llm.chat(MULTI_QUERY_PROMPT.format(question=question), temperature=0.3)
-    return [question] + [line.strip("-• ").strip() for line in reply.splitlines() if line.strip()][:3]
+    variants = [line.strip("-• ").strip() for line in reply.splitlines() if line.strip()]
+    return [question] + variants[:3]          # keep the original question too
 
 if llm.llm_available():
-    print("\n".join(multi_query("how do I make my script stop for a bit")))
+    for version in multi_query("how do I make my script stop for a bit"):
+        print("•", version)
 ```
 
-Retrieve for every variant and fuse the rankings with RRF (lesson 5 again!):
+**What you should see:** the original question plus 3 rewrites using words like *sleep*,
+*delay* or *pause execution* - the vocabulary the documentation actually uses.
+
+Now a librarian that uses this: for each version, search; then combine with RRF.
 
 ```{code-cell} ipython3
-class MultiQueryRetriever:
-    def __init__(self, retriever, candidates: int = 20):
-        self.retriever, self.candidates = retriever, candidates
+class MultiQueryLibrarian:
+    def __init__(self, librarian, candidates: int = 20):
+        self.librarian, self.candidates = librarian, candidates
 
-    def search(self, query: str, k: int = 5) -> list[Hit]:
-        by_id, rankings = {}, []
-        for q in multi_query(query):
-            hits = self.retriever.search(q, self.candidates)
-            rankings.append([h.chunk.chunk_id for h in hits])
-            by_id.update({h.chunk.chunk_id: h.chunk for h in hits})
-        fused = sorted(reciprocal_rank_fusion(rankings).items(), key=lambda kv: -kv[1])[:k]
-        return [Hit(by_id[c], s, r) for r, (c, s) in enumerate(fused, 1)]
+    def search(self, question: str, k: int = 5) -> list[Hit]:
+        cards_by_id, ranked_lists = {}, []
+        for version in multi_query(question):                     # 1. several versions
+            found = self.librarian.search(version, self.candidates)  # 2. search each one
+            ranked_lists.append([c.chunk.chunk_id for c in found])
+            cards_by_id.update({c.chunk.chunk_id: c.chunk for c in found})
+        combined = reciprocal_rank_fusion(ranked_lists)            # 3. combine with RRF
+        best = sorted(combined.items(), key=lambda item: -item[1])[:k]
+        return [Hit(cards_by_id[cid], points, rank) for rank, (cid, points) in enumerate(best, 1)]
 ```
 
-## HyDE - Hypothetical Document Embeddings
+---
 
-A question ("how to pause?") and its answer ("Delay execution for a given number of seconds")
-look different. HyDE asks the LLM to **write a fake answer** in documentation style and embeds
-*that*. The fake answer may contain errors - it is only used to *find* real documents, never shown.
+## Trick 2 · HyDE: imagine the answer, then search for it
+
+Here's a clever observation: a **question** and its **answer** look very different, but an
+**answer** and **another answer** look alike. So:
+
+1. Ask the AI to write a short, *pretend* answer in the style of the documentation.
+   (It might even contain mistakes - that's okay!)
+2. Turn that pretend answer into numbers and search for **real** cards near it.
+3. Throw the pretend answer away. Only real cards are used.
+
+It's like looking for a lost dog: instead of describing it in words, you hold up a photo of a
+similar-looking dog and ask *"seen one like this?"*
+
+HyDE stands for **Hy**pothetical **D**ocument **E**mbeddings - "hypothetical" meaning "imagined".
 
 ```{code-cell} ipython3
 HYDE_PROMPT = """Write a short passage (2-3 sentences) from the Python standard library
@@ -80,57 +122,93 @@ documentation that answers the question. Write it in the style of a docstring.
 
 Question: {question}"""
 
-class HyDERetriever:
-    def __init__(self, vector_retriever):
-        self.vec = vector_retriever
-
-    def search(self, query: str, k: int = 5) -> list[Hit]:
-        fake = llm.chat(HYDE_PROMPT.format(question=query), temperature=0.0)
-        vector = self.vec.embedder.embed_passages([fake], use_cache=False)[0]  # a passage, not a query!
-        scores = self.vec.vectors @ vector
-        order = scores.argsort()[::-1][:k]
-        return [Hit(self.vec.chunks[i], float(scores[i]), r) for r, i in enumerate(order, 1)]
-
 if llm.llm_available():
     print(llm.chat(HYDE_PROMPT.format(question="how do I make my script stop for a bit")))
 ```
 
-## Measure (this costs LLM calls: ~40 per system)
+**What you should see:** a short, documentation-style paragraph about `time.sleep` - which looks
+a lot like the real card we want to find.
+
+```{code-cell} ipython3
+class HyDELibrarian:
+    def __init__(self, meaning_librarian):
+        self.librarian = meaning_librarian
+
+    def search(self, question: str, k: int = 5) -> list[Hit]:
+        pretend_answer = llm.chat(HYDE_PROMPT.format(question=question))
+        # The pretend answer is a *passage*, so we embed it like a card, not like a question:
+        vector = self.librarian.embedder.embed_passages([pretend_answer], use_cache=False)[0]
+        scores = self.librarian.vectors @ vector
+        best = scores.argsort()[::-1][:k]
+        return [Hit(self.librarian.chunks[i], float(scores[i]), rank) for rank, i in enumerate(best, 1)]
+```
+
+---
+
+## Are they worth it? Let's measure
+
+This box runs the full exam for four librarians. The two new ones call the AI for **every**
+question, so it takes a few minutes (about 80 AI calls).
 
 ```{code-cell} ipython3
 if llm.llm_available():
     results = pd.concat([
-        evaluate_retriever(vec, qa, 5, "vector"),
-        evaluate_retriever(hybrid, qa, 5, "hybrid"),
-        evaluate_retriever(HyDERetriever(vec), qa, 5, "HyDE (vector)"),
-        evaluate_retriever(MultiQueryRetriever(hybrid), qa, 5, "multi-query (hybrid)"),
+        evaluate_retriever(meaning_librarian, exam, 5, "meaning"),
+        evaluate_retriever(hybrid_librarian, exam, 5, "hybrid"),
+        evaluate_retriever(HyDELibrarian(meaning_librarian), exam, 5, "HyDE (meaning)"),
+        evaluate_retriever(MultiQueryLibrarian(hybrid_librarian), exam, 5, "multi-query (hybrid)"),
     ])
     display(summarize(results))
 ```
 
-Notice the `ms` column: every transformation adds an LLM round-trip **before** retrieval starts.
+**What you should see:** the tricks usually push **mrr** up. Now look at the **ms** column: each
+question now takes **seconds** instead of milliseconds, because the AI must answer *before* the
+search can even start. Better results vs. waiting time (and AI cost) - again a trade-off you
+have to decide on.
 
-### ✏️ Exercise 9.1 - query decomposition
+### ✏️ Exercise 9.1 · Split a two-part question (no checker)
 
-Multi-hop questions ("compress with gzip **and then** encode as base64") need evidence from two
-documents. Write a `DecomposingRetriever` that asks the LLM to split a question into
-independent sub-questions (one per line), retrieves `k // 2` hits for each, and merges them.
-Evaluate it on the `multi_hop` questions only:
-`[q for q in qa if q["category"] == "multi_hop"]`.
+Some questions need **two** documents, like *"How do I compress data with gzip and then encode
+the result as base64 text?"* - one part is about `gzip`, the other about `base64`. A single
+search often finds only one of them.
+
+Build a `SplittingLibrarian` that:
+
+1. asks the AI to split the question into simple sub-questions, one per line
+   (example prompt: *"Split the question into independent sub-questions, one per line. If it is
+   already simple, repeat it."*),
+2. searches for each sub-question,
+3. combines the cards (skip duplicates) and returns the top `k`.
+
+Test it only on the two-document questions:
+`[q for q in exam if q["category"] == "multi_hop"]`. Does it beat the hybrid librarian?
+(One possible answer is on the Solutions page.)
 
 ```{code-cell} ipython3
 # YOUR CODE HERE
 ```
 
-## Key takeaways
+---
 
-- Query transformations trade latency and cost for recall.
-- HyDE embeds a *fake answer* as a passage; Multi-Query fuses several rankings with RRF.
-- They help most where the raw question is vague or worded unlike the documents - measure on
-  your own data before adopting them.
+## Common mix-ups
 
-## Going further
+- **"HyDE shows the made-up answer to the user."** Never - it's only used to *find* real cards.
+- **"More AI steps = better."** Each step adds waiting time and cost. Only keep a trick if your
+  measurements show it's worth it **for your users' questions**.
 
-- RAG_Techniques [query_transformations](https://github.com/NirDiamant/RAG_Techniques/blob/main/all_rag_techniques/query_transformations.ipynb), [HyDe](https://github.com/NirDiamant/RAG_Techniques/blob/main/all_rag_techniques/HyDe_Hypothetical_Document_Embedding.ipynb), [HyPE](https://github.com/NirDiamant/RAG_Techniques/blob/main/all_rag_techniques/HyPE_Hypothetical_Prompt_Embeddings.ipynb) · `references/NirDiamant_RAG_Techniques/all_rag_techniques/`
-- RAG from scratch, videos 5-9 (Multi-Query, RAG-Fusion, decomposition, step-back, HyDE): `references/langchain-ai_rag-from-scratch/rag_from_scratch_5_to_9.ipynb`
-- Original HyDE paper: Gao et al., *Precise Zero-Shot Dense Retrieval without Relevance Labels* (2022).
+## Recap
+
+- Users' words often don't match the documents' words.
+- **Multi-Query:** search with several rewrites, combine with RRF.
+- **HyDE:** search with an imagined answer instead of the question.
+- Both usually help, but make every question take seconds instead of milliseconds.
+
+**Next lesson:** a system that checks its own cards - and can decide to search again.
+
+## Want to go deeper? (optional)
+
+- *RAG_Techniques*: [query_transformations](https://github.com/NirDiamant/RAG_Techniques/blob/main/all_rag_techniques/query_transformations.ipynb),
+  [HyDe](https://github.com/NirDiamant/RAG_Techniques/blob/main/all_rag_techniques/HyDe_Hypothetical_Document_Embedding.ipynb),
+  [HyPE](https://github.com/NirDiamant/RAG_Techniques/blob/main/all_rag_techniques/HyPE_Hypothetical_Prompt_Embeddings.ipynb) ·
+  `references/NirDiamant_RAG_Techniques/all_rag_techniques/`
+- *RAG from scratch*, videos 5-9 (Multi-Query, splitting questions, HyDE): `references/langchain-ai_rag-from-scratch/rag_from_scratch_5_to_9.ipynb`

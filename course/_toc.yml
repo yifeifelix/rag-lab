@@ -1,24 +1,25 @@
 format: jb-book
 root: 00_welcome
 parts:
-  - caption: Indexing
+  - caption: Building the library
     chapters:
       - file: 01_chunking
       - file: 02_embeddings
-  - caption: Retrieval
+  - caption: Training the librarian
     chapters:
       - file: 03_vector_search
       - file: 04_bm25
       - file: 05_hybrid_rrf
       - file: 06_reranking
-  - caption: Generation and quality
+  - caption: The writer and grading
     chapters:
       - file: 07_generation
       - file: 08_evaluation
-  - caption: Advanced
+  - caption: Advanced tricks
     chapters:
       - file: 09_query_transformations
       - file: 10_advanced_patterns
   - caption: Reference
     chapters:
+      - file: glossary
       - file: solutions

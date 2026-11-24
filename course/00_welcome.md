@@ -9,106 +9,205 @@ kernelspec:
   name: python3
 ---
 
-# 0 · Welcome: what is RAG?
+# Lesson 0 · What is RAG? (and how this course works)
 
-**Time:** 20 minutes · **You will:** see a complete RAG system work end-to-end before we take it apart.
+> **In one sentence:** RAG means "look it up first, then answer" - just like a person who checks the
+> manual before replying, instead of answering from memory.
 
-## The problem
+**Time:** about 20 minutes · **You need:** nothing except this page. No maths, no prior AI knowledge.
 
-A large language model (LLM) like ChatGPT learned from a huge pile of text, but:
+---
 
-1. it **doesn't know your documents** (your company wiki, your notes, last week's policy update);
-2. it **can't tell you where an answer came from**;
-3. when it doesn't know, it often **makes something up** ("hallucinates").
+## A story to start
 
-## The idea: an open-book exam
+Imagine you start a new job at a company. On day one your manager asks you:
 
-**Retrieval-Augmented Generation (RAG)** turns a closed-book exam into an open-book one:
+> *"How many days do we keep customer data after an export?"*
+
+You have two options:
+
+1. **Answer from memory.** You've never seen the company's rules, so you guess. Maybe you say
+   "probably 30 days?" with a confident face. If you're wrong, nobody notices until it's too late.
+2. **Look it up.** You walk to the company library, find the policy document, read the right
+   paragraph, and answer: *"30 days - it says so in the Export Policy, section 2."*
+
+Option 2 is obviously better. It's slower, but the answer is **correct**, **up to date**, and you
+can **show where it came from**.
+
+### Chatbots have the same problem
+
+AI chatbots like ChatGPT are like a very well-read new employee. They have read a huge amount of
+text on the internet, so they know a lot. But:
+
+- They have **never read your company's documents**, your notes, or last week's update.
+- They usually **can't tell you where an answer came from**.
+- When they don't know, they often **make up something that sounds right**. People call this
+  *hallucination*.
+
+**RAG** (short for **Retrieval-Augmented Generation**) is simply option 2 for chatbots:
+
+| Word | Plain meaning |
+|---|---|
+| **Retrieval** | *finding* the right pages first |
+| **Augmented** | *adding* those pages to the question |
+| **Generation** | the AI *writes* an answer using those pages |
+
+---
+
+## The three helpers in our library
+
+Throughout this course we'll use one picture. Think of a small library with three helpers:
 
 ```text
-          ┌──────────────┐  top-k chunks  ┌───────────────┐
-question ─►  RETRIEVER   ├───────────────►  LLM (writer)  ├─► answer + citations
-          └──────┬───────┘                └───────────────┘
-                 │ searches
-          ┌──────▼───────┐
-          │ your chunked │  ← built once, offline ("indexing")
-          │  documents   │
-          └──────────────┘
+   📚 THE LIBRARY             🧑‍💼 THE LIBRARIAN               ✍️ THE WRITER
+   your documents,            hears your question and         reads only the cards the
+   cut into small             quickly brings back the         librarian brought, writes
+   index cards                5 most useful cards             an answer, and adds footnotes
+                                                              like [1], [2]
 ```
 
-1. **Indexing** (once): split documents into small *chunks* and store them in a searchable index.
-2. **Retrieval** (per question): find the few chunks most likely to contain the answer.
-3. **Generation** (per question): give those chunks to the LLM and ask it to answer *only* from them, citing its sources.
+1. **The library** - Before anyone asks anything, we cut our documents into small pieces
+   (we'll call them **chunks**, think "index cards") and organise them so they're easy to search.
+   This happens **once**, ahead of time.
+2. **The librarian** (the *retriever*) - When a question comes in, the librarian finds the few
+   cards most likely to contain the answer. This happens **for every question**, and must be fast.
+3. **The writer** (the *language model*, or *LLM*) - The writer reads only those cards and writes
+   a short answer, pointing to the card each fact came from. If the cards don't contain the
+   answer, a good writer says *"I don't know"* instead of guessing.
 
-Almost every "advanced RAG" trick you'll meet is an improvement to one of these three steps.
+Almost every fancy RAG technique you will ever hear about is just a way to make **one of these
+three helpers** do a better job.
 
-## How this course works
+---
 
-| Part | Lessons | What you build |
+## How this course is organised
+
+| Part | Lessons | In plain words |
 |---|---|---|
-| Indexing | 1 Chunking · 2 Embeddings | turn documents into searchable pieces |
-| Retrieval | 3 Vector search · 4 BM25 · 5 Hybrid · 6 Re-ranking | find the right evidence |
-| Generation | 7 Prompting with sources | grounded answers with citations |
-| Quality | 8 Evaluation | measure instead of guessing |
-| Advanced | 9 Query transformations · 10 Self-correcting RAG | the techniques from the "awesome RAG" repos |
+| Building the library | 1 · Cutting documents into cards<br>2 · Turning text into numbers | how to prepare your documents |
+| Training the librarian | 3 · Search by meaning<br>4 · Search by keywords<br>5 · Combining two searches<br>6 · A second, more careful check | how to find the right cards |
+| The writer | 7 · Answering only from the cards | how to get honest answers with sources |
+| Checking the work | 8 · Grading the system | how to know if a change really helped |
+| Advanced tricks | 9 · Improving the question<br>10 · A system that checks itself | ideas from the newest RAG research |
 
-Every lesson has the same rhythm: **idea → small experiment → exercise (✅ auto-checked) → going further**.
+Each lesson follows the same pattern:
 
-```{admonition} Your files vs. the originals
+1. **A story or picture** that explains the idea without any jargon.
+2. **Code you just run** (you don't need to write it) - with a note saying what you should see.
+3. **A small exercise** where you write a few lines yourself. A checker tells you ✅ or ❌ and gives a hint.
+4. **A short recap** and links if you want to dig deeper.
+
+```{admonition} How to run code in JupyterLab
 :class: tip
-In JupyterLab you are editing your own copy in `workspace/`. Break things freely!
-`scripts/lab reset 03` gives you a fresh copy of lesson 03 (your old one is kept as `.bak`).
-Stuck on an exercise? Solutions are in `course/solutions.md` - try first, then compare.
+- Click on a grey code box, then press **Shift + Enter**. The code runs and the result appears underneath.
+- Run the boxes **from top to bottom** - later boxes use things created by earlier ones.
+- If something looks broken, use the menu **Kernel → Restart Kernel and Run All Cells**.
+- You are working on **your own copy** (in the `workspace` folder). You can't break the original.
+  To start a lesson again from scratch, ask the course owner to run `scripts/lab reset 03` (for lesson 3).
+- Stuck on an exercise? The answers are on the **Solutions** page. Try first - you learn more that way.
 ```
 
-## Run your first RAG system
+---
 
-Run each cell with **Shift + Enter**. The first run loads a small embedding model (a few seconds).
+## Let's watch a complete RAG system work
+
+Don't worry about understanding the code yet. Just run each box and read the explanation.
+We'll take every piece apart in the coming lessons.
+
+### Step 1 · Build the library
+
+Our library is the official documentation of Python (a programming language) - 45 real
+documents, from `json` (saving data as text) to `random` (random numbers).
+
+The box below does three things:
+- **loads** the 45 documents,
+- **cuts** them into small cards (chunks),
+- and **indexes** them so they can be searched (this takes about 10-40 seconds the first time,
+  because a small AI model reads every card).
 
 ```{code-cell} ipython3
 from raglab import load_documents, chunk_documents
 from raglab.retrieval import VectorRetriever
-from raglab.display import hits_table
 
-docs = load_documents("python_docs")      # 45 pages of real Python documentation
-print(len(docs), "documents, e.g.", docs[0].title)
+docs = load_documents("python_docs")
+print("Documents in the library:", len(docs))
+print("Example title:", docs[0].title)
 
 chunks = chunk_documents(docs, method="recursive", max_chars=800)
-print(len(chunks), "chunks after splitting")
+print("Cards after cutting:", len(chunks))
 
-retriever = VectorRetriever(chunks)       # indexing: embed every chunk
+librarian = VectorRetriever(chunks)
+print("The librarian is ready!")
 ```
 
-Now **retrieval** - ask a question in plain English:
+**What you should see:** 45 documents became several hundred cards, and the librarian is ready.
+
+### Step 2 · Ask the librarian
+
+Now we ask a question in normal English. Notice that we never say the name of the function -
+we just describe what we want to do.
 
 ```{code-cell} ipython3
-hits = retriever.search("How do I turn a Python dict into a JSON string?", k=3)
-hits_table(hits)
+from raglab.display import hits_table
+
+cards = librarian.search("How do I turn a Python dict into a JSON string?", k=3)
+hits_table(cards)
 ```
 
-Notice the question never said `dumps` - the embedding model understood the *meaning*.
+**What you should see:** a small table with the 3 best cards. Each row shows:
 
-Finally **generation**. This needs an LLM; if none is configured yet, the cell explains how to set one up (lessons 1-6 don't need it).
+- **score** - how well the card matches the question (higher = better match),
+- **doc_id** - which document the card came from,
+- **preview** - the start of the card's text.
+
+The top cards should come from `py.json` - the right document - and mention `dumps`, the function
+that does exactly this. The librarian found it **even though our question never said "dumps"**.
+It understood the *meaning*. You'll learn how in lessons 2 and 3.
+
+### Step 3 · Let the writer answer
+
+The writer is an AI language model. It needs to be connected first (the course owner does this
+once). If it isn't connected yet, the box simply prints instructions - everything in lessons 1-6
+works without it.
 
 ```{code-cell} ipython3
 from raglab import llm
 from raglab.rag import SimpleRAG
 
 if llm.llm_available():
-    rag = SimpleRAG(retriever, k=3)
+    rag = SimpleRAG(librarian, k=3)
     display(rag.ask("How do I turn a Python dict into a JSON string?"))
 else:
     print(llm.explain_setup())
 ```
 
-## What just happened?
+**What you should see:** a short answer with little numbers like **[1]** in it. Each number
+points to one of the cards listed under **Sources**. That's how you can check the answer:
+open the source and see if it really says that.
 
-- `chunk_documents` cut 45 documents into a few hundred chunks → **lesson 1**
-- `VectorRetriever` turned each chunk into a vector of 384 numbers → **lessons 2-3**
-- `search` compared your question's vector with every chunk's vector → **lesson 3**
-- `SimpleRAG` pasted the top chunks into a prompt and asked the LLM to cite them → **lesson 7**
+---
 
-## Going further
+## What just happened? (the whole course in four lines)
 
-- *RAG from scratch* (LangChain), videos 1-4 give the same big picture: [GitHub](https://github.com/langchain-ai/rag-from-scratch) · local copy `references/langchain-ai_rag-from-scratch/rag_from_scratch_1_to_4.ipynb`
-- *Simple local RAG* builds the whole pipeline in one notebook: [GitHub](https://github.com/mrdbourke/simple-local-rag) · `references/mrdbourke_simple-local-rag/00-simple-local-rag.ipynb`
+| What the code did | Which helper | Lesson |
+|---|---|---|
+| `chunk_documents` cut 45 documents into small cards | 📚 library | 1 |
+| `VectorRetriever` turned each card into a list of numbers that captures its meaning | 📚 library | 2 |
+| `librarian.search` found the cards closest in meaning to the question | 🧑‍💼 librarian | 3-6 |
+| `SimpleRAG` gave those cards to the AI and asked for an answer with footnotes | ✍️ writer | 7 |
+
+## Recap
+
+- RAG = **look it up first, then answer** - from your own documents, with sources.
+- Three helpers: the **library** (prepared once), the **librarian** (finds cards), the **writer** (answers from them).
+- If an answer is wrong, the first question is always: *did the librarian bring the right cards?*
+
+## Want to go deeper? (optional)
+
+These free projects by other people cover the same big picture. You can open the local copies
+from the file panel on the left, in the `references` folder.
+
+- *RAG from scratch* (by LangChain) - videos and notebooks 1-4 show the same big picture:
+  [GitHub](https://github.com/langchain-ai/rag-from-scratch) · `references/langchain-ai_rag-from-scratch/rag_from_scratch_1_to_4.ipynb`
+- *Simple local RAG* builds a whole system in one long notebook:
+  [GitHub](https://github.com/mrdbourke/simple-local-rag) · `references/mrdbourke_simple-local-rag/00-simple-local-rag.ipynb`

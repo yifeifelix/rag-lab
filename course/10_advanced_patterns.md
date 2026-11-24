@@ -9,37 +9,73 @@ kernelspec:
   name: python3
 ---
 
-# 10 · Self-correcting and agentic RAG
+# Lesson 10 · A system that checks its own work (and where to go next)
 
-**Time:** 60 minutes · **Needs:** an LLM · **You will:** build a RAG loop that checks its own evidence, then map the advanced techniques you can study next.
+> **In one sentence:** instead of blindly trusting the librarian, the system checks whether the
+> cards are actually useful - and if not, it searches again or honestly gives up.
 
-So far our pipeline is a straight line: retrieve → generate. It never asks *"is this evidence
-any good?"* The newest patterns add **decisions** to the loop.
+**Time:** about 60 minutes · **Needs:** the AI writer · **You will:** build a self-checking RAG
+system, then a tiny "agent" that decides for itself when to search - and get a map of advanced
+techniques to explore next.
 
-## Corrective RAG (CRAG), simplified
+---
 
-The CRAG paper adds an evaluator between retrieval and generation:
+## The problem with a straight line
+
+Until now, our system has been a straight line:
 
 ```text
-question ─► retrieve ─► grade each chunk ─┬─ some relevant ──► generate from relevant chunks only
-                                          └─ none relevant ──► rewrite query, retrieve again
-                                                                 └─ still none ──► refuse
+question ──► librarian finds cards ──► writer answers
 ```
+
+It never stops to ask *"are these cards any good?"* If the librarian brings rubbish, the writer
+either refuses (good) or - worse - tries to answer from rubbish.
+
+A careful human researcher works differently. They look at what they found, think *"this isn't
+quite it"*, try a different search, and only write once they have good material. The newest RAG
+techniques add exactly these **decisions** to the line.
+
+---
+
+## Part 1 · Corrective RAG ("check the cards first")
+
+This idea comes from a 2024 research paper called **CRAG** (*Corrective* RAG). We'll build a
+simplified version:
+
+```text
+question ─► librarian finds cards ─► check each card: "does this help?"
+                                        │
+                     ┌──────────────────┴──────────────────┐
+              some cards help                         no card helps
+                     │                                     │
+       writer answers from the                 rewrite the question and
+       helpful cards only                      search once more
+                                                           │
+                                               still nothing? → "I don't know"
+```
+
+Like a student writing an essay: they check each book from the library, keep the useful ones,
+and if none were useful, they go back with a better search term. If there's still nothing, they
+say so honestly instead of making something up.
+
+Set up the librarian first:
 
 ```{code-cell} ipython3
 from raglab import llm, load_documents, chunk_documents
 from raglab.retrieval import BM25Retriever, VectorRetriever, HybridRetriever
-from raglab.rag import SYSTEM_PROMPT, build_prompt, cited_numbers
+from raglab.rag import SYSTEM_PROMPT, build_prompt
 
-chunks = chunk_documents(load_documents("python_docs"), "recursive", max_chars=800)
-retriever = HybridRetriever([BM25Retriever(chunks), VectorRetriever(chunks)])
-print("LLM ready:", llm.llm_available())
+cards = chunk_documents(load_documents("python_docs"), "recursive", max_chars=800)
+librarian = HybridRetriever([BM25Retriever(cards), VectorRetriever(cards)])
+print("Writer connected:", llm.llm_available())
 ```
 
-### Step 1 · A relevance grader
+### Step 1 · The card checker
+
+We ask the AI a simple yes/no question for each card: *"Does this card help answer the question?"*
 
 ```{code-cell} ipython3
-GRADE_PROMPT = """Does the passage contain information that helps answer the question?
+CHECK_PROMPT = """Does the passage contain information that helps answer the question?
 Answer only "yes" or "no".
 
 Question: {question}
@@ -47,17 +83,23 @@ Question: {question}
 Passage:
 {passage}"""
 
-def is_relevant(question: str, hit) -> bool:
-    reply = llm.chat(GRADE_PROMPT.format(question=question, passage=hit.chunk.text))
+def card_helps(question: str, found_card) -> bool:
+    reply = llm.chat(CHECK_PROMPT.format(question=question, passage=found_card.chunk.text))
     return reply.strip().lower().startswith("yes")
 
 if llm.llm_available():
-    q = "How do I remove a directory tree?"
-    for hit in retriever.search(q, 4):
-        print(is_relevant(q, hit), "|", hit.doc_id, "|", hit.chunk.text[:70].replace("\n", " "))
+    question = "How do I remove a directory tree?"
+    for found_card in librarian.search(question, 4):
+        verdict = "✅ helps " if card_helps(question, found_card) else "❌ no help"
+        print(verdict, "|", found_card.doc_id, "|", found_card.chunk.text[:70].replace("\n", " "))
 ```
 
-### Step 2 · The corrective loop
+**What you should see:** the card about `shutil.rmtree` marked as helpful, and most cards about
+other things (like `copytree` or `move`) marked as not helpful - even though the librarian
+thought they were similar. The checker is an AI too, so now and then it will judge a card
+differently from you.
+
+### Step 2 · The full check-and-retry loop
 
 ```{code-cell} ipython3
 REWRITE_PROMPT = """Rewrite this question as a search query for the Python standard library
@@ -65,30 +107,47 @@ documentation. Reply with the query only.
 
 Question: {question}"""
 
-def corrective_rag(question: str, k: int = 4, verbose: bool = True) -> str:
-    query = question
+def corrective_rag(question: str, k: int = 4) -> str:
+    search_for = question
     for attempt in (1, 2):
-        hits = retriever.search(query, k)
-        good = [h for h in hits if is_relevant(question, h)]
-        if verbose:
-            print(f"attempt {attempt}: query={query!r} -> {len(good)}/{len(hits)} relevant")
-        if good:
-            return llm.chat(build_prompt(question, good), system=SYSTEM_PROMPT)
-        query = llm.chat(REWRITE_PROMPT.format(question=question))
+        found = librarian.search(search_for, k)
+        helpful = [c for c in found if card_helps(question, c)]
+        print(f"  attempt {attempt}: searched for {search_for!r} -> {len(helpful)} of {len(found)} cards helpful")
+        if helpful:
+            return llm.chat(build_prompt(question, helpful), system=SYSTEM_PROMPT)
+        search_for = llm.chat(REWRITE_PROMPT.format(question=question))   # try a better search
     return "I don't know based on the provided sources."
 
 if llm.llm_available():
     for q in ["make the computer wait 2 secs", "What is the capital of Australia?"]:
-        print("→", corrective_rag(q), "\n")
+        print("QUESTION:", q)
+        print("ANSWER:", corrective_rag(q), "\n")
 ```
 
-Cost check: grading 4 chunks = 4 extra LLM calls per question. Cheaper alternatives: grade with the
-cross-encoder score from lesson 6, or grade all chunks in one call.
+**What you should see:**
 
-## Agentic RAG: let the model decide
+- For *"wait 2 secs"*, at least one helpful card is found and the answer mentions `sleep`.
+- For *"capital of Australia"*, no card helps - even after a rewrite - so the system honestly
+  says *"I don't know"*. (A plain RAG system might have answered "Canberra" from memory, without
+  any source.)
 
-In **agentic RAG**, retrieval becomes a *tool* that the LLM may call - zero, one or many times, with
-queries it writes itself. A minimal hand-rolled agent loop:
+**The cost:** checking 4 cards means 4 extra AI calls per question, plus possibly a rewrite and a
+second search. Cheaper ideas: use the re-ranker's score from Lesson 6 as the check, or check all
+cards in one AI call.
+
+---
+
+## Part 2 · An agent: let the AI decide when to search
+
+So far **we** decided the steps. In **agentic RAG**, the AI decides: it can search, read the
+results, search again with different words, and answer only when it's ready. Searching becomes
+a **tool** the AI chooses to use. (An **agent** is simply an AI that can take actions in a loop,
+not just write one reply.)
+
+Think of a detective: look for clues → think → look somewhere else → ... → name the culprit.
+
+We'll make a tiny agent with a simple rule: on each turn, the AI must reply with exactly one line,
+either `SEARCH: something` or `ANSWER: something`.
 
 ```{code-cell} ipython3
 AGENT_PROMPT = """You can search the Python documentation. On each turn reply with EXACTLY one line:
@@ -98,69 +157,88 @@ Use at most 3 searches. If the documentation does not help, ANSWER: I don't know
 
 Question: {question}"""
 
-def agent(question: str, max_steps: int = 4) -> str:
-    messages = [{"role": "user", "content": AGENT_PROMPT.format(question=question)}]
-    seen = []
-    for _ in range(max_steps):
-        reply = llm.chat(messages)
+def agent(question: str, max_turns: int = 4) -> str:
+    conversation = [{"role": "user", "content": AGENT_PROMPT.format(question=question)}]
+    all_results = []
+    for _ in range(max_turns):
+        reply = llm.chat(conversation)
         print("🤖", reply.splitlines()[0][:120])
         if reply.startswith("ANSWER:"):
             return reply.removeprefix("ANSWER:").strip()
-        query = reply.removeprefix("SEARCH:").strip()
-        hits = retriever.search(query, 3)
-        seen.extend(hits)
-        first = len(seen) - len(hits)
-        results = "\n\n".join(f"[{first + i}] {h.chunk.text[:600]}" for i, h in enumerate(hits, 1))
-        messages += [{"role": "assistant", "content": reply}, {"role": "user", "content": f"Results:\n{results}"}]
-    return "Stopped: step limit reached."
+        found = librarian.search(reply.removeprefix("SEARCH:").strip(), 3)
+        all_results.extend(found)
+        first_number = len(all_results) - len(found)
+        results_text = "\n\n".join(f"[{first_number + i}] {c.chunk.text[:600]}" for i, c in enumerate(found, 1))
+        conversation += [{"role": "assistant", "content": reply},
+                         {"role": "user", "content": f"Results:\n{results_text}"}]
+    return "Stopped: too many turns."
 
 if llm.llm_available():
-    print("\nFINAL:", agent("Compress some bytes with gzip and then make them safe to put in JSON as text."))
+    print("\nFINAL ANSWER:", agent("Compress some bytes with gzip and then make them safe to put in JSON as text."))
 ```
 
-Real frameworks (LangGraph, the OpenAI/Anthropic tool-use APIs) replace the `SEARCH:` text protocol
-with structured tool calls, but the loop is the same: **think → act → observe → repeat**.
+**What you should see:** lines starting with 🤖 showing the agent's decisions - usually one or
+two searches (for gzip, then base64), and then a final answer that combines both. It chose those
+searches by itself.
 
-### ✏️ Exercise 10.1 - CRAG on the leaderboard
+Real tools (like LangGraph, or the "tool use" features of AI providers) do the same thing with a
+more reliable format than our `SEARCH:` lines, but the loop is identical:
+**think → act → look at the result → repeat**.
 
-Wrap `corrective_rag` so it can be evaluated on the 2 `unanswerable` questions and 10 answerable
-ones of your choice. Compare against `SimpleRAG` from lesson 7: does it refuse more correctly? Does
-it refuse answerable questions by mistake? How many LLM calls did each use?
+### ✏️ Exercise 10.1 · Is checking worth it? (no checker)
+
+Compare `corrective_rag` with the plain `SimpleRAG` from Lesson 7:
+
+1. Pick 8 questions: the 2 impossible ones (`category == "unanswerable"`) and 6 normal ones.
+2. Run both systems. Which refuses the impossible questions more reliably? Does either refuse a
+   normal question by mistake?
+3. Count the AI calls (tip: corrective RAG makes one per checked card, plus the answer).
+
+Write down: when would you pay the extra cost in a real project?
 
 ```{code-cell} ipython3
 # YOUR CODE HERE
 ```
 
-## Map of advanced techniques
+---
 
-You now understand every building block. Here is where each "awesome RAG" technique plugs in,
-with the notebook to study next (local copies in `references/`):
+## Part 3 · Your map of advanced techniques
 
-| Stage | Technique | Study notebook |
-|---|---|---|
-| Indexing | Semantic / proposition chunking | RAG_Techniques `semantic_chunking`, `proposition_chunking` |
-| Indexing | Contextual chunk headers, document augmentation | RAG_Techniques `contextual_chunk_headers`, `document_augmentation` |
-| Indexing | Hierarchical summaries (RAPTOR) | RAG_Techniques `raptor`, `hierarchical_indices` |
-| Indexing | Knowledge graphs (GraphRAG, LightRAG) | RAG_Techniques `graph_rag`, `Microsoft_GraphRag`, `light_rag`; `references/HKUDS_LightRAG/` |
-| Indexing | Vectorless, reasoning over a table of contents | `references/VectifyAI_PageIndex/` |
-| Retrieval | Fusion, re-ranking, HyDE, Multi-Query | lessons 5, 6, 9 here |
-| Retrieval | Context window around chunk, segment extraction | RAG_Techniques `context_enrichment_window_around_chunk`, `relevant_segment_extraction` |
-| Post-retrieval | Contextual compression | RAG_Techniques `contextual_compression` |
-| Control | Self-RAG, CRAG, adaptive retrieval | RAG_Techniques `self_rag`, `crag`, `adaptive_retrieval`; RAG from scratch 15-18 |
-| Control | Agentic RAG with LangGraph | `references/GiovanniPasq_agentic-rag-for-dummies/`; RAG_Techniques `Agentic_RAG` |
-| End-to-end | A competition-winning system | `references/IlyaRice_RAG-Challenge-2/` |
+You now understand every building block. Each "advanced RAG" technique you'll read about improves
+one of the three helpers. Here's where each one fits, with a notebook to study it in the
+`references` folder:
 
-**Suggested path:** pick one technique per week; re-implement its core idea with `raglab` on our
-corpus; evaluate it with lesson 8's leaderboard. A technique that doesn't move your metrics on
-*your* data isn't worth its complexity.
+| Helper | Technique | What it does, in plain words | Study notebook |
+|---|---|---|---|
+| 📚 Library | Semantic / proposition chunking | cut cards by topic changes, or into single facts | RAG_Techniques `semantic_chunking`, `proposition_chunking` |
+| 📚 Library | Contextual chunk headers | stick a short "this card is from..." label on each card | RAG_Techniques `contextual_chunk_headers` |
+| 📚 Library | RAPTOR / hierarchical indices | add summary cards for whole sections and books | RAG_Techniques `raptor`, `hierarchical_indices` |
+| 📚 Library | GraphRAG / LightRAG | build a map of *who/what is connected to what* | RAG_Techniques `graph_rag`, `light_rag`; `references/HKUDS_LightRAG/` |
+| 📚 Library | PageIndex (vectorless) | let the AI navigate a table of contents like a human | `references/VectifyAI_PageIndex/` |
+| 🧑‍💼 Librarian | Hybrid, re-ranking, Multi-Query, HyDE | Lessons 5, 6 and 9 of this course | - |
+| 🧑‍💼 Librarian | Context window around chunk | also bring the cards just before and after | RAG_Techniques `context_enrichment_window_around_chunk` |
+| ✍️ Writer | Contextual compression | cut irrelevant sentences out of cards before writing | RAG_Techniques `contextual_compression` |
+| 🔁 Decisions | Self-RAG, CRAG, adaptive retrieval | check and retry (Part 1 above) | RAG_Techniques `self_rag`, `crag`; RAG from scratch 15-18 |
+| 🔁 Decisions | Agentic RAG | the AI decides when to search (Part 2 above) | `references/GiovanniPasq_agentic-rag-for-dummies/` |
+| 🏆 Everything | A competition-winning system | see how all the pieces fit in practice | `references/IlyaRice_RAG-Challenge-2/` |
 
-## Key takeaways
+**A good way to keep learning:** pick one technique per week. Read its notebook. Rebuild the core
+idea with the tools from this course, on our library. Then test it with the leaderboard from
+Lesson 8. If it doesn't improve the scores **on your questions**, it isn't worth the extra complexity.
 
-- Advanced RAG adds *decisions*: grade evidence, retry, refuse, or search again.
-- Every decision is an extra LLM call: watch latency and cost.
-- Measure every technique on your own data before adopting it.
+---
 
-## Going further
+## Recap
 
-- CRAG paper: Yan et al., *Corrective Retrieval Augmented Generation* (2024). Self-RAG: Asai et al. (2023).
-- RAG from scratch, videos 15-18 (re-ranking, CRAG, Self-RAG, long context): `references/langchain-ai_rag-from-scratch/rag_from_scratch_15_to_18.ipynb`
+- Advanced RAG adds **decisions**: check the cards, search again, or honestly say "I don't know".
+- **Corrective RAG** checks every card and retries with a better search if none helps.
+- An **agent** lets the AI choose when and what to search.
+- Every extra decision is an extra AI call - more time and more cost. Measure before adopting.
+
+🎉 **Congratulations - you've finished the course!** You now know how every part of a RAG system
+works, how to measure it, and where to look next.
+
+## Want to go deeper? (optional)
+
+- The research papers: *Corrective Retrieval Augmented Generation* (Yan et al., 2024) and *Self-RAG* (Asai et al., 2023).
+- *RAG from scratch*, videos 15-18: `references/langchain-ai_rag-from-scratch/rag_from_scratch_15_to_18.ipynb`

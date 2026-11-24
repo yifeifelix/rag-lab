@@ -1,7 +1,8 @@
 # Solutions
 
-Try each exercise first - the auto-checker tells you when you're right. Reference versions of
-the coded exercises also live in `src/raglab/`.
+Try each exercise first - the checker tells you when you're right, and struggling a little is
+how the idea sticks. If you're stuck for more than 10 minutes, peek here, then close this page
+and write it again yourself. Ready-made versions of the coded exercises also live in `src/raglab/`.
 
 ## 1.1 Fixed-size chunks
 
@@ -74,9 +75,10 @@ def bm25_term_score(tf, idf, doc_len, avg_len, k1=1.5, b=0.75):
 
 ## 4.3 Vocabulary mismatch
 
-Example: "make my program wait a bit" finds nothing useful with BM25 because the docs say
-"Delay execution for a given number of seconds". Rewriting to "delay execution seconds sleep"
-fixes it.
+Example: "jumble a list into random order" - the documentation says "shuffle", so the keyword
+librarian finds the wrong cards (or none). Rewriting it as "shuffle list random" fixes it.
+Another one: "make my program wait a bit" vs. the documentation's "Delay execution for a given
+number of seconds" - rewrite as "delay execution seconds sleep".
 
 ## 5.1 RRF
 
@@ -143,7 +145,7 @@ def reciprocal_rank(retrieved, relevant):
     return 0.0
 ```
 
-## 9.1 Query decomposition
+## 9.1 Splitting a two-part question
 
 ```python
 DECOMPOSE_PROMPT = """Split the question into independent sub-questions, one per line.
@@ -151,7 +153,7 @@ If it is already simple, repeat it. No numbering.
 
 Question: {question}"""
 
-class DecomposingRetriever:
+class SplittingLibrarian:
     def __init__(self, retriever):
         self.retriever = retriever
 
@@ -165,7 +167,7 @@ class DecomposingRetriever:
         return [Hit(h.chunk, h.score, r) for r, h in enumerate(merged[:k], 1)]
 ```
 
-## 10.1 CRAG vs. SimpleRAG
+## 10.1 Is checking worth it?
 
 Count LLM calls by wrapping `llm.chat`. Typical result: CRAG refuses the unanswerable questions
 more reliably, but costs ~5 calls per question instead of 1, and occasionally rejects a relevant
